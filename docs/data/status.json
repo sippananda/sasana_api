@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10T15:37+08:00",
+ "generated_at": "2026-10-10T16:05+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -60,6 +60,8 @@
  "today": {
   "date": "2026-10-10",
   "weekday": "Sat",
+  "school_day": false,
+  "no_school_reason": "weekend",
   "values": {
    "CA15W": 165,
    "CA19B": 157,
@@ -75,12 +77,15 @@
   "reason": "below",
   "reason_text": "Average is 150 or below. School stays open.",
   "next_date": "2026-10-11",
-  "next_weekday": "Sun"
+  "next_weekday": "Sun",
+  "next_school_date": "2026-10-12"
  },
  "daily": [
   {
    "date": "2026-10-03",
    "weekday": "Sat",
+   "school_day": false,
+   "no_school_reason": "weekend",
    "values": {
     "CA15W": 83,
     "CA19B": 71,
@@ -98,6 +103,8 @@
   {
    "date": "2026-10-04",
    "weekday": "Sun",
+   "school_day": false,
+   "no_school_reason": "weekend",
    "values": {
     "CA15W": 99,
     "CA19B": 83,
@@ -115,6 +122,8 @@
   {
    "date": "2026-10-05",
    "weekday": "Mon",
+   "school_day": true,
+   "no_school_reason": null,
    "values": {
     "CA15W": 97,
     "CA19B": 79,
@@ -132,6 +141,8 @@
   {
    "date": "2026-10-06",
    "weekday": "Tue",
+   "school_day": true,
+   "no_school_reason": null,
    "values": {
     "CA15W": 153,
     "CA19B": 152,
@@ -149,6 +160,8 @@
   {
    "date": "2026-10-07",
    "weekday": "Wed",
+   "school_day": true,
+   "no_school_reason": null,
    "values": {
     "CA15W": 182,
     "CA19B": 176,
@@ -166,6 +179,8 @@
   {
    "date": "2026-10-08",
    "weekday": "Thu",
+   "school_day": true,
+   "no_school_reason": null,
    "values": {
     "CA15W": 167,
     "CA19B": 165,
@@ -183,6 +198,8 @@
   {
    "date": "2026-10-09",
    "weekday": "Fri",
+   "school_day": true,
+   "no_school_reason": null,
    "values": {
     "CA15W": 172,
     "CA19B": 168,
@@ -200,6 +217,8 @@
   {
    "date": "2026-10-10",
    "weekday": "Sat",
+   "school_day": false,
+   "no_school_reason": "weekend",
    "values": {
     "CA15W": 165,
     "CA19B": 157,
