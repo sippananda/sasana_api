@@ -2,8 +2,8 @@ name: Collect air quality data
 
 on:
   schedule:
-    # Minute 22 and minute 52 of every hour. GitHub may start a run some minutes late.
-    - cron: "22,52 * * * *"
+    # Minute 45 of every hour (trial). GitHub may start a run some minutes late.
+    - cron: "45 * * * *"
   workflow_dispatch:
   push:
     branches: [main]
