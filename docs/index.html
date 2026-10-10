@@ -299,10 +299,10 @@
       var note2 = "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".";
       // When only that one reading is still to come, say what it would take to change the result.
       if (nsMs - DAY === nextMs && t.decision_next_day === "open") {
-        var lim = (t.streak || 0) + 1 >= rule.streak_days ? rule.close_above_streak : rule.close_above_single_day;
-        note2 += " Open, unless that average is above " + lim + ".";
+        note2 += " Open, unless that average is " + ((t.streak || 0) + 1 >= rule.streak_days
+          ? rule.close_from_streak + " or above." : "above " + rule.close_above_single_day + ".");
       } else if (nsMs - DAY === nextMs && t.decision_next_day === "closed") {
-        note2 += " Closed, unless that average is " + rule.reopen_at_or_below + " or below.";
+        note2 += " Closed, unless that average is below " + rule.reopen_below + ".";
       }
       box(label2, nsMs, "", "Not decided yet", note2);
     }
@@ -317,13 +317,13 @@
       }
     } else if (t.school_status === "closed") {
       reason = "The rule status is closed. It changes to open after a " + readClock +
-        " average of " + rule.reopen_at_or_below + " or below.";
+        " average below " + rule.reopen_below + ".";
     }
     $("reason").textContent = reason;
     var count = $("count"); count.textContent = "";
     // The count only runs while school is open.
     if (t.school_status === "open" && t.streak !== null && t.streak !== undefined) {
-      count.appendChild(el("span", {}, "Days in a row above " + rule.close_above_streak + ":"));
+      count.appendChild(el("span", {}, "Days in a row at " + rule.close_from_streak + " or above:"));
       var pips = el("span", { "class": "pips", "aria-hidden": "true" });
       for (var i = 0; i < rule.streak_days; i++)
         pips.appendChild(el("span", { "class": "pip" + (i < t.streak ? " on" : "") }));
@@ -381,8 +381,8 @@
     [
       "Every day at " + readClock + ", take the API of the four stations. Average them.",
       "Average above " + rule.close_above_single_day + " on any single day: school is closed the next day.",
-      "Average above " + rule.close_above_streak + " for " + rule.streak_days + " days in a row: school is closed the next day.",
-      "While school is closed: average " + rule.reopen_at_or_below + " or below reopens school the next day.",
+      "Average " + rule.close_from_streak + " or above for " + rule.streak_days + " days in a row: school is closed the next day.",
+      "While school is closed: an average below " + rule.reopen_below + " reopens school the next day.",
       "The count of " + rule.streak_days + " days restarts after school reopens."
     ].forEach(function (x) { ul.appendChild(el("li", {}, x)); });
     $("notes").textContent = "Stations: " + st.map(function (x) { return x.name; }).join("; ") +
@@ -390,7 +390,8 @@
       "Kuala Selangor is used instead, although it is the farthest. " +
       "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday. " +
       "The average is rounded to a whole number. 0.5 and above goes up. " +
-      "So 149.5 becomes 150, and 141.4 becomes 141.";
+      "So 149.5 becomes 150, and 141.4 becomes 141. An average of exactly " +
+      rule.close_from_streak + " counts as high.";
   }
 
   // ------------------------------------------------------------ table
@@ -431,7 +432,7 @@
     }
     st.forEach(function (x, i) { key(COLORS[i], "", x.short); });
     key("var(--ink)", "avg-key", "Average of the four");
-    key("var(--limit)", "limit-key", "Limits " + s.rule.close_above_streak + " and " + s.rule.close_above_single_day);
+    key("var(--limit)", "limit-key", "Limits " + s.rule.close_from_streak + " and " + s.rule.close_above_single_day);
 
     var W = Math.max(300, Math.round(host.clientWidth || 720));
     var H = W < 520 ? 250 : 320, L = 34, R = 34, T = 18, B = 30;
@@ -467,7 +468,7 @@
         g.appendChild(svg("text", { x: (X(a) + X(b)) / 2, y: H - 10, "text-anchor": "middle" }, dayLabel(d)));
     }
     // limits
-    var limits = [s.rule.close_above_streak, s.rule.close_above_single_day];
+    var limits = [s.rule.close_from_streak, s.rule.close_above_single_day];
     limits.forEach(function (lim) {
       g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(lim), y2: Y(lim),
         stroke: "var(--limit)", "stroke-width": 1.25, "stroke-dasharray": "5 4" }));

@@ -3,8 +3,10 @@
 The rule (from the school's "Haze Protocol Update"):
   - Each day, take the 2:00 pm API of four DOE stations and average them.
   - School CLOSES the next day if the average is above 180 on any single day,
-    or above 150 for three days in a row.
-  - While closed, school REOPENS the next day when the average is 150 or below.
+    or 150 or above for three days in a row.
+  - While closed, school REOPENS the next day when the average is below 150.
+  - An average of exactly 150 counts as high (owner's decision, 10 Oct 2026).
+    The notice itself says "above 150".
   - The count of three days restarts after school reopens.
 
 Choices this code makes where the notice is silent (see README, "Open questions"):
@@ -55,9 +57,9 @@ def evaluate(days, rule):
       reason_text        one plain sentence
     """
     hi = rule["close_above_single_day"]
-    lim = rule["close_above_streak"]
+    lim = rule["close_from_streak"]          # this value or above counts as a high day
     need = rule["streak_days"]
-    reopen = rule["reopen_at_or_below"]
+    reopen = rule["reopen_below"]            # below this value reopens school
     start = rule.get("start_date") or ""
 
     status = OPEN
@@ -83,27 +85,27 @@ def evaluate(days, rule):
             text = ("No usable 2:00 pm reading. Status and count do not change. "
                     "Check the DOE website.")
         elif status == OPEN:
-            streak = streak + 1 if avg > lim else 0
+            streak = streak + 1 if avg >= lim else 0
             if avg > hi:
                 nxt, reason = CLOSED, "above_single_day"
                 text = f"Average is above {hi}. School closes the next day."
             elif streak >= need:
                 nxt, reason = CLOSED, "streak"
-                text = (f"Average is above {lim} for {need} days in a row. "
+                text = (f"Average is {lim} or above for {need} days in a row. "
                         "School closes the next day.")
-            elif avg > lim:
+            elif avg >= lim:
                 nxt, reason = OPEN, "counting"
-                text = f"Average is above {lim}. Day {streak} of {need}. School stays open."
+                text = f"Average is {lim} or above. Day {streak} of {need}. School stays open."
             else:
                 nxt, reason = OPEN, "below"
-                text = f"Average is {lim} or below. School stays open."
+                text = f"Average is below {lim}. School stays open."
         else:  # closed
-            if avg <= reopen:
+            if avg < reopen:
                 nxt, reason = OPEN, "reopen"
-                text = f"Average is {reopen} or below. School reopens the next day."
+                text = f"Average is below {reopen}. School reopens the next day."
             else:
                 nxt, reason = CLOSED, "stays_closed"
-                text = f"Average is still above {reopen}. School stays closed."
+                text = f"Average is still {reopen} or above. School stays closed."
 
         # The count only runs while school is open. It restarts after reopening.
         shown_streak = streak if status == OPEN else 0

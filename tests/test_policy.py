@@ -7,8 +7,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import policy  # noqa: E402
 
-RULE = {"close_above_single_day": 180, "close_above_streak": 150, "streak_days": 3,
-        "reopen_at_or_below": 150, "min_stations": 3, "start_date": "2026-01-01"}
+RULE = {"close_above_single_day": 180, "close_from_streak": 150, "streak_days": 3,
+        "reopen_below": 150, "min_stations": 3, "start_date": "2026-01-01"}
 
 
 def run(averages, rule=RULE, first=date(2026, 3, 1)):
@@ -23,7 +23,7 @@ def col(rows, key):
 
 class Rule(unittest.TestCase):
     def test_clean_air_stays_open(self):
-        rows = run([60, 99, 150])
+        rows = run([60, 99, 149])
         self.assertEqual(col(rows, "decision_next_day"), ["open"] * 3)
         self.assertEqual(col(rows, "streak"), [0, 0, 0])
 
@@ -36,10 +36,17 @@ class Rule(unittest.TestCase):
     def test_exactly_180_does_not_close(self):
         self.assertEqual(run([180])[0]["decision_next_day"], "open")
 
-    def test_exactly_150_does_not_count(self):
-        rows = run([151, 151, 150, 151])
+    def test_exactly_150_counts_as_high(self):
+        rows = run([151, 151, 149, 150])
         self.assertEqual(col(rows, "streak"), [1, 2, 0, 1])
         self.assertEqual(col(rows, "decision_next_day"), ["open"] * 4)
+        rows = run([150, 150, 150])
+        self.assertEqual(col(rows, "streak"), [1, 2, 3])
+        self.assertEqual(rows[2]["decision_next_day"], "closed")
+        self.assertEqual(rows[2]["reason"], "streak")
+        # 149.5 is rounded to 150, so it counts too
+        self.assertEqual(run([149.5])[0]["streak"], 1)
+        self.assertEqual(run([149.4])[0]["streak"], 0)
 
     def test_three_days_above_150_closes_on_day_four(self):
         rows = run([151, 160, 170, 155])
@@ -55,12 +62,13 @@ class Rule(unittest.TestCase):
         self.assertEqual(col(rows, "streak"), [1, 2, 0, 1, 2])
         self.assertTrue(all(d == "open" for d in col(rows, "decision_next_day")))
 
-    def test_reopens_only_at_150_or_below(self):
-        rows = run([185, 160, 150.5, 150, 100])
+    def test_reopens_only_below_150(self):
+        rows = run([185, 160, 150, 149, 100])
         self.assertEqual(col(rows, "school_status"),
                          ["open", "closed", "closed", "closed", "open"])
         self.assertEqual(col(rows, "decision_next_day"),
                          ["closed", "closed", "closed", "open", "open"])
+        self.assertEqual(rows[2]["reason"], "stays_closed")
         self.assertEqual(rows[3]["reason"], "reopen")
 
     def test_count_restarts_after_reopening(self):
@@ -80,12 +88,12 @@ class Rule(unittest.TestCase):
         # 0.5 and above goes up. Below 0.5 goes down.
         self.assertEqual(run([180.25])[0]["decision_next_day"], "open")    # 180
         self.assertEqual(run([180.5])[0]["decision_next_day"], "closed")   # 181
-        self.assertEqual(run([150.25])[0]["streak"], 0)                    # 150
-        self.assertEqual(run([150.5])[0]["streak"], 1)                     # 151
-        self.assertEqual(run([150.5])[0]["average"], 151)
-        # closed school: 150.25 is 150, so it reopens. 150.5 is 151, so it stays closed.
-        self.assertEqual(run([185, 150.25])[1]["decision_next_day"], "open")
-        self.assertEqual(run([185, 150.5])[1]["decision_next_day"], "closed")
+        self.assertEqual(run([149.25])[0]["streak"], 0)                    # 149
+        self.assertEqual(run([149.5])[0]["streak"], 1)                     # 150
+        self.assertEqual(run([149.5])[0]["average"], 150)
+        # closed school: 149.25 is 149, so it reopens. 149.5 is 150, so it stays closed.
+        self.assertEqual(run([185, 149.25])[1]["decision_next_day"], "open")
+        self.assertEqual(run([185, 149.5])[1]["decision_next_day"], "closed")
 
     def test_missing_day_changes_nothing(self):
         rows = run([160, None, 160, 160])

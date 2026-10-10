@@ -17,9 +17,9 @@
   ],
   "rule": {
     "close_above_single_day": 180,
-    "close_above_streak": 150,
+    "close_from_streak": 150,
     "streak_days": 3,
-    "reopen_at_or_below": 150,
+    "reopen_below": 150,
     "min_stations": 3,
     "start_date": "2026-10-10"
   },

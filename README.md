@@ -23,8 +23,8 @@ One run per hour is enough. A late reading is collected by the next run.
 ## The rule
 
 - Average above 180 on any single day: school is closed the next day.
-- Average above 150 for three days in a row: school is closed the next day.
-- While school is closed: an average of 150 or below reopens school the next day.
+- Average 150 or above for three days in a row: school is closed the next day.
+- While school is closed: an average below 150 reopens school the next day.
 - The count of three days restarts after school reopens.
 
 ## Set up (one time, about 10 minutes)
@@ -50,9 +50,9 @@ All settings are in `config.json`.
 | `school_days` | Days with school. Other days show "No school". | Mon to Fri |
 | `no_school_dates` | Extra days without school, for example `"2026-12-25"` | none |
 | `close_above_single_day` | Close when the average is above this on one day | 180 |
-| `close_above_streak` | Count a day when the average is above this | 150 |
+| `close_from_streak` | Count a day when the average is this or above | 150 |
 | `streak_days` | Days in a row needed to close | 3 |
-| `reopen_at_or_below` | Reopen when the average is at or below this | 150 |
+| `reopen_below` | Reopen when the average is below this | 150 |
 | `min_stations` | Fewest stations needed for a usable average | 3 |
 | `start_date` | First day the rule is applied. School is taken as open on this day. | 2026-10-10 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
@@ -73,8 +73,10 @@ The notice does not say what to do in these cases. The code makes a choice. Each
 3. **No reading for a whole day.** Status and count stay as they were. The page asks to check DOE.
 4. **Rounding.** The average is rounded to a whole number before it is compared with the limits.
    0.5 and above goes up. So 149.5 becomes 150, and 141.4 becomes 141.
-   150.4 becomes 150, which is not above 150. 150.5 becomes 151, which is above 150.
-5. **Start date.** Days before `start_date` are shown but not counted.
+5. **Exactly 150.** The notice says "above 150". The page counts 150 itself as high (owner's decision).
+   So 149.5 becomes 150 and counts toward the three days. While school is closed, 150 keeps it closed.
+   The 180 limit is not changed: 180 itself does not close school, 181 does.
+6. **Start date.** Days before `start_date` are shown but not counted.
 
 ## If something goes wrong
 
