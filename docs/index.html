@@ -37,6 +37,12 @@
   header { padding: 0 4px; }
   h1 { font-size: 1.6rem; line-height: 1.2; margin: 0; letter-spacing: -.015em; text-wrap: balance; }
   .sub { color: var(--ink-2); margin: 4px 0 0; }
+  .meta {
+    display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 0;
+    padding: 4px 12px 4px 10px; border: 1px solid var(--edge); border-radius: 14px;
+    background: var(--surface); color: var(--ink-2); font-size: .85rem;
+  }
+  .meta::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
   /* every section is a card */
   section {
     background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
@@ -179,6 +185,7 @@
   <header>
     <h1>Haze Monitoring and School Opening/Closure Status</h1>
     <p class="sub" id="school">Sasana International School</p>
+    <p class="meta" id="updated">Loading…</p>
   </header>
   <div class="warn" id="warn" hidden></div>
 
@@ -204,7 +211,7 @@
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
     <p class="small">The black dots are the 2:00 pm averages. Only these are used for the decision.</p>
-    <p class="small" id="updated">Loading…</p>
+    <p class="small" id="latest"></p>
   </section>
 
   <section>
@@ -281,12 +288,15 @@
 
     // ---- freshness
     var newest = s.latest ? parse(s.latest.datetime) : null;
-    // Shown at the bottom of section 3, with the numbers of that reading.
     $("updated").textContent = newest
-      ? "Newest DOE reading, " + dayLabel(newest) + ", " + clock(newest) + ": " + st.map(function (x) {
+      ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
+      : "No DOE reading yet.";
+    // The numbers of that reading, at the bottom of section 3.
+    $("latest").textContent = newest
+      ? "Latest reading, " + clock(newest) + ": " + st.map(function (x) {
           return x.short + " " + num(s.latest.values[x.id]);
         }).join(" · ") + " · average " + num(s.latest.average) + ". For information only."
-      : "No DOE reading yet.";
+      : "";
     var ageH = newest ? (nowMY() - newest) / 3600e3 : Infinity;
     var warn = $("warn");
     if (ageH > s.stale_after_hours) {
