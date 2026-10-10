@@ -33,15 +33,16 @@ class Collector(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def collect(self, now, start_date=None):
+    def collect(self, now, start_date=None, no_school=None):
         env = dict(os.environ,
                    MONITOR_NOW=now, MONITOR_DATA_DIR=str(self.data),
                    APIMS_RETRY_WAIT="0", NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
                    APIMS_TABLE_URL=f"http://127.0.0.1:{self.port}/api3/publicportalapims/apitablehourly",
                    APIMS_CURRENT_URL=f"http://127.0.0.1:{self.port}/MapServer/0/query")
-        if start_date:
+        if start_date or no_school:
             cfg = json.loads((ROOT / "config.json").read_text())
-            cfg["rule"]["start_date"] = start_date
+            cfg["rule"]["start_date"] = start_date or cfg["rule"]["start_date"]
+            cfg["no_school_dates"] = no_school or []
             path = Path(self.tmp.name) / "config.json"
             path.write_text(json.dumps(cfg))
             env["MONITOR_CONFIG"] = str(path)
@@ -85,6 +86,31 @@ class Collector(unittest.TestCase):
         run, st = self.collect("2026-10-10T09:10", start_date="2026-10-03")
         self.assertEqual((st["today"]["school_status"], st["today"]["decision_next_day"]),
                          ("closed", None))
+
+    def test_weekend_is_not_a_school_day(self):
+        # 10 Oct 2026 is a Saturday. The rule still runs. The next school day is Monday.
+        run, st = self.collect("2026-10-10T15:37")
+        t = st["today"]
+        self.assertEqual((t["school_day"], t["no_school_reason"]), (False, "weekend"))
+        self.assertEqual(t["next_date"], "2026-10-11")
+        self.assertEqual(t["next_school_date"], "2026-10-12")
+        self.assertEqual(t["decision_next_day"], "open")          # rule result for Sunday
+        self.assertEqual([d["school_day"] for d in st["daily"]],
+                         [False, False, True, True, True, True, True, False])
+        daily = (self.data / "daily.csv").read_text().splitlines()
+        self.assertIn(",weekend,", daily[-1])
+        self.assertIn(",yes,", daily[-2])
+
+    def test_friday_points_to_monday_and_holidays_are_skipped(self):
+        run, st = self.collect("2026-10-09T15:10", start_date="2026-10-03")
+        t = st["today"]
+        self.assertTrue(t["school_day"])
+        self.assertEqual((t["school_status"], t["decision_next_day"]), ("open", "closed"))
+        self.assertEqual(t["next_school_date"], "2026-10-12")
+        run, st = self.collect("2026-10-09T15:10", start_date="2026-10-03",
+                               no_school=["2026-10-12", "2026-10-09"])
+        self.assertEqual(st["today"]["no_school_reason"], "holiday")
+        self.assertEqual(st["today"]["next_school_date"], "2026-10-13")
 
     def test_no_reading_by_three_pm_is_flagged(self):
         run, st = self.collect("2026-10-11T14:20")

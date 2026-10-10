@@ -188,6 +188,24 @@ def fmt(x):
     return f"{x:.2f}".rstrip("0").rstrip(".")
 
 
+def no_school_reason(d, cfg):
+    """None on a school day. Otherwise "weekend" or "holiday"."""
+    if d.isoformat() in cfg.get("no_school_dates", []):
+        return "holiday"
+    if d.strftime("%a") not in cfg.get("school_days", ["Mon", "Tue", "Wed", "Thu", "Fri"]):
+        return "weekend"
+    return None
+
+
+def next_school_day(d, cfg):
+    """The first school day after date d."""
+    for _ in range(366):
+        d += timedelta(days=1)
+        if no_school_reason(d, cfg) is None:
+            return d
+    return d
+
+
 def build_days(hourly, cfg, now):
     """One entry per calendar day, from the first 2 pm reading to today."""
     ids = [s["id"] for s in cfg["stations"]]
@@ -214,6 +232,8 @@ def build_days(hourly, cfg, now):
         entry = {
             "date": d.isoformat(),
             "weekday": d.strftime("%a"),
+            "school_day": no_school_reason(d, cfg) is None,
+            "no_school_reason": no_school_reason(d, cfg),
             "values": values,
             "stations_used": used,
             "average": avg,
@@ -266,6 +286,8 @@ def build_status(hourly, cfg, now):
     today_out["reading_state"] = today["reading_state"]
     today_out["next_date"] = (now.date() + timedelta(days=1)).isoformat()
     today_out["next_weekday"] = (now.date() + timedelta(days=1)).strftime("%a")
+    # The rule runs on every calendar day. School itself only runs on school days.
+    today_out["next_school_date"] = next_school_day(now.date(), cfg).isoformat()
 
     filled = sorted(k for k in hourly if hourly[k])
     newest = filled[-1] if filled else None
@@ -306,13 +328,14 @@ def daily_csv_text(evaluated, cfg):
     ids = [s["id"] for s in cfg["stations"]]
     names = [s["short"].lower().replace(" ", "_") for s in cfg["stations"]]
     head = ["date", "weekday"] + names + ["stations_used", "average",
-                                          "school_status", "decision_next_day",
+                                          "school_day", "school_status", "decision_next_day",
                                           "days_in_a_row", "reason"]
     lines = [",".join(head)]
     for r in evaluated:
         cells = [r["date"], r["weekday"]]
         cells += ["" if r["values"].get(s) is None else str(r["values"][s]) for s in ids]
         cells += [str(r["stations_used"]), fmt(r["average"]),
+                  "yes" if r["school_day"] else r["no_school_reason"],
                   r["school_status"] or "", r["decision_next_day"] or "",
                   "" if r["streak"] is None else str(r["streak"]), r["reason"]]
         lines.append(",".join(cells))
@@ -402,8 +425,9 @@ def main():
                f"({'hourly table' if table_ok else 'map service' if got_current else 'no source'}). "
                f"Newest reading {newest}. "
                f"Today {t['date']}: 2 pm reading {t['reading_state']}, "
-               f"average {fmt(t['average']) or '-'}, school {t['school_status']}, "
-               f"next day {t['decision_next_day'] or 'not decided'}. "
+               f"average {fmt(t['average']) or '-'}, rule status {t['school_status']}, "
+               f"rule for next day {t['decision_next_day'] or 'not decided'}, "
+               f"next school day {t['next_school_date']}. "
                f"{'Data changed' if data_changed else 'No change'}.")
     log(f"today {t['date']}: reading={t['reading_state']} average={fmt(t['average']) or '-'} "
         f"status={t['school_status']} next_day={t['decision_next_day']}")

@@ -231,26 +231,57 @@
 
     // ---- 1. status boxes
     var boxes = $("boxes"); boxes.textContent = "";
-    function box(label, ms, state, note) {
-      var b = el("div", { "class": "box " + (state || "") });
+    function box(label, ms, cls, text, note) {
+      var b = el("div", { "class": "box " + (cls || "") });
       b.appendChild(el("div", { "class": "when" }, label + dayLabel(ms)));
-      b.appendChild(el("div", { "class": "state" }, state ? "School " + word(state) : "Not decided yet"));
+      b.appendChild(el("div", { "class": "state" }, text));
       if (note) b.appendChild(el("div", { "class": "note" }, note));
       boxes.appendChild(b);
     }
+    var DAY = 24 * 3600e3;
     var started = t.date >= rule.start_date;
-    box(isToday ? "Today · " : "", todayMs, started ? t.school_status : null,
-        started ? "" : "Monitoring starts on " + dayLabel(parse(rule.start_date)) + ".");
-    var pendingNote = t.reading_state === "before"
-      ? "Decided after the " + readClock + " reading."
-      : "Waiting for the " + readClock + " reading from DOE.";
-    box(isToday ? "Tomorrow · " : "", nextMs, t.decision_next_day,
-        t.decision_next_day ? "From the " + readClock + " reading of " + dayLabel(todayMs) + "." : pendingNote);
+    var todayIsSchool = t.school_day !== false;
 
-    $("reason").textContent = t.decision_next_day ? t.reason_text
-      : (t.school_status === "closed"
-        ? "School reopens the day after a " + readClock + " average of " + rule.reopen_at_or_below + " or below."
-        : "");
+    // Box 1: today. The rule runs every day, but school only runs on school days.
+    if (!started) {
+      box(isToday ? "Today · " : "", todayMs, "", "Not decided yet",
+          "Monitoring starts on " + dayLabel(parse(rule.start_date)) + ".");
+    } else if (!todayIsSchool) {
+      box(isToday ? "Today · " : "", todayMs, "", "No school",
+          t.no_school_reason === "holiday" ? "School holiday." : "Weekend.");
+    } else {
+      box(isToday ? "Today · " : "", todayMs, t.school_status, "School " + word(t.school_status), "");
+    }
+
+    // Box 2: the next school day.
+    var nextSchool = t.next_school_date || t.next_date;
+    var nsMs = parse(nextSchool), isTomorrow = nextSchool === t.next_date;
+    var label2 = !isToday ? "" : isTomorrow ? "Tomorrow · " : "Next school day · ";
+    if (isTomorrow && t.decision_next_day) {
+      box(label2, nsMs, t.decision_next_day, "School " + word(t.decision_next_day),
+          "From the " + readClock + " reading of " + dayLabel(todayMs) + ".");
+    } else if (isTomorrow) {
+      box(label2, nsMs, "", "Not decided yet", t.reading_state === "before"
+        ? "Decided after the " + readClock + " reading."
+        : "Waiting for the " + readClock + " reading from DOE.");
+    } else {
+      box(label2, nsMs, "", "Not decided yet",
+          "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".");
+    }
+
+    var reason = "";
+    if (t.decision_next_day) {
+      reason = t.reason_text;
+      if (!isTomorrow) {
+        reason = t.reason_text.split(". ")[0].replace(/\.$/, "") + ". Rule status for " + dayLabel(nextMs) +
+          ": " + word(t.decision_next_day).toLowerCase() +
+          ". That day is not a school day, but the rule still counts it.";
+      }
+    } else if (t.school_status === "closed") {
+      reason = "The rule status is closed. It changes to open after a " + readClock +
+        " average of " + rule.reopen_at_or_below + " or below.";
+    }
+    $("reason").textContent = reason;
     var count = $("count"); count.textContent = "";
     // The count only runs while school is open.
     if (t.school_status === "open" && t.streak !== null && t.streak !== undefined) {
@@ -314,14 +345,15 @@
     $("notes").textContent = "Stations: " + st.map(function (x) { return x.name; }).join("; ") +
       ". Cheras is left out because it is close to two of the other stations. " +
       "Kuala Selangor is used instead, although it is the farthest. " +
-      "Every calendar day counts, weekends too. The exact average is used, not a rounded number.";
+      "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday. " +
+      "The exact average is used, not a rounded number.";
   }
 
   // ------------------------------------------------------------ table
   function drawTable(s) {
     var tb = $("daily"); tb.textContent = "";
     var head = el("tr");
-    ["Date", "Average", "School that day", "Next day"].concat(
+    ["Date", "Average", "School that day", "Rule for next day"].concat(
       s.stations.map(function (x) { return x.short; })).forEach(function (h, i) {
       head.appendChild(el("th", i === 2 || i === 3 ? { "class": "l" } : {}, h));
     });
@@ -330,8 +362,10 @@
       var tr = el("tr", d.reason === "before_start" ? { "class": "muted" } : {});
       tr.appendChild(el("td", {}, dayLabel(parse(d.date))));
       tr.appendChild(el("td", { "class": "strong" }, d.average === null ? "no data" : num(d.average)));
-      tr.appendChild(el("td", { "class": "l " + (d.school_status || "") },
-        d.school_status ? word(d.school_status) : "not counted"));
+      var noSchool = d.school_day === false;
+      tr.appendChild(el("td", { "class": "l " + (noSchool ? "" : d.school_status || "") },
+        noSchool ? (d.no_school_reason === "holiday" ? "holiday" : "weekend")
+          : d.school_status ? word(d.school_status) : "not counted"));
       tr.appendChild(el("td", { "class": "l " + (d.decision_next_day || "") },
         d.decision_next_day ? word(d.decision_next_day) : "–"));
       s.stations.forEach(function (x) { tr.appendChild(el("td", {}, num(d.values[x.id]))); });

@@ -7,6 +7,8 @@
   },
   "timezone_offset_hours": 8,
   "reading_hour": 14,
+  "school_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  "no_school_dates": [],
   "stations": [
     {"id": "CA15W", "name": "Batu Muda, Kuala Lumpur", "short": "Batu Muda", "state_id": 14, "distance_km": 19},
     {"id": "CA19B", "name": "Petaling Jaya", "short": "Petaling Jaya", "state_id": 10, "distance_km": 22},

@@ -47,6 +47,8 @@ All settings are in `config.json`.
 | Setting | Meaning | Now |
 |---|---|---|
 | `reading_hour` | Hour of the daily reading, Malaysia time | 14 |
+| `school_days` | Days with school. Other days show "No school". | Mon to Fri |
+| `no_school_dates` | Extra days without school, for example `"2026-12-25"` | none |
 | `close_above_single_day` | Close when the average is above this on one day | 180 |
 | `close_above_streak` | Count a day when the average is above this | 150 |
 | `streak_days` | Days in a row needed to close | 3 |
@@ -63,7 +65,9 @@ To change a station, edit the `stations` list. The station `id` and `state_id` c
 
 The notice does not say what to do in these cases. The code makes a choice. Each choice is easy to change.
 
-1. **Weekends and holidays.** The code counts every calendar day. "Next day" can be a Saturday.
+1. **Weekends and holidays.** The page shows "No school" on these days.
+   The rule still counts their readings. So the Sunday 2:00 pm reading decides Monday.
+   A high weekend day also counts toward the three days in a row.
 2. **A station does not report at 2:00 pm.** With 3 stations, the code averages the 3 and shows a yellow note.
    With 2 or fewer, there is no decision for that day.
 3. **No reading for a whole day.** Status and count stay as they were. The page asks to check DOE.

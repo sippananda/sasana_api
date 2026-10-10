@@ -8,7 +8,8 @@ The rule (from the school's "Haze Protocol Update"):
   - The count of three days restarts after school reopens.
 
 Choices this code makes where the notice is silent (see README, "Open questions"):
-  - Every calendar day counts, weekends included.
+  - Every calendar day counts for the rule, weekends included. So the Sunday
+    reading decides Monday. The web page shows weekends as "no school".
   - The exact average is compared with the limits. It is not rounded first.
   - A day with no usable reading changes nothing: status and count stay as they were.
 """
