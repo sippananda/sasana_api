@@ -56,7 +56,7 @@ class Rule(unittest.TestCase):
         self.assertTrue(all(d == "open" for d in col(rows, "decision_next_day")))
 
     def test_reopens_only_at_150_or_below(self):
-        rows = run([185, 160, 150.25, 150, 100])
+        rows = run([185, 160, 150.5, 150, 100])
         self.assertEqual(col(rows, "school_status"),
                          ["open", "closed", "closed", "closed", "open"])
         self.assertEqual(col(rows, "decision_next_day"),
@@ -76,9 +76,16 @@ class Rule(unittest.TestCase):
         self.assertEqual(rows[4]["streak"], 1)
         self.assertEqual(rows[4]["decision_next_day"], "open")
 
-    def test_average_is_not_rounded(self):
-        self.assertEqual(run([180.25])[0]["decision_next_day"], "closed")
-        self.assertEqual(run([150.25])[0]["streak"], 1)
+    def test_average_is_rounded_before_the_limits(self):
+        # 0.5 and above goes up. Below 0.5 goes down.
+        self.assertEqual(run([180.25])[0]["decision_next_day"], "open")    # 180
+        self.assertEqual(run([180.5])[0]["decision_next_day"], "closed")   # 181
+        self.assertEqual(run([150.25])[0]["streak"], 0)                    # 150
+        self.assertEqual(run([150.5])[0]["streak"], 1)                     # 151
+        self.assertEqual(run([150.5])[0]["average"], 151)
+        # closed school: 150.25 is 150, so it reopens. 150.5 is 151, so it stays closed.
+        self.assertEqual(run([185, 150.25])[1]["decision_next_day"], "open")
+        self.assertEqual(run([185, 150.5])[1]["decision_next_day"], "closed")
 
     def test_missing_day_changes_nothing(self):
         rows = run([160, None, 160, 160])
@@ -107,7 +114,18 @@ class Rule(unittest.TestCase):
 
 class Average(unittest.TestCase):
     def test_four_stations(self):
-        self.assertEqual(policy.average([165, 157, 162, 102], 3), 146.5)
+        self.assertEqual(policy.average([165, 157, 162, 102], 3), 147)     # 146.5
+
+    def test_rounding(self):
+        self.assertEqual(policy.round_half_up(149.5), 150)
+        self.assertEqual(policy.round_half_up(141.4), 141)
+        self.assertEqual(policy.round_half_up(150.5), 151)   # not 150 (no "round to even")
+        self.assertEqual(policy.round_half_up(149.49), 149)
+        self.assertEqual(policy.round_half_up(160), 160)
+        self.assertIsNone(policy.round_half_up(None))
+        self.assertEqual(policy.average([149, 150, 150, 149], 3), 150)     # 149.5
+        self.assertEqual(policy.average([142, 141, 141, 142], 3), 142)     # 141.5
+        self.assertEqual(policy.average([141, 141, 142, None], 3), 141)    # 141.33
 
     def test_three_of_four(self):
         self.assertEqual(policy.average([150, None, 160, 170], 3), 160)

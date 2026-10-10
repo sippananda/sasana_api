@@ -58,14 +58,14 @@ class Collector(unittest.TestCase):
         self.assertEqual([d["date"] for d in st["daily"]],
                          [f"2026-10-{n:02d}" for n in range(3, 11)])
         self.assertEqual([d["average"] for d in st["daily"]],
-                         [71.75, 85.75, 84.5, 132.25, 172.0, 161.0, 167.75, 146.5])
+                         [72, 86, 85, 132, 172, 161, 168, 147])
         t = st["today"]
         self.assertEqual((t["reading_state"], t["average"], t["stations_used"]),
-                         ("done", 146.5, 4))
+                         ("done", 147, 4))
         self.assertEqual((t["school_status"], t["decision_next_day"], t["streak"]),
                          ("open", "open", 0))
         self.assertEqual(st["latest"]["datetime"], "2026-10-10T15:00")
-        self.assertEqual(st["latest"]["average"], 143.75)
+        self.assertEqual(st["latest"]["average"], 144)
 
     def test_before_two_pm_decision_is_pending(self):
         run, st = self.collect("2026-10-10T13:20")

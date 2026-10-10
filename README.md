@@ -71,7 +71,9 @@ The notice does not say what to do in these cases. The code makes a choice. Each
 2. **A station does not report at 2:00 pm.** With 3 stations, the code averages the 3 and shows a yellow note.
    With 2 or fewer, there is no decision for that day.
 3. **No reading for a whole day.** Status and count stay as they were. The page asks to check DOE.
-4. **Rounding.** The exact average is used. 150.25 counts as above 150.
+4. **Rounding.** The average is rounded to a whole number before it is compared with the limits.
+   0.5 and above goes up. So 149.5 becomes 150, and 141.4 becomes 141.
+   150.4 becomes 150, which is not above 150. 150.5 becomes 151, which is above 150.
 5. **Start date.** Days before `start_date` are shown but not counted.
 
 ## If something goes wrong

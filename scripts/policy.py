@@ -10,27 +10,41 @@ The rule (from the school's "Haze Protocol Update"):
 Choices this code makes where the notice is silent (see README, "Open questions"):
   - Every calendar day counts for the rule, weekends included. So the Sunday
     reading decides Monday. The web page shows weekends as "no school".
-  - The exact average is compared with the limits. It is not rounded first.
+  - The average is rounded to a whole number before it is compared with the
+    limits. 0.5 and above goes up: 149.5 becomes 150, 141.4 becomes 141.
   - A day with no usable reading changes nothing: status and count stay as they were.
 """
+
+import math
 
 OPEN = "open"
 CLOSED = "closed"
 
 
+def round_half_up(x):
+    """Whole number. 0.5 and above goes up: 149.5 -> 150, 141.4 -> 141."""
+    if x is None:
+        return None
+    return int(math.floor(x + 0.5))
+
+
 def average(values, min_stations):
-    """Mean of the readings that exist. None if too few stations reported."""
+    """Mean of the readings that exist, rounded to a whole number.
+
+    None if too few stations reported.
+    """
     present = [v for v in values if v is not None]
     if len(present) < min_stations or not present:
         return None
-    return sum(present) / len(present)
+    return round_half_up(sum(present) / len(present))
 
 
 def evaluate(days, rule):
     """Apply the rule to a list of days in date order.
 
-    days: [{"date": "YYYY-MM-DD", "average": float or None}, ...]
+    days: [{"date": "YYYY-MM-DD", "average": number or None}, ...]
           The list must have one entry per calendar day, with no gaps.
+          An average with decimals is rounded to a whole number first.
     rule: the "rule" block of config.json.
 
     Returns a new list. Each entry has the input fields plus:
@@ -51,7 +65,8 @@ def evaluate(days, rule):
     out = []
     for day in days:
         row = dict(day)
-        avg = day.get("average")
+        avg = round_half_up(day.get("average"))
+        row["average"] = avg
 
         if day["date"] < start:
             row.update(school_status=None, decision_next_day=None, streak=None,

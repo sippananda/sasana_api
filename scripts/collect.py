@@ -182,7 +182,7 @@ def hourly_csv_text(data, ids):
 # ---------------------------------------------------------------- daily
 
 def fmt(x):
-    """Average with up to 2 decimals and no trailing zeros."""
+    """Number as text, with no trailing zeros. Averages are whole numbers."""
     if x is None:
         return ""
     return f"{x:.2f}".rstrip("0").rstrip(".")
@@ -297,7 +297,8 @@ def build_status(hourly, cfg, now):
         present = [v for v in vals.values() if v is not None]
         latest = {"datetime": newest, "values": vals,
                   "stations_used": len(present),
-                  "average": sum(present) / len(present) if present else None}
+                  "average": policy.round_half_up(sum(present) / len(present))
+                  if present else None}
 
     since = (now - timedelta(hours=96)).strftime(KEY)
     recent = []
@@ -307,7 +308,7 @@ def build_status(hourly, cfg, now):
         vals = [hourly[hour].get(sid) for sid in ids]
         present = [v for v in vals if v is not None]
         recent.append({"t": hour, "v": vals,
-                       "avg": round(sum(present) / len(present), 2)
+                       "avg": policy.round_half_up(sum(present) / len(present))
                        if len(present) == len(ids) else None})
 
     return {
