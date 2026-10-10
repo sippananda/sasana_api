@@ -117,41 +117,5 @@ class Average(unittest.TestCase):
         self.assertIsNone(policy.average([None] * 4, 3))
 
 
-class Weighted(unittest.TestCase):
-    KM = [19, 22, 24, 33]
-
-    def test_weights_add_up_to_one_and_nearer_is_larger(self):
-        w = policy.distance_weights(self.KM)
-        self.assertAlmostEqual(sum(w), 1.0)
-        self.assertEqual(w, sorted(w, reverse=True))
-        self.assertEqual([round(x, 3) for x in w], [0.309, 0.267, 0.245, 0.178])
-
-    def test_weight_is_one_over_distance(self):
-        w = policy.distance_weights(self.KM)
-        self.assertAlmostEqual(w[0] / w[3], 33 / 19)
-
-    def test_same_reading_everywhere_gives_the_same_average(self):
-        w = policy.distance_weights(self.KM)
-        self.assertAlmostEqual(policy.average([160] * 4, 3, w), 160)
-
-    def test_real_reading_10_oct_2026(self):
-        w = policy.distance_weights(self.KM)
-        vals = [165, 157, 162, 102]
-        self.assertEqual(policy.average(vals, 3), 146.5)
-        self.assertEqual(round(policy.average(vals, 3, w), 2), 150.9)
-
-    def test_missing_station_is_left_out(self):
-        w = policy.distance_weights(self.KM)
-        got = policy.average([165, 157, 162, None], 3, w)
-        want = (165 / 19 + 157 / 22 + 162 / 24) / (1 / 19 + 1 / 22 + 1 / 24)
-        self.assertAlmostEqual(got, want)
-        self.assertIsNone(policy.average([165, None, None, 102], 3, w))
-
-    def test_power_two_gives_more_weight_to_the_nearest(self):
-        w1, w2 = policy.distance_weights(self.KM, 1), policy.distance_weights(self.KM, 2)
-        self.assertGreater(w2[0], w1[0])
-        self.assertLess(w2[3], w1[3])
-
-
 if __name__ == "__main__":
     unittest.main()

@@ -15,10 +15,6 @@
     {"id": "CA20B", "name": "Shah Alam", "short": "Shah Alam", "state_id": 10, "distance_km": 24},
     {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33}
   ],
-  "official_method": "plain",
-  "weighting": {
-    "power": 1
-  },
   "rule": {
     "close_above_single_day": 180,
     "close_above_streak": 150,

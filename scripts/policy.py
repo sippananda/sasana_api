@@ -18,28 +18,12 @@ OPEN = "open"
 CLOSED = "closed"
 
 
-def distance_weights(distances_km, power=1):
-    """Inverse distance weights. A nearer station gets a larger weight.
-
-    weight = (1 / distance ** power), then scaled so that all weights add up to 1.
-    """
-    raw = [1.0 / (d ** power) for d in distances_km]
-    total = sum(raw)
-    return [r / total for r in raw]
-
-
-def average(values, min_stations, weights=None):
-    """Average of the readings that exist. None if too few stations reported.
-
-    weights=None gives the plain average (the school rule).
-    With weights, a missing station is left out and the other weights are scaled up.
-    """
-    if weights is None:
-        weights = [1.0] * len(values)
-    pairs = [(v, w) for v, w in zip(values, weights) if v is not None]
-    if len(pairs) < min_stations or not pairs:
+def average(values, min_stations):
+    """Mean of the readings that exist. None if too few stations reported."""
+    present = [v for v in values if v is not None]
+    if len(present) < min_stations or not present:
         return None
-    return sum(v * w for v, w in pairs) / sum(w for _, w in pairs)
+    return sum(present) / len(present)
 
 
 def evaluate(days, rule):

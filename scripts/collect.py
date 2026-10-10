@@ -206,16 +206,9 @@ def next_school_day(d, cfg):
     return d
 
 
-def station_weights(cfg):
-    """Distance weights of the stations, in the order of config.json."""
-    power = cfg.get("weighting", {}).get("power", 1)
-    return policy.distance_weights([s["distance_km"] for s in cfg["stations"]], power)
-
-
 def build_days(hourly, cfg, now):
     """One entry per calendar day, from the first 2 pm reading to today."""
     ids = [s["id"] for s in cfg["stations"]]
-    weights = station_weights(cfg)
     rule = cfg["rule"]
     hh = cfg["reading_hour"]
     late = cfg["collector"]["late_after_hour"]
@@ -236,7 +229,6 @@ def build_days(hourly, cfg, now):
         values = {sid: vals.get(sid) for sid in ids}
         used = sum(v is not None for v in values.values())
         avg = policy.average(list(values.values()), rule["min_stations"])
-        wavg = policy.average(list(values.values()), rule["min_stations"], weights)
         entry = {
             "date": d.isoformat(),
             "weekday": d.strftime("%a"),
@@ -244,8 +236,7 @@ def build_days(hourly, cfg, now):
             "no_school_reason": no_school_reason(d, cfg),
             "values": values,
             "stations_used": used,
-            "plain_average": avg,
-            "weighted_average": wavg,
+            "average": avg,
         }
         if d == today:
             if now.hour < hh:
@@ -262,10 +253,10 @@ def build_days(hourly, cfg, now):
     return days
 
 
-def rule_view(days, cfg, now, method):
-    """Apply the rule with one kind of average: "plain" or "weighted"."""
+def build_status(hourly, cfg, now):
+    ids = [s["id"] for s in cfg["stations"]]
     rule = cfg["rule"]
-    days = [dict(d, average=d[method + "_average"], method=method) for d in days]
+    days = build_days(hourly, cfg, now)
 
     today = days[-1]
     # Today enters the rule only when its reading is in, or when it is clearly late.
@@ -297,17 +288,6 @@ def rule_view(days, cfg, now, method):
     today_out["next_weekday"] = (now.date() + timedelta(days=1)).strftime("%a")
     # The rule runs on every calendar day. School itself only runs on school days.
     today_out["next_school_date"] = next_school_day(now.date(), cfg).isoformat()
-    return today_out, evaluated
-
-
-def build_status(hourly, cfg, now):
-    ids = [s["id"] for s in cfg["stations"]]
-    rule = cfg["rule"]
-    weights = station_weights(cfg)
-    days = build_days(hourly, cfg, now)
-    # The school rule uses the plain average. The weighted view is for comparison.
-    today_out, evaluated = rule_view(days, cfg, now, "plain")
-    w_today, w_evaluated = rule_view(days, cfg, now, "weighted")
 
     filled = sorted(k for k in hourly if hourly[k])
     newest = filled[-1] if filled else None
@@ -317,8 +297,7 @@ def build_status(hourly, cfg, now):
         present = [v for v in vals.values() if v is not None]
         latest = {"datetime": newest, "values": vals,
                   "stations_used": len(present),
-                  "average": sum(present) / len(present) if present else None,
-                  "weighted_average": policy.average(list(vals.values()), 1, weights)}
+                  "average": sum(present) / len(present) if present else None}
 
     since = (now - timedelta(hours=96)).strftime(KEY)
     recent = []
@@ -327,10 +306,9 @@ def build_status(hourly, cfg, now):
             continue
         vals = [hourly[hour].get(sid) for sid in ids]
         present = [v for v in vals if v is not None]
-        full = len(present) == len(ids)
         recent.append({"t": hour, "v": vals,
-                       "avg": round(sum(present) / len(present), 2) if full else None,
-                       "wavg": round(policy.average(vals, len(ids), weights), 2) if full else None})
+                       "avg": round(sum(present) / len(present), 2)
+                       if len(present) == len(ids) else None})
 
     return {
         "generated_at": now.strftime("%Y-%m-%dT%H:%M") + "+08:00",
@@ -339,33 +317,27 @@ def build_status(hourly, cfg, now):
         "stale_after_hours": cfg["collector"]["stale_after_hours"],
         "rule": rule,
         "stations": cfg["stations"],
-        "official_method": cfg.get("official_method", "plain"),
-        "weighting": {"power": cfg.get("weighting", {}).get("power", 1),
-                      "weights": dict(zip(ids, weights))},
         "latest": latest,
         "today": today_out,
         "daily": evaluated[-30:],
-        "weighted": {"today": w_today, "daily": w_evaluated[-30:]},
         "hourly": recent,
-    }, evaluated, w_evaluated
+    }, evaluated
 
 
-def daily_csv_text(evaluated, w_evaluated, cfg):
+def daily_csv_text(evaluated, cfg):
     ids = [s["id"] for s in cfg["stations"]]
     names = [s["short"].lower().replace(" ", "_") for s in cfg["stations"]]
     head = ["date", "weekday"] + names + ["stations_used", "average",
                                           "school_day", "school_status", "decision_next_day",
-                                          "days_in_a_row", "reason",
-                                          "weighted_average", "weighted_decision_next_day"]
+                                          "days_in_a_row", "reason"]
     lines = [",".join(head)]
-    for r, w in zip(evaluated, w_evaluated):
+    for r in evaluated:
         cells = [r["date"], r["weekday"]]
         cells += ["" if r["values"].get(s) is None else str(r["values"][s]) for s in ids]
         cells += [str(r["stations_used"]), fmt(r["average"]),
                   "yes" if r["school_day"] else r["no_school_reason"],
                   r["school_status"] or "", r["decision_next_day"] or "",
-                  "" if r["streak"] is None else str(r["streak"]), r["reason"],
-                  fmt(w["weighted_average"]), w["decision_next_day"] or ""]
+                  "" if r["streak"] is None else str(r["streak"]), r["reason"]]
         lines.append(",".join(cells))
     return "\n".join(lines) + "\n"
 
@@ -430,8 +402,8 @@ def main():
     after = hourly_csv_text(hourly, ids)
     data_changed = write_text_if_changed(HOURLY_CSV, after) or before != after
 
-    status, evaluated, w_evaluated = build_status(hourly, cfg, now)
-    write_text_if_changed(DAILY_CSV, daily_csv_text(evaluated, w_evaluated, cfg))
+    status, evaluated = build_status(hourly, cfg, now)
+    write_text_if_changed(DAILY_CSV, daily_csv_text(evaluated, cfg))
 
     # Rewrite status.json only when something other than the clock changed.
     old = None
@@ -453,8 +425,7 @@ def main():
                f"({'hourly table' if table_ok else 'map service' if got_current else 'no source'}). "
                f"Newest reading {newest}. "
                f"Today {t['date']}: 2 pm reading {t['reading_state']}, "
-               f"average {fmt(t['average']) or '-'} "
-               f"(weighted {fmt(t['weighted_average']) or '-'}), rule status {t['school_status']}, "
+               f"average {fmt(t['average']) or '-'}, rule status {t['school_status']}, "
                f"rule for next day {t['decision_next_day'] or 'not decided'}, "
                f"next school day {t['next_school_date']}. "
                f"{'Data changed' if data_changed else 'No change'}.")
