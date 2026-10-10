@@ -112,6 +112,24 @@ class Collector(unittest.TestCase):
         self.assertEqual(st["today"]["no_school_reason"], "holiday")
         self.assertEqual(st["today"]["next_school_date"], "2026-10-13")
 
+    def test_weighted_view_is_reported_next_to_the_school_rule(self):
+        run, st = self.collect("2026-10-10T15:37")
+        self.assertEqual(st["official_method"], "plain")
+        self.assertAlmostEqual(sum(st["weighting"]["weights"].values()), 1.0)
+        plain, weighted = st["today"], st["weighted"]["today"]
+        # same day, same stations, different average
+        self.assertEqual((plain["average"], round(weighted["average"], 2)), (146.5, 150.9))
+        self.assertEqual(round(plain["weighted_average"], 2), 150.9)
+        self.assertEqual(weighted["plain_average"], 146.5)
+        # 150.9 is above 150: the weighted view counts this day, the school rule does not
+        self.assertEqual((plain["streak"], weighted["streak"]), (0, 1))
+        self.assertEqual(len(st["daily"]), len(st["weighted"]["daily"]))
+        self.assertEqual(st["hourly"][-1]["avg"], 143.75)
+        self.assertEqual(st["hourly"][-1]["wavg"], 148.23)
+        head, last = (self.data / "daily.csv").read_text().splitlines()[0::8][:2]
+        self.assertTrue(head.endswith("weighted_average,weighted_decision_next_day"))
+        self.assertTrue(last.endswith(",150.9,open"))
+
     def test_no_reading_by_three_pm_is_flagged(self):
         run, st = self.collect("2026-10-11T14:20")
         self.assertEqual(st["today"]["reading_state"], "waiting")

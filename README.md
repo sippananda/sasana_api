@@ -27,6 +27,35 @@ The second run in each hour is a safety check, in case the first run was too ear
 - While school is closed: an average of 150 or below reopens school the next day.
 - The count of three days restarts after school reopens.
 
+## Weighted by distance (trial)
+
+The page has a button to switch between two calculations.
+
+- **Plain average.** This is the school rule. Each station counts 25%.
+- **Weighted by distance.** A trial. A nearer station counts more.
+
+How the weight is calculated (inverse distance weighting):
+
+1. For each station, calculate 1 ÷ distance in km.
+2. Divide each result by the sum of the four results. This is the weight.
+3. Multiply each API by its weight and add the four results.
+
+| Station | Distance | 1 ÷ distance | Weight |
+|---|---|---|---|
+| Batu Muda | 19 km | 0.0526 | 30.9% |
+| Petaling Jaya | 22 km | 0.0455 | 26.7% |
+| Shah Alam | 24 km | 0.0417 | 24.5% |
+| Kuala Selangor | 33 km | 0.0303 | 17.8% |
+
+Things to know before the school decides:
+
+- The limits 150 and 180 are the same for both calculations.
+- The three nearer stations are south and south-east of the school. They are in the city area.
+  Kuala Selangor is the only station to the west. Weighting lowers its share from 25% to 18%.
+- So the weighted average is usually a little higher than the plain average.
+  On 10 Oct 2026 it was 150.9 against 146.5. That is on the other side of the 150 limit.
+- The page starts with the calculation named in `official_method`. The other one is marked "trial".
+
 ## Set up (one time, about 10 minutes)
 
 1. Create a new **public** repository on GitHub. GitHub Pages is free for public repositories.
@@ -53,6 +82,8 @@ All settings are in `config.json`.
 | `close_above_streak` | Count a day when the average is above this | 150 |
 | `streak_days` | Days in a row needed to close | 3 |
 | `reopen_at_or_below` | Reopen when the average is at or below this | 150 |
+| `official_method` | The calculation the page shows first: `plain` or `weighted` | plain |
+| `weighting.power` | Strength of the distance weighting. 1 = weight is 1 ÷ distance. 2 = 1 ÷ distance². | 1 |
 | `min_stations` | Fewest stations needed for a usable average | 3 |
 | `start_date` | First day the rule is applied. School is taken as open on this day. | 2026-10-10 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
@@ -73,6 +104,8 @@ The notice does not say what to do in these cases. The code makes a choice. Each
 3. **No reading for a whole day.** Status and count stay as they were. The page asks to check DOE.
 4. **Rounding.** The exact average is used. 150.25 counts as above 150.
 5. **Start date.** Days before `start_date` are shown but not counted.
+6. **Plain or weighted average.** The notice says "average them", so the plain average is the rule.
+   The weighted average is shown as a trial only.
 
 ## If something goes wrong
 

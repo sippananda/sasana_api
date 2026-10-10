@@ -103,6 +103,22 @@
   td.closed { color: var(--closed); font-weight: 600; }
   td.open { color: var(--open); font-weight: 600; }
   tr.muted td { color: var(--ink-3); }
+  .switch { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .switch button {
+    font: inherit; color: var(--ink); background: #fff; cursor: pointer;
+    border: 1.5px solid var(--ink); border-radius: 8px; padding: 6px 12px; text-align: left;
+    line-height: 1.25;
+  }
+  .switch button small { display: block; font-size: .75rem; color: var(--ink-2); }
+  .switch button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .switch button[aria-pressed="true"] small { color: #d8d8d4; }
+  .switch button:focus-visible { outline: 3px solid #0b57d0; outline-offset: 2px; }
+  .trial { border-left: 4px solid var(--ink); background: var(--mark); padding: 8px 12px;
+           margin: 0 0 12px; font-weight: 600; }
+  ol { margin: 0 0 12px; padding-left: 22px; }
+  #wtable td, #wtable th { text-align: right; }
+  #wtable td:first-child, #wtable th:first-child { text-align: left; }
+  #wtable tr.total td { font-weight: 700; border-top: 1.5px solid var(--ink); }
   ul { margin: 0 0 10px; padding-left: 20px; }
   li { margin-bottom: 4px; }
   a { color: #0b57d0; }
@@ -124,6 +140,12 @@
 
   <section>
     <h2><span class="n">1</span>School status</h2>
+    <div class="switch" role="group" aria-label="Calculation">
+      <span class="small">Calculation:</span>
+      <button type="button" id="mPlain" aria-pressed="true">Plain average<small id="mPlainTag">school rule</small></button>
+      <button type="button" id="mWeighted" aria-pressed="false">Weighted by distance<small id="mWeightedTag">trial</small></button>
+    </div>
+    <p class="trial" id="trial" hidden></p>
     <div class="boxes" id="boxes"></div>
     <p class="reason" id="reason"></p>
     <div class="count" id="count"></div>
@@ -142,7 +164,7 @@
     <h2><span class="n">3</span>Hourly API, last 4 days</h2>
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
-    <p class="small">The black dots are the 2:00 pm averages. Only these are used for the decision.</p>
+    <p class="small" id="chartNote"></p>
   </section>
 
   <section>
@@ -156,6 +178,11 @@
     <h2><span class="n">5</span>The rule</h2>
     <ul id="rule"></ul>
     <p class="small" id="notes"></p>
+  </section>
+
+  <section id="weighted-average">
+    <h2><span class="n">6</span>Weighted by distance: how it works</h2>
+    <div id="wexplain"></div>
   </section>
 
   <footer class="small">
@@ -206,8 +233,20 @@
   }
   function word(state) { return state === "closed" ? "CLOSED" : state === "open" ? "OPEN" : "–"; }
 
+  // Which calculation is shown: "plain" or "weighted". Starts with the school's own method.
+  var mode = null;
+  function viewOf(s) {
+    var official = s.official_method || "plain";
+    if (!mode) mode = official;
+    if (mode === "weighted" && !s.weighted) mode = "plain";
+    var w = mode === "weighted";
+    return { weighted: w, official: mode === official, officialName: official,
+             today: w ? s.weighted.today : s.today, daily: w ? s.weighted.daily : s.daily };
+  }
+
   function render(s) {
-    var rule = s.rule, t = s.today, st = s.stations;
+    var V = viewOf(s), daily = V.daily;
+    var rule = s.rule, t = V.today, st = s.stations;
     var readClock = clock(Date.UTC(2000, 0, 1, s.reading_hour));
     var todayMs = parse(t.date), nextMs = parse(t.next_date);
     var realToday = new Date(nowMY()); realToday.setUTCHours(0, 0, 0, 0);
@@ -228,6 +267,17 @@
         ? "The newest reading is " + Math.floor(ageH) + " hours old. "
         : "") + "Do not rely on this page now. Check the DOE website.";
     } else { warn.hidden = true; }
+
+    // ---- calculation switch
+    $("mPlain").setAttribute("aria-pressed", String(!V.weighted));
+    $("mWeighted").setAttribute("aria-pressed", String(V.weighted));
+    $("mPlainTag").textContent = V.officialName === "plain" ? "school rule" : "trial";
+    $("mWeightedTag").textContent = V.officialName === "weighted" ? "school rule" : "trial";
+    $("mWeighted").disabled = !s.weighted;
+    var trial = $("trial");
+    trial.hidden = V.official;
+    trial.textContent = "Trial view. This is not the school rule. The school rule uses the " +
+      (V.officialName === "plain" ? "plain average" : "average weighted by distance") + ".";
 
     // ---- 1. status boxes
     var boxes = $("boxes"); boxes.textContent = "";
@@ -303,7 +353,9 @@
 
     // ---- 2. the 2 pm reading
     var haveReading = t.reading_state === "done";
-    var shown = haveReading ? t : (s.daily.length ? s.daily[s.daily.length - 1] : null);
+    var shown = haveReading ? t : (daily.length ? daily[daily.length - 1] : null);
+    var W = s.weighting ? s.weighting.weights : null;
+    function pct(x) { return Math.round(x * 100) + "%"; }
     $("readTitle").textContent = readClock + " reading" + (shown ? " · " + dayLabel(parse(shown.date)) : "");
     var tiles = $("tiles"); tiles.textContent = "";
     st.forEach(function (x) {
@@ -311,16 +363,24 @@
       d.appendChild(el("div", { "class": "name" }, x.short));
       d.appendChild(el("div", { "class": "val" }, shown ? num(shown.values[x.id]) : "–"));
       d.appendChild(el("div", { "class": "km" }, x.distance_km + " km from school"));
+      if (V.weighted && W) d.appendChild(el("div", { "class": "km" }, "weight " + pct(W[x.id])));
       tiles.appendChild(d);
     });
     var avg = $("avg"); avg.textContent = "";
     if (shown && shown.average !== null) {
-      avg.appendChild(document.createTextNode("Average of the four = "));
+      avg.appendChild(document.createTextNode(V.weighted ? "Weighted average = " : "Average of the four = "));
       avg.appendChild(el("b", {}, num(shown.average)));
       if (shown.stations_used < st.length) {
         avg.appendChild(document.createTextNode(" "));
         avg.appendChild(el("span", { "class": "flag" },
           "Only " + shown.stations_used + " of " + st.length + " stations reported."));
+      }
+      // Always show the other calculation next to it, for comparison.
+      var other = V.weighted ? shown.plain_average : shown.weighted_average;
+      if (other !== null && other !== undefined) {
+        avg.appendChild(el("div", { "class": "small" },
+          (V.weighted ? "Plain average: " : "Weighted by distance: ") + num(other) +
+          (V.official ? " (trial)." : " (school rule).")));
       }
     } else if (shown) {
       avg.appendChild(el("span", { "class": "flag" }, "No usable reading. Check the DOE website."));
@@ -335,11 +395,16 @@
     if (s.latest) {
       latest.textContent = "Latest reading, " + clock(newest) + ": " + st.map(function (x) {
         return x.short + " " + num(s.latest.values[x.id]);
-      }).join(" · ") + " · average " + num(s.latest.average) + ". For information only.";
+      }).join(" · ") + (V.weighted
+        ? " · weighted average " + num(s.latest.weighted_average)
+        : " · average " + num(s.latest.average)) + ". For information only.";
     }
 
+    $("chartNote").textContent = "The black dots are the " + readClock + " " +
+      (V.weighted ? "weighted averages" : "averages") + ". Only these are used for the decision.";
     drawChart(s);
     drawTable(s);
+    drawExplain(s, shown, readClock);
 
     // ---- 5. rule
     var ul = $("rule"); ul.textContent = "";
@@ -359,17 +424,22 @@
 
   // ------------------------------------------------------------ table
   function drawTable(s) {
+    var V = viewOf(s);
     var tb = $("daily"); tb.textContent = "";
     var head = el("tr");
-    ["Date", "Average", "School that day", "Rule for next day"].concat(
+    ["Date", "Plain average", "Weighted average", "School that day", "Rule for next day"].concat(
       s.stations.map(function (x) { return x.short; })).forEach(function (h, i) {
-      head.appendChild(el("th", i === 2 || i === 3 ? { "class": "l" } : {}, h));
+      head.appendChild(el("th", i === 3 || i === 4 ? { "class": "l" } : {}, h));
     });
     tb.appendChild(head);
-    s.daily.slice().reverse().forEach(function (d) {
+    V.daily.slice().reverse().forEach(function (d) {
       var tr = el("tr", d.reason === "before_start" ? { "class": "muted" } : {});
       tr.appendChild(el("td", {}, dayLabel(parse(d.date))));
-      tr.appendChild(el("td", { "class": "strong" }, d.average === null ? "no data" : num(d.average)));
+      // The average used by the selected calculation is in bold.
+      var plain = d.plain_average === undefined ? d.average : d.plain_average;
+      tr.appendChild(el("td", V.weighted ? {} : { "class": "strong" }, plain === null ? "no data" : num(plain)));
+      tr.appendChild(el("td", V.weighted ? { "class": "strong" } : {},
+        d.weighted_average === null || d.weighted_average === undefined ? "–" : num(d.weighted_average)));
       var noSchool = d.school_day === false;
       tr.appendChild(el("td", { "class": "l " + (noSchool ? "" : d.school_status || "") },
         noSchool ? (d.no_school_reason === "holiday" ? "holiday" : "weekend")
@@ -381,10 +451,76 @@
     });
   }
 
+  // ------------------------------------------------------------ weighted average, explained
+  function drawExplain(s, shown, readClock) {
+    var host = $("wexplain"); host.textContent = "";
+    if (!s.weighting) { host.textContent = "Not available yet."; return; }
+    var st = s.stations, W = s.weighting.weights, pw = s.weighting.power;
+    var n = st.length, even = Math.round(100 / n) + "%";
+    function pct1(x) { return (Math.round(x * 1000) / 10).toFixed(1) + "%"; }
+    var inv = pw === 1 ? "1 ÷ distance" : "1 ÷ (distance to the power " + pw + ")";
+    host.appendChild(el("p", {}, "The plain average counts every station the same: " + even + " each. " +
+      "The weighted average counts a nearer station more. The idea: air at a nearer station is more like the air at school."));
+    var ol = el("ol");
+    ["For each station, calculate " + inv + ". The distance is in km.",
+     "Add the " + n + " results. Divide each result by this sum. This gives the weight of the station. The weights add up to 100%.",
+     "Multiply each API by its weight. Add the " + n + " results. This is the weighted average."
+    ].forEach(function (x) { ol.appendChild(el("li", {}, x)); });
+    host.appendChild(ol);
+
+    var have = shown && shown.weighted_average !== null && shown.weighted_average !== undefined &&
+      st.every(function (x) { return shown.values[x.id] !== null && shown.values[x.id] !== undefined; });
+    var wrap = el("div", { "class": "scroll" }), tb = el("table", { id: "wtable" });
+    var head = el("tr");
+    ["Station", "Distance", inv, "Weight"].concat(have ? ["API", "Weight × API"] : []).forEach(function (h) {
+      head.appendChild(el("th", {}, h));
+    });
+    tb.appendChild(head);
+    var sumInv = 0, sumProd = 0;
+    st.forEach(function (x) {
+      var r = 1 / Math.pow(x.distance_km, pw); sumInv += r;
+      var tr = el("tr");
+      tr.appendChild(el("td", {}, x.short));
+      tr.appendChild(el("td", {}, x.distance_km + " km"));
+      tr.appendChild(el("td", {}, r.toFixed(4)));
+      tr.appendChild(el("td", {}, pct1(W[x.id])));
+      if (have) {
+        var prod = W[x.id] * shown.values[x.id]; sumProd += prod;
+        tr.appendChild(el("td", {}, num(shown.values[x.id])));
+        tr.appendChild(el("td", {}, prod.toFixed(2)));
+      }
+      tb.appendChild(tr);
+    });
+    var tot = el("tr", { "class": "total" });
+    tot.appendChild(el("td", {}, "Sum"));
+    tot.appendChild(el("td", {}, ""));
+    tot.appendChild(el("td", {}, sumInv.toFixed(4)));
+    tot.appendChild(el("td", {}, "100%"));
+    if (have) { tot.appendChild(el("td", {}, "")); tot.appendChild(el("td", {}, sumProd.toFixed(2))); }
+    tb.appendChild(tot);
+    wrap.appendChild(tb); host.appendChild(wrap);
+    if (have) {
+      host.appendChild(el("p", { style: "margin-top:10px" },
+        "Example: the " + readClock + " reading of " + dayLabel(parse(shown.date)) + ". " +
+        "Weighted average " + num(shown.weighted_average) + ". Plain average " + num(shown.plain_average) + "."));
+    }
+
+    var far = st.reduce(function (a, b) { return b.distance_km > a.distance_km ? b : a; });
+    var ul = el("ul");
+    ["If all stations show the same API, both averages are the same.",
+     far.short + " is the farthest station. Its weight goes from " + even + " to " +
+       Math.round(W[far.id] * 100) + "%. So a very different reading there changes the weighted average less.",
+     "The limits " + s.rule.close_above_streak + " and " + s.rule.close_above_single_day + " are the same for both calculations.",
+     "If one station does not report, it is left out. The other weights are scaled up to 100%."
+    ].forEach(function (x) { ul.appendChild(el("li", {}, x)); });
+    host.appendChild(ul);
+  }
+
   // ------------------------------------------------------------ chart
   function drawChart(s) {
     var host = $("chart"); host.textContent = "";
     var legend = $("legend"); legend.textContent = "";
+    var V = viewOf(s);
     var st = s.stations, rows = s.hourly;
     if (!rows.length) { host.textContent = "No hourly data yet."; return; }
 
@@ -394,13 +530,13 @@
       sp.appendChild(document.createTextNode(label)); legend.appendChild(sp);
     }
     st.forEach(function (x, i) { key(COLORS[i], "", x.short); });
-    key("var(--ink)", "avg-key", "Average of the four");
+    key("var(--ink)", "avg-key", V.weighted ? "Weighted average" : "Average of the four");
     key("var(--limit)", "limit-key", "Limits " + s.rule.close_above_streak + " and " + s.rule.close_above_single_day);
 
     var W = Math.max(300, Math.round(host.clientWidth || 720));
     var H = W < 520 ? 250 : 320, L = 34, R = 34, T = 18, B = 30;
     var H1 = 3600e3;
-    var pts = rows.map(function (r) { return { t: parse(r.t), v: r.v, avg: r.avg }; });
+    var pts = rows.map(function (r) { return { t: parse(r.t), v: r.v, avg: V.weighted ? r.wavg : r.avg }; });
     var t1 = pts[pts.length - 1].t, t0 = t1 - 96 * H1;
     pts = pts.filter(function (p) { return p.t >= t0; });
     var max = Math.max(s.rule.close_above_single_day + 20,
@@ -461,7 +597,7 @@
     series(function (p) { return p.avg; }, "var(--ink)", 2.75);
 
     // 2 pm averages: the decision points
-    s.daily.forEach(function (day) {
+    V.daily.forEach(function (day) {
       var t = parse(day.date) + s.reading_hour * H1;
       if (day.average === null || t < t0 || t > t1) return;
       g.appendChild(svg("circle", { cx: X(t), cy: Y(day.average), r: 5, fill: "var(--ink)",
@@ -504,7 +640,7 @@
         r.appendChild(el("b", {}, num(best.v[i]))); tip.appendChild(r);
       });
       var r = el("div"); var k = el("i"); k.style.borderTopColor = "var(--ink)";
-      r.appendChild(k); r.appendChild(document.createTextNode("Average"));
+      r.appendChild(k); r.appendChild(document.createTextNode(V.weighted ? "Weighted average" : "Average"));
       r.appendChild(el("b", {}, num(best.avg))); tip.appendChild(r);
       tip.hidden = false;
       var px = X(best.t) / W * box.width, tw = tip.offsetWidth;
@@ -527,6 +663,9 @@
       });
   }
   var lastStatus = null, timer = null;
+  function choose(m) { mode = m; if (lastStatus) render(lastStatus); }
+  $("mPlain").addEventListener("click", function () { choose("plain"); });
+  $("mWeighted").addEventListener("click", function () { choose("weighted"); });
   window.addEventListener("resize", function () {
     clearTimeout(timer);
     timer = setTimeout(function () { if (lastStatus) drawChart(lastStatus); }, 150);
