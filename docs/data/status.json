@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10T16:05+08:00",
+ "generated_at": "2026-10-10T16:12+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -46,16 +46,27 @@
    "distance_km": 33
   }
  ],
+ "official_method": "plain",
+ "weighting": {
+  "power": 1,
+  "weights": {
+   "CA15W": 0.309495896834701,
+   "CA19B": 0.2672919109026964,
+   "CA20B": 0.2450175849941383,
+   "CA18B": 0.17819460726846426
+  }
+ },
  "latest": {
-  "datetime": "2026-10-10T15:00",
+  "datetime": "2026-10-10T16:00",
   "values": {
-   "CA15W": 162,
+   "CA15W": 160,
    "CA19B": 155,
-   "CA20B": 160,
-   "CA18B": 98
+   "CA20B": 159,
+   "CA18B": 96
   },
   "stations_used": 4,
-  "average": 143.75
+  "average": 142.5,
+  "weighted_average": 147.01406799531065
  },
  "today": {
   "date": "2026-10-10",
@@ -69,8 +80,11 @@
    "CA18B": 102
   },
   "stations_used": 4,
-  "average": 146.5,
+  "plain_average": 146.5,
+  "weighted_average": 150.90035169988278,
   "reading_state": "done",
+  "average": 146.5,
+  "method": "plain",
   "school_status": "open",
   "decision_next_day": "open",
   "streak": 0,
@@ -93,7 +107,10 @@
     "CA18B": 55
    },
    "stations_used": 4,
+   "plain_average": 71.75,
+   "weighted_average": 73.57796014067995,
    "average": 71.75,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -112,7 +129,10 @@
     "CA18B": 69
    },
    "stations_used": 4,
+   "plain_average": 85.75,
+   "weighted_average": 87.66236811254396,
    "average": 85.75,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -131,7 +151,10 @@
     "CA18B": 69
    },
    "stations_used": 4,
+   "plain_average": 84.5,
+   "weighted_average": 86.21922626025791,
    "average": 84.5,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -150,7 +173,10 @@
     "CA18B": 71
    },
    "stations_used": 4,
+   "plain_average": 132.25,
+   "weighted_average": 138.12075029308323,
    "average": 132.25,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -169,7 +195,10 @@
     "CA18B": 152
    },
    "stations_used": 4,
+   "plain_average": 172.0,
+   "weighted_average": 174.07033997655333,
    "average": 172.0,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -188,7 +217,10 @@
     "CA18B": 141
    },
    "stations_used": 4,
+   "plain_average": 161.0,
+   "weighted_average": 162.8124267291911,
    "average": 161.0,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -207,7 +239,10 @@
     "CA18B": 155
    },
    "stations_used": 4,
+   "plain_average": 167.75,
+   "weighted_average": 168.88159437280189,
    "average": 167.75,
+   "method": "plain",
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -226,8 +261,11 @@
     "CA18B": 102
    },
    "stations_used": 4,
-   "average": 146.5,
+   "plain_average": 146.5,
+   "weighted_average": 150.90035169988278,
    "reading_state": "done",
+   "average": 146.5,
+   "method": "plain",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -235,6 +273,213 @@
    "reason_text": "Average is 150 or below. School stays open."
   }
  ],
+ "weighted": {
+  "today": {
+   "date": "2026-10-10",
+   "weekday": "Sat",
+   "school_day": false,
+   "no_school_reason": "weekend",
+   "values": {
+    "CA15W": 165,
+    "CA19B": 157,
+    "CA20B": 162,
+    "CA18B": 102
+   },
+   "stations_used": 4,
+   "plain_average": 146.5,
+   "weighted_average": 150.90035169988278,
+   "reading_state": "done",
+   "average": 150.90035169988278,
+   "method": "weighted",
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 1,
+   "reason": "counting",
+   "reason_text": "Average is above 150. Day 1 of 3. School stays open.",
+   "next_date": "2026-10-11",
+   "next_weekday": "Sun",
+   "next_school_date": "2026-10-12"
+  },
+  "daily": [
+   {
+    "date": "2026-10-03",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "values": {
+     "CA15W": 83,
+     "CA19B": 71,
+     "CA20B": 78,
+     "CA18B": 55
+    },
+    "stations_used": 4,
+    "plain_average": 71.75,
+    "weighted_average": 73.57796014067995,
+    "average": 73.57796014067995,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-04",
+    "weekday": "Sun",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "values": {
+     "CA15W": 99,
+     "CA19B": 83,
+     "CA20B": 92,
+     "CA18B": 69
+    },
+    "stations_used": 4,
+    "plain_average": 85.75,
+    "weighted_average": 87.66236811254396,
+    "average": 87.66236811254396,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-05",
+    "weekday": "Mon",
+    "school_day": true,
+    "no_school_reason": null,
+    "values": {
+     "CA15W": 97,
+     "CA19B": 79,
+     "CA20B": 93,
+     "CA18B": 69
+    },
+    "stations_used": 4,
+    "plain_average": 84.5,
+    "weighted_average": 86.21922626025791,
+    "average": 86.21922626025791,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-06",
+    "weekday": "Tue",
+    "school_day": true,
+    "no_school_reason": null,
+    "values": {
+     "CA15W": 153,
+     "CA19B": 152,
+     "CA20B": 153,
+     "CA18B": 71
+    },
+    "stations_used": 4,
+    "plain_average": 132.25,
+    "weighted_average": 138.12075029308323,
+    "average": 138.12075029308323,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-07",
+    "weekday": "Wed",
+    "school_day": true,
+    "no_school_reason": null,
+    "values": {
+     "CA15W": 182,
+     "CA19B": 176,
+     "CA20B": 178,
+     "CA18B": 152
+    },
+    "stations_used": 4,
+    "plain_average": 172.0,
+    "weighted_average": 174.07033997655333,
+    "average": 174.07033997655333,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-08",
+    "weekday": "Thu",
+    "school_day": true,
+    "no_school_reason": null,
+    "values": {
+     "CA15W": 167,
+     "CA19B": 165,
+     "CA20B": 171,
+     "CA18B": 141
+    },
+    "stations_used": 4,
+    "plain_average": 161.0,
+    "weighted_average": 162.8124267291911,
+    "average": 162.8124267291911,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-09",
+    "weekday": "Fri",
+    "school_day": true,
+    "no_school_reason": null,
+    "values": {
+     "CA15W": 172,
+     "CA19B": 168,
+     "CA20B": 176,
+     "CA18B": 155
+    },
+    "stations_used": 4,
+    "plain_average": 167.75,
+    "weighted_average": 168.88159437280189,
+    "average": 168.88159437280189,
+    "method": "weighted",
+    "school_status": null,
+    "decision_next_day": null,
+    "streak": null,
+    "reason": "before_start",
+    "reason_text": "Before the monitoring start date. Not counted."
+   },
+   {
+    "date": "2026-10-10",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "values": {
+     "CA15W": 165,
+     "CA19B": 157,
+     "CA20B": 162,
+     "CA18B": 102
+    },
+    "stations_used": 4,
+    "plain_average": 146.5,
+    "weighted_average": 150.90035169988278,
+    "reading_state": "done",
+    "average": 150.90035169988278,
+    "method": "weighted",
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 1,
+    "reason": "counting",
+    "reason_text": "Average is above 150. Day 1 of 3. School stays open."
+   }
+  ]
+ },
  "hourly": [
   {
    "t": "2026-10-07T14:00",
@@ -244,7 +489,8 @@
     178,
     152
    ],
-   "avg": 172.0
+   "avg": 172.0,
+   "wavg": 174.07
   },
   {
    "t": "2026-10-08T14:00",
@@ -254,7 +500,8 @@
     171,
     141
    ],
-   "avg": 161.0
+   "avg": 161.0,
+   "wavg": 162.81
   },
   {
    "t": "2026-10-08T19:00",
@@ -264,7 +511,8 @@
     null,
     98
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-08T20:00",
@@ -274,7 +522,8 @@
     null,
     96
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-08T21:00",
@@ -284,7 +533,8 @@
     null,
     95
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-08T22:00",
@@ -294,7 +544,8 @@
     null,
     95
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-08T23:00",
@@ -304,7 +555,8 @@
     null,
     94
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T00:00",
@@ -314,7 +566,8 @@
     null,
     95
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T01:00",
@@ -324,7 +577,8 @@
     null,
     95
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T02:00",
@@ -334,7 +588,8 @@
     null,
     98
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T03:00",
@@ -344,7 +599,8 @@
     null,
     100
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T04:00",
@@ -354,7 +610,8 @@
     null,
     105
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T05:00",
@@ -364,7 +621,8 @@
     null,
     114
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T06:00",
@@ -374,7 +632,8 @@
     null,
     123
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T07:00",
@@ -384,7 +643,8 @@
     null,
     136
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T08:00",
@@ -394,7 +654,8 @@
     null,
     145
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T09:00",
@@ -404,7 +665,8 @@
     null,
     151
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T10:00",
@@ -414,7 +676,8 @@
     null,
     152
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T11:00",
@@ -424,7 +687,8 @@
     null,
     153
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T12:00",
@@ -434,7 +698,8 @@
     null,
     153
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T13:00",
@@ -444,7 +709,8 @@
     null,
     154
    ],
-   "avg": null
+   "avg": null,
+   "wavg": null
   },
   {
    "t": "2026-10-09T14:00",
@@ -454,7 +720,8 @@
     176,
     155
    ],
-   "avg": 167.75
+   "avg": 167.75,
+   "wavg": 168.88
   },
   {
    "t": "2026-10-09T15:00",
@@ -464,7 +731,8 @@
     177,
     155
    ],
-   "avg": 168.5
+   "avg": 168.5,
+   "wavg": 169.7
   },
   {
    "t": "2026-10-09T16:00",
@@ -474,7 +742,8 @@
     176,
     155
    ],
-   "avg": 167.5
+   "avg": 167.5,
+   "wavg": 168.61
   },
   {
    "t": "2026-10-09T17:00",
@@ -484,7 +753,8 @@
     175,
     156
    ],
-   "avg": 167.5
+   "avg": 167.5,
+   "wavg": 168.55
   },
   {
    "t": "2026-10-09T18:00",
@@ -494,7 +764,8 @@
     174,
     155
    ],
-   "avg": 166.75
+   "avg": 166.75,
+   "wavg": 167.81
   },
   {
    "t": "2026-10-09T19:00",
@@ -504,7 +775,8 @@
     174,
     155
    ],
-   "avg": 166.25
+   "avg": 166.25,
+   "wavg": 167.28
   },
   {
    "t": "2026-10-09T20:00",
@@ -514,7 +786,8 @@
     174,
     155
    ],
-   "avg": 166.0
+   "avg": 166.0,
+   "wavg": 167.01
   },
   {
    "t": "2026-10-09T21:00",
@@ -524,7 +797,8 @@
     174,
     155
    ],
-   "avg": 166.0
+   "avg": 166.0,
+   "wavg": 167.01
   },
   {
    "t": "2026-10-09T22:00",
@@ -534,7 +808,8 @@
     173,
     155
    ],
-   "avg": 165.75
+   "avg": 165.75,
+   "wavg": 166.77
   },
   {
    "t": "2026-10-09T23:00",
@@ -544,7 +819,8 @@
     173,
     155
    ],
-   "avg": 165.75
+   "avg": 165.75,
+   "wavg": 166.77
   },
   {
    "t": "2026-10-10T00:00",
@@ -554,7 +830,8 @@
     173,
     155
    ],
-   "avg": 165.5
+   "avg": 165.5,
+   "wavg": 166.5
   },
   {
    "t": "2026-10-10T01:00",
@@ -564,7 +841,8 @@
     172,
     155
    ],
-   "avg": 165.25
+   "avg": 165.25,
+   "wavg": 166.26
   },
   {
    "t": "2026-10-10T02:00",
@@ -574,7 +852,8 @@
     172,
     154
    ],
-   "avg": 165.0
+   "avg": 165.0,
+   "wavg": 166.08
   },
   {
    "t": "2026-10-10T03:00",
@@ -584,7 +863,8 @@
     171,
     154
    ],
-   "avg": 164.75
+   "avg": 164.75,
+   "wavg": 165.83
   },
   {
    "t": "2026-10-10T04:00",
@@ -594,7 +874,8 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164.25,
+   "wavg": 165.32
   },
   {
    "t": "2026-10-10T05:00",
@@ -604,7 +885,8 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164.25,
+   "wavg": 165.32
   },
   {
    "t": "2026-10-10T06:00",
@@ -614,7 +896,8 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164.25,
+   "wavg": 165.32
   },
   {
    "t": "2026-10-10T07:00",
@@ -624,7 +907,8 @@
     170,
     154
    ],
-   "avg": 164.0
+   "avg": 164.0,
+   "wavg": 165.01
   },
   {
    "t": "2026-10-10T08:00",
@@ -634,7 +918,8 @@
     169,
     154
    ],
-   "avg": 163.75
+   "avg": 163.75,
+   "wavg": 164.77
   },
   {
    "t": "2026-10-10T09:00",
@@ -644,7 +929,8 @@
     168,
     153
    ],
-   "avg": 163.0
+   "avg": 163.0,
+   "wavg": 164.08
   },
   {
    "t": "2026-10-10T10:00",
@@ -654,7 +940,8 @@
     167,
     152
    ],
-   "avg": 162.25
+   "avg": 162.25,
+   "wavg": 163.34
   },
   {
    "t": "2026-10-10T11:00",
@@ -664,7 +951,8 @@
     166,
     152
    ],
-   "avg": 162.0
+   "avg": 162.0,
+   "wavg": 163.1
   },
   {
    "t": "2026-10-10T12:00",
@@ -674,7 +962,8 @@
     165,
     144
    ],
-   "avg": 159.0
+   "avg": 159.0,
+   "wavg": 160.54
   },
   {
    "t": "2026-10-10T13:00",
@@ -684,7 +973,8 @@
     164,
     120
    ],
-   "avg": 152.5
+   "avg": 152.5,
+   "wavg": 155.75
   },
   {
    "t": "2026-10-10T14:00",
@@ -694,7 +984,8 @@
     162,
     102
    ],
-   "avg": 146.5
+   "avg": 146.5,
+   "wavg": 150.9
   },
   {
    "t": "2026-10-10T15:00",
@@ -704,7 +995,19 @@
     160,
     98
    ],
-   "avg": 143.75
+   "avg": 143.75,
+   "wavg": 148.23
+  },
+  {
+   "t": "2026-10-10T16:00",
+   "v": [
+    160,
+    155,
+    159,
+    96
+   ],
+   "avg": 142.5,
+   "wavg": 147.01
   }
  ]
 }
