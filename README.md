@@ -1,0 +1,98 @@
+# Sasana Haze Monitor
+
+This repository checks the air quality every hour. It works out the school closure
+status from the school's Haze Protocol. It shows the result on a web page.
+
+Everything runs on GitHub. No computer at home or at school is needed.
+
+![How it works](flow.png)
+
+## What it does
+
+- Every 30 minutes, GitHub runs `scripts/collect.py`.
+- The script reads the hourly API (Air Pollutant Index) from the DOE website.
+- It keeps four stations: Batu Muda, Petaling Jaya, Shah Alam, Kuala Selangor.
+- It saves the readings in `docs/data/hourly.csv`.
+- It takes the 2:00 pm reading of each day and averages the four stations.
+- It applies the school rule and writes `docs/data/daily.csv` and `docs/data/status.json`.
+- GitHub Pages shows `docs/index.html`. The page reads `status.json`.
+
+DOE publishes one reading per hour. So the data changes once per hour.
+The second run in each hour is a safety check, in case the first run was too early.
+
+## The rule
+
+- Average above 180 on any single day: school is closed the next day.
+- Average above 150 for three days in a row: school is closed the next day.
+- While school is closed: an average of 150 or below reopens school the next day.
+- The count of three days restarts after school reopens.
+
+## Set up (one time, about 10 minutes)
+
+1. Create a new **public** repository on GitHub. GitHub Pages is free for public repositories.
+2. Put all files of this folder in the repository, on the `main` branch.
+   The folder `.github/workflows` must be included. It is a hidden folder on some computers.
+3. Open **Settings → Pages**. Under "Build and deployment", set **Source** to **GitHub Actions**.
+4. Open the **Actions** tab. If GitHub asks, allow workflows to run.
+5. Choose **Collect air quality data → Run workflow**. Wait about one minute.
+6. Open the page address shown in **Settings → Pages**.
+   It looks like `https://YOUR-NAME.github.io/REPOSITORY-NAME/`.
+
+After this, GitHub runs the collection by itself.
+
+## Settings
+
+All settings are in `config.json`.
+
+| Setting | Meaning | Now |
+|---|---|---|
+| `reading_hour` | Hour of the daily reading, Malaysia time | 14 |
+| `close_above_single_day` | Close when the average is above this on one day | 180 |
+| `close_above_streak` | Count a day when the average is above this | 150 |
+| `streak_days` | Days in a row needed to close | 3 |
+| `reopen_at_or_below` | Reopen when the average is at or below this | 150 |
+| `min_stations` | Fewest stations needed for a usable average | 3 |
+| `start_date` | First day the rule is applied. School is taken as open on this day. | 2026-10-10 |
+| `backfill_days` | How many past days the script tries to fill | 7 |
+| `stale_after_hours` | The page shows a warning when the data is older than this | 3 |
+| `late_after_hour` | From this hour, a missing 2:00 pm reading is shown as "did not arrive" | 15 |
+
+To change a station, edit the `stations` list. The station `id` and `state_id` come from DOE.
+
+## Open questions for the school
+
+The notice does not say what to do in these cases. The code makes a choice. Each choice is easy to change.
+
+1. **Weekends and holidays.** The code counts every calendar day. "Next day" can be a Saturday.
+2. **A station does not report at 2:00 pm.** With 3 stations, the code averages the 3 and shows a yellow note.
+   With 2 or fewer, there is no decision for that day.
+3. **No reading for a whole day.** Status and count stay as they were. The page asks to check DOE.
+4. **Rounding.** The exact average is used. 150.25 counts as above 150.
+5. **Start date.** Days before `start_date` are shown but not counted.
+
+## If something goes wrong
+
+- The page shows a yellow warning when the newest reading is more than 3 hours old.
+- GitHub sends an email to the repository owner when a run fails.
+- The DOE website keeps about one week of hourly data. After a break, the script fills the gap by itself, up to 7 days.
+- GitHub stops scheduled runs after 60 days with no activity in a public repository.
+  This repository saves data every hour, so this should not happen.
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `config.json` | Stations, limits, times |
+| `scripts/policy.py` | The rule. No network, no files. |
+| `scripts/collect.py` | Reads DOE, saves data, builds the status |
+| `docs/index.html` | The web page |
+| `docs/data/` | The data: `hourly.csv`, `daily.csv`, `status.json` |
+| `.github/workflows/collect.yml` | The schedule |
+| `tests/` | Tests. Run with `python3 -m unittest discover -s tests` |
+
+## Data source
+
+Department of Environment Malaysia (DOE), Air Pollutant Index Management System (APIMS):
+<https://eqms.doe.gov.my/APIMS/main>
+
+The page is a calculation aid. The school's own announcement is the official decision.

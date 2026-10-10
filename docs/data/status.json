@@ -1,0 +1,691 @@
+{
+ "generated_at": "2026-10-10T15:37+08:00",
+ "school": {
+  "name": "Sasana International School",
+  "place": "Bandar Tasik Puteri",
+  "latitude": 3.32,
+  "longitude": 101.55
+ },
+ "reading_hour": 14,
+ "stale_after_hours": 3,
+ "rule": {
+  "close_above_single_day": 180,
+  "close_above_streak": 150,
+  "streak_days": 3,
+  "reopen_at_or_below": 150,
+  "min_stations": 3,
+  "start_date": "2026-10-10"
+ },
+ "stations": [
+  {
+   "id": "CA15W",
+   "name": "Batu Muda, Kuala Lumpur",
+   "short": "Batu Muda",
+   "state_id": 14,
+   "distance_km": 19
+  },
+  {
+   "id": "CA19B",
+   "name": "Petaling Jaya",
+   "short": "Petaling Jaya",
+   "state_id": 10,
+   "distance_km": 22
+  },
+  {
+   "id": "CA20B",
+   "name": "Shah Alam",
+   "short": "Shah Alam",
+   "state_id": 10,
+   "distance_km": 24
+  },
+  {
+   "id": "CA18B",
+   "name": "Kuala Selangor",
+   "short": "Kuala Selangor",
+   "state_id": 10,
+   "distance_km": 33
+  }
+ ],
+ "latest": {
+  "datetime": "2026-10-10T15:00",
+  "values": {
+   "CA15W": 162,
+   "CA19B": 155,
+   "CA20B": 160,
+   "CA18B": 98
+  },
+  "stations_used": 4,
+  "average": 143.75
+ },
+ "today": {
+  "date": "2026-10-10",
+  "weekday": "Sat",
+  "values": {
+   "CA15W": 165,
+   "CA19B": 157,
+   "CA20B": 162,
+   "CA18B": 102
+  },
+  "stations_used": 4,
+  "average": 146.5,
+  "reading_state": "done",
+  "school_status": "open",
+  "decision_next_day": "open",
+  "streak": 0,
+  "reason": "below",
+  "reason_text": "Average is 150 or below. School stays open.",
+  "next_date": "2026-10-11",
+  "next_weekday": "Sun"
+ },
+ "daily": [
+  {
+   "date": "2026-10-03",
+   "weekday": "Sat",
+   "values": {
+    "CA15W": 83,
+    "CA19B": 71,
+    "CA20B": 78,
+    "CA18B": 55
+   },
+   "stations_used": 4,
+   "average": 71.75,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-04",
+   "weekday": "Sun",
+   "values": {
+    "CA15W": 99,
+    "CA19B": 83,
+    "CA20B": 92,
+    "CA18B": 69
+   },
+   "stations_used": 4,
+   "average": 85.75,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-05",
+   "weekday": "Mon",
+   "values": {
+    "CA15W": 97,
+    "CA19B": 79,
+    "CA20B": 93,
+    "CA18B": 69
+   },
+   "stations_used": 4,
+   "average": 84.5,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-06",
+   "weekday": "Tue",
+   "values": {
+    "CA15W": 153,
+    "CA19B": 152,
+    "CA20B": 153,
+    "CA18B": 71
+   },
+   "stations_used": 4,
+   "average": 132.25,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-07",
+   "weekday": "Wed",
+   "values": {
+    "CA15W": 182,
+    "CA19B": 176,
+    "CA20B": 178,
+    "CA18B": 152
+   },
+   "stations_used": 4,
+   "average": 172.0,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-08",
+   "weekday": "Thu",
+   "values": {
+    "CA15W": 167,
+    "CA19B": 165,
+    "CA20B": 171,
+    "CA18B": 141
+   },
+   "stations_used": 4,
+   "average": 161.0,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-09",
+   "weekday": "Fri",
+   "values": {
+    "CA15W": 172,
+    "CA19B": 168,
+    "CA20B": 176,
+    "CA18B": 155
+   },
+   "stations_used": 4,
+   "average": 167.75,
+   "school_status": null,
+   "decision_next_day": null,
+   "streak": null,
+   "reason": "before_start",
+   "reason_text": "Before the monitoring start date. Not counted."
+  },
+  {
+   "date": "2026-10-10",
+   "weekday": "Sat",
+   "values": {
+    "CA15W": 165,
+    "CA19B": 157,
+    "CA20B": 162,
+    "CA18B": 102
+   },
+   "stations_used": 4,
+   "average": 146.5,
+   "reading_state": "done",
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 0,
+   "reason": "below",
+   "reason_text": "Average is 150 or below. School stays open."
+  }
+ ],
+ "hourly": [
+  {
+   "t": "2026-10-07T14:00",
+   "v": [
+    182,
+    176,
+    178,
+    152
+   ],
+   "avg": 172.0
+  },
+  {
+   "t": "2026-10-08T14:00",
+   "v": [
+    167,
+    165,
+    171,
+    141
+   ],
+   "avg": 161.0
+  },
+  {
+   "t": "2026-10-08T19:00",
+   "v": [
+    null,
+    null,
+    null,
+    98
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-08T20:00",
+   "v": [
+    null,
+    null,
+    null,
+    96
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-08T21:00",
+   "v": [
+    null,
+    null,
+    null,
+    95
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-08T22:00",
+   "v": [
+    null,
+    null,
+    null,
+    95
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-08T23:00",
+   "v": [
+    173,
+    null,
+    null,
+    94
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T00:00",
+   "v": [
+    173,
+    null,
+    null,
+    95
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T01:00",
+   "v": [
+    173,
+    null,
+    null,
+    95
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T02:00",
+   "v": [
+    173,
+    null,
+    null,
+    98
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T03:00",
+   "v": [
+    173,
+    null,
+    null,
+    100
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T04:00",
+   "v": [
+    172,
+    null,
+    null,
+    105
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T05:00",
+   "v": [
+    172,
+    null,
+    null,
+    114
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T06:00",
+   "v": [
+    172,
+    null,
+    null,
+    123
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T07:00",
+   "v": [
+    172,
+    169,
+    null,
+    136
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T08:00",
+   "v": [
+    172,
+    169,
+    null,
+    145
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T09:00",
+   "v": [
+    171,
+    169,
+    null,
+    151
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T10:00",
+   "v": [
+    170,
+    169,
+    null,
+    152
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T11:00",
+   "v": [
+    170,
+    168,
+    null,
+    153
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T12:00",
+   "v": [
+    171,
+    168,
+    null,
+    153
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T13:00",
+   "v": [
+    172,
+    168,
+    null,
+    154
+   ],
+   "avg": null
+  },
+  {
+   "t": "2026-10-09T14:00",
+   "v": [
+    172,
+    168,
+    176,
+    155
+   ],
+   "avg": 167.75
+  },
+  {
+   "t": "2026-10-09T15:00",
+   "v": [
+    173,
+    169,
+    177,
+    155
+   ],
+   "avg": 168.5
+  },
+  {
+   "t": "2026-10-09T16:00",
+   "v": [
+    172,
+    167,
+    176,
+    155
+   ],
+   "avg": 167.5
+  },
+  {
+   "t": "2026-10-09T17:00",
+   "v": [
+    172,
+    167,
+    175,
+    156
+   ],
+   "avg": 167.5
+  },
+  {
+   "t": "2026-10-09T18:00",
+   "v": [
+    171,
+    167,
+    174,
+    155
+   ],
+   "avg": 166.75
+  },
+  {
+   "t": "2026-10-09T19:00",
+   "v": [
+    171,
+    165,
+    174,
+    155
+   ],
+   "avg": 166.25
+  },
+  {
+   "t": "2026-10-09T20:00",
+   "v": [
+    171,
+    164,
+    174,
+    155
+   ],
+   "avg": 166.0
+  },
+  {
+   "t": "2026-10-09T21:00",
+   "v": [
+    171,
+    164,
+    174,
+    155
+   ],
+   "avg": 166.0
+  },
+  {
+   "t": "2026-10-09T22:00",
+   "v": [
+    171,
+    164,
+    173,
+    155
+   ],
+   "avg": 165.75
+  },
+  {
+   "t": "2026-10-09T23:00",
+   "v": [
+    171,
+    164,
+    173,
+    155
+   ],
+   "avg": 165.75
+  },
+  {
+   "t": "2026-10-10T00:00",
+   "v": [
+    171,
+    163,
+    173,
+    155
+   ],
+   "avg": 165.5
+  },
+  {
+   "t": "2026-10-10T01:00",
+   "v": [
+    171,
+    163,
+    172,
+    155
+   ],
+   "avg": 165.25
+  },
+  {
+   "t": "2026-10-10T02:00",
+   "v": [
+    171,
+    163,
+    172,
+    154
+   ],
+   "avg": 165.0
+  },
+  {
+   "t": "2026-10-10T03:00",
+   "v": [
+    171,
+    163,
+    171,
+    154
+   ],
+   "avg": 164.75
+  },
+  {
+   "t": "2026-10-10T04:00",
+   "v": [
+    171,
+    162,
+    170,
+    154
+   ],
+   "avg": 164.25
+  },
+  {
+   "t": "2026-10-10T05:00",
+   "v": [
+    171,
+    162,
+    170,
+    154
+   ],
+   "avg": 164.25
+  },
+  {
+   "t": "2026-10-10T06:00",
+   "v": [
+    171,
+    162,
+    170,
+    154
+   ],
+   "avg": 164.25
+  },
+  {
+   "t": "2026-10-10T07:00",
+   "v": [
+    170,
+    162,
+    170,
+    154
+   ],
+   "avg": 164.0
+  },
+  {
+   "t": "2026-10-10T08:00",
+   "v": [
+    170,
+    162,
+    169,
+    154
+   ],
+   "avg": 163.75
+  },
+  {
+   "t": "2026-10-10T09:00",
+   "v": [
+    170,
+    161,
+    168,
+    153
+   ],
+   "avg": 163.0
+  },
+  {
+   "t": "2026-10-10T10:00",
+   "v": [
+    169,
+    161,
+    167,
+    152
+   ],
+   "avg": 162.25
+  },
+  {
+   "t": "2026-10-10T11:00",
+   "v": [
+    169,
+    161,
+    166,
+    152
+   ],
+   "avg": 162.0
+  },
+  {
+   "t": "2026-10-10T12:00",
+   "v": [
+    167,
+    160,
+    165,
+    144
+   ],
+   "avg": 159.0
+  },
+  {
+   "t": "2026-10-10T13:00",
+   "v": [
+    167,
+    159,
+    164,
+    120
+   ],
+   "avg": 152.5
+  },
+  {
+   "t": "2026-10-10T14:00",
+   "v": [
+    165,
+    157,
+    162,
+    102
+   ],
+   "avg": 146.5
+  },
+  {
+   "t": "2026-10-10T15:00",
+   "v": [
+    162,
+    155,
+    160,
+    98
+   ],
+   "avg": 143.75
+  }
+ ]
+}

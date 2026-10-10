@@ -1,0 +1,74 @@
+name: Collect air quality data
+
+on:
+  schedule:
+    # Minute 7 and minute 37 of every hour. GitHub may start a run some minutes late.
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/**"
+      - "config.json"
+      - ".github/workflows/collect.yml"
+
+permissions:
+  contents: write    # save new data files in this repository
+  pages: write       # publish the website
+  id-token: write    # needed by the GitHub Pages publish step
+
+# Never run two collections at the same time.
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+    steps:
+      - name: Get the repository
+        uses: actions/checkout@v7
+
+      - name: Run the tests
+        if: github.event_name != 'schedule'
+        run: python3 -m unittest discover -s tests
+
+      - name: Collect readings from DOE
+        id: collect
+        continue-on-error: true
+        run: python3 scripts/collect.py
+
+      - name: Save new data in the repository
+        id: save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No new data."
+          else
+            git commit -m "Data: $(TZ=Asia/Kuala_Lumpur date '+%Y-%m-%d %H:%M') Malaysia time"
+            git push || (git pull --rebase && git push)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pack the website
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+
+      - name: Publish the website
+        if: steps.save.outputs.changed == 'true' || github.event_name != 'schedule'
+        uses: actions/deploy-pages@v5
+
+      - name: Mark the run as failed when DOE gave no data
+        if: steps.collect.outcome == 'failure'
+        run: |
+          echo "The collector could not read new data from DOE. See the step above."
+          exit 1
