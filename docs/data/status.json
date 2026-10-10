@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10T19:21+08:00",
+ "generated_at": "2026-10-10T20:15+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -47,15 +47,15 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-10T19:00",
+  "datetime": "2026-10-10T20:00",
   "values": {
-   "CA15W": 157,
+   "CA15W": 156,
    "CA19B": 153,
-   "CA20B": 157,
-   "CA18B": 88
+   "CA20B": 156,
+   "CA18B": 86
   },
   "stations_used": 4,
-  "average": 138.75
+  "average": 137.75
  },
  "today": {
   "date": "2026-10-10",
@@ -745,6 +745,16 @@
     88
    ],
    "avg": 138.75
+  },
+  {
+   "t": "2026-10-10T20:00",
+   "v": [
+    156,
+    153,
+    156,
+    86
+   ],
+   "avg": 137.75
   }
  ]
 }
