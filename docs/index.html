@@ -265,8 +265,16 @@
         ? "Decided after the " + readClock + " reading."
         : "Waiting for the " + readClock + " reading from DOE.");
     } else {
-      box(label2, nsMs, "", "Not decided yet",
-          "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".");
+      // The reading on the day before the next school day decides it.
+      var note2 = "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".";
+      // When only that one reading is still to come, say what it would take to change the result.
+      if (nsMs - DAY === nextMs && t.decision_next_day === "open") {
+        var lim = (t.streak || 0) + 1 >= rule.streak_days ? rule.close_above_streak : rule.close_above_single_day;
+        note2 += " Open, unless that average is above " + lim + ".";
+      } else if (nsMs - DAY === nextMs && t.decision_next_day === "closed") {
+        note2 += " Closed, unless that average is " + rule.reopen_at_or_below + " or below.";
+      }
+      box(label2, nsMs, "", "Not decided yet", note2);
     }
 
     var reason = "";
