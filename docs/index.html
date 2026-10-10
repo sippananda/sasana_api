@@ -154,8 +154,8 @@
   .tip i { width: 12px; height: 0; border-top: 2px solid; display: inline-block; }
   .tip b { margin-left: auto; padding-left: 14px; }
   .scroll { overflow-x: auto; }
-  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
-  th, td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
+  table { border-collapse: collapse; width: 100%; font-size: .875rem; }
+  th, td { padding: 6px 7px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
   th { background: var(--tile); font-weight: 600; white-space: normal; vertical-align: bottom; }
   th:first-child { border-radius: 10px 0 0 0; }
   th:last-child { border-radius: 0 10px 0 0; }
@@ -217,6 +217,8 @@
   <section>
     <h2><span class="n">4</span>Daily API records</h2>
     <div class="scroll"><table id="daily"></table></div>
+    <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
+      this day means for the following day. School is always closed on weekends and holidays.</p>
     <p class="small" style="margin-top:8px">Download:
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
   </section>
@@ -491,21 +493,25 @@
   function drawTable(s) {
     var tb = $("daily"); tb.textContent = "";
     var head = el("tr");
-    ["Date", "Average", "School that day", "Rule for next day"].concat(
+    ["Date", "Average", "School that day", "Decision for the next day"].concat(
       s.stations.map(function (x) { return x.short; })).forEach(function (h, i) {
       head.appendChild(el("th", i === 2 || i === 3 ? { "class": "l" } : {}, h));
     });
     tb.appendChild(head);
-    s.daily.slice().reverse().forEach(function (d) {
+    // School is always closed on a weekend or a holiday, whatever the rule says.
+    function off(reason) { return "Closed (" + (reason === "holiday" ? "holiday" : "weekend") + ")"; }
+    var from = s.table_first_date || "";
+    s.daily.filter(function (d) { return d.date >= from; }).reverse().forEach(function (d) {
       var tr = el("tr", d.reason === "before_start" ? { "class": "muted" } : {});
       tr.appendChild(el("td", {}, dayLabel(parse(d.date))));
       tr.appendChild(el("td", { "class": "strong" }, d.average === null ? "no data" : num(d.average)));
       var noSchool = d.school_day === false;
       tr.appendChild(el("td", { "class": "l " + (noSchool ? "" : d.school_status || "") },
-        noSchool ? (d.no_school_reason === "holiday" ? "holiday" : "weekend")
+        noSchool ? off(d.no_school_reason)
           : d.school_status ? word(d.school_status) : "not counted"));
-      tr.appendChild(el("td", { "class": "l " + (d.decision_next_day || "") },
-        d.decision_next_day ? word(d.decision_next_day) : "–"));
+      var nextOff = d.next_school_day === false;
+      tr.appendChild(el("td", { "class": "l " + (nextOff ? "" : d.decision_next_day || "") },
+        !d.decision_next_day ? "–" : nextOff ? off(d.next_no_school_reason) : word(d.decision_next_day)));
       s.stations.forEach(function (x) { tr.appendChild(el("td", {}, num(d.values[x.id]))); });
       tb.appendChild(tr);
     });

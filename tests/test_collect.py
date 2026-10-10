@@ -33,7 +33,7 @@ class Collector(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def collect(self, now, start_date=None, no_school=None, first_date=None):
+    def collect(self, now, start_date=None, no_school=None, table_first_date=None):
         env = dict(os.environ,
                    MONITOR_NOW=now, MONITOR_DATA_DIR=str(self.data),
                    APIMS_RETRY_WAIT="0", NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
@@ -43,7 +43,7 @@ class Collector(unittest.TestCase):
         cfg = json.loads((ROOT / "config.json").read_text())
         cfg["rule"]["start_date"] = start_date or "2026-10-10"
         cfg["no_school_dates"] = no_school or []
-        cfg["collector"]["first_date"] = first_date
+        cfg["table_first_date"] = table_first_date
         path = Path(self.tmp.name) / "config.json"
         path.write_text(json.dumps(cfg))
         env["MONITOR_CONFIG"] = str(path)
@@ -68,21 +68,29 @@ class Collector(unittest.TestCase):
         self.assertEqual(st["latest"]["datetime"], "2026-10-10T15:00")
         self.assertEqual(st["latest"]["average"], 144)
 
-    def test_first_date_drops_earlier_days(self):
-        # A first run without the setting keeps the whole week.
-        run, st = self.collect("2026-10-10T15:37")
-        self.assertEqual(st["daily"][0]["date"], "2026-10-03")
-        # With the setting, the earlier days are deleted from every file.
-        run, st = self.collect("2026-10-10T15:37", first_date="2026-10-09")
+    def test_table_first_date_hides_rows_but_keeps_the_data(self):
+        run, st = self.collect("2026-10-10T15:37", table_first_date="2026-10-09")
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
-        self.assertEqual([d["date"] for d in st["daily"]], ["2026-10-09", "2026-10-10"])
-        self.assertEqual([d["average"] for d in st["daily"]], [168, 147])
-        self.assertTrue(all(h["t"] >= "2026-10-09" for h in st["hourly"]))
+        self.assertEqual(st["table_first_date"], "2026-10-09")
+        # The page starts its table on that day. Nothing is deleted from the files.
+        self.assertEqual(st["daily"][0]["date"], "2026-10-03")
         for name in ("hourly.csv", "daily.csv"):
             rows = (self.data / name).read_text().strip().split("\n")[1:]
-            self.assertTrue(rows and all(r >= "2026-10-09" for r in rows), name)
-        self.assertEqual((st["today"]["school_status"], st["today"]["decision_next_day"]),
-                         ("open", "open"))
+            self.assertTrue(rows[0].startswith("2026-10-03"), name)
+
+    def test_rule_starts_on_9_oct_and_weekend_days_are_marked(self):
+        run, st = self.collect("2026-10-10T15:37", start_date="2026-10-09")
+        fri, sat = st["daily"][-2], st["daily"][-1]
+        # Fri 9 Oct: a normal school day, average 168, high day 1. The day after is a Saturday.
+        self.assertEqual((fri["date"], fri["school_status"], fri["average"], fri["streak"]),
+                         ("2026-10-09", "open", 168, 1))
+        self.assertEqual((fri["next_school_day"], fri["next_no_school_reason"]), (False, "weekend"))
+        # Sat 10 Oct: average 147, the count restarts. The day after is a Sunday.
+        self.assertEqual((sat["streak"], sat["decision_next_day"]), (0, "open"))
+        self.assertEqual((sat["next_school_day"], sat["next_no_school_reason"]), (False, "weekend"))
+        # Sun 11 Oct: the day after is a school day.
+        run, st = self.collect("2026-10-11T09:00", start_date="2026-10-09")
+        self.assertEqual((st["today"]["date"], st["today"]["next_school_day"]), ("2026-10-11", True))
 
     def test_before_two_pm_decision_is_pending(self):
         run, st = self.collect("2026-10-10T13:20")

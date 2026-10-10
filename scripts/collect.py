@@ -234,6 +234,9 @@ def build_days(hourly, cfg, now):
             "weekday": d.strftime("%a"),
             "school_day": no_school_reason(d, cfg) is None,
             "no_school_reason": no_school_reason(d, cfg),
+            # The day after. The page shows "Closed (weekend)" for it when it is not a school day.
+            "next_school_day": no_school_reason(d + timedelta(days=1), cfg) is None,
+            "next_no_school_reason": no_school_reason(d + timedelta(days=1), cfg),
             "values": values,
             "stations_used": used,
             "average": avg,
@@ -316,6 +319,8 @@ def build_status(hourly, cfg, now):
         "school": cfg["school"],
         "reading_hour": cfg["reading_hour"],
         "stale_after_hours": cfg["collector"]["stale_after_hours"],
+        # First day in the table of section 4. Older days stay in the files and in the chart.
+        "table_first_date": cfg.get("table_first_date"),
         "rule": rule,
         "stations": cfg["stations"],
         "latest": latest,
@@ -384,13 +389,9 @@ def main():
 
     # 2. Fill gaps in the 2 pm readings of the last days.
     #    Skipped when the hourly table did not answer in step 1.
-    #    Days before "first_date" are not wanted.
-    first_date = cfg["collector"].get("first_date") or ""
     backfill = cfg["collector"]["backfill_days"] if table_ok else 0
     for back in range(1, backfill + 1):
         day = (now - timedelta(days=back)).replace(hour=hh, minute=0, second=0, microsecond=0)
-        if day.strftime("%Y-%m-%d") < first_date:
-            continue
         have = hourly.get(day.strftime(KEY), {})
         if all(s in have for s in ids):
             continue
@@ -403,9 +404,7 @@ def main():
             except RuntimeError as err:
                 log(f"backfill {day:%Y-%m-%d} state {state}: FAILED - {err}")
 
-    # 3. Save and compute. Readings from before "first_date" are not kept.
-    for hour in [h for h in hourly if h[:10] < first_date]:
-        del hourly[hour]
+    # 3. Save and compute.
     after = hourly_csv_text(hourly, ids)
     data_changed = write_text_if_changed(HOURLY_CSV, after) or before != after
 
