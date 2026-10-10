@@ -384,9 +384,13 @@ def main():
 
     # 2. Fill gaps in the 2 pm readings of the last days.
     #    Skipped when the hourly table did not answer in step 1.
+    #    Days before "first_date" are not wanted.
+    first_date = cfg["collector"].get("first_date") or ""
     backfill = cfg["collector"]["backfill_days"] if table_ok else 0
     for back in range(1, backfill + 1):
         day = (now - timedelta(days=back)).replace(hour=hh, minute=0, second=0, microsecond=0)
+        if day.strftime("%Y-%m-%d") < first_date:
+            continue
         have = hourly.get(day.strftime(KEY), {})
         if all(s in have for s in ids):
             continue
@@ -399,7 +403,9 @@ def main():
             except RuntimeError as err:
                 log(f"backfill {day:%Y-%m-%d} state {state}: FAILED - {err}")
 
-    # 3. Save and compute.
+    # 3. Save and compute. Readings from before "first_date" are not kept.
+    for hour in [h for h in hourly if h[:10] < first_date]:
+        del hourly[hour]
     after = hourly_csv_text(hourly, ids)
     data_changed = write_text_if_changed(HOURLY_CSV, after) or before != after
 

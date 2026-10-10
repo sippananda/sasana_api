@@ -24,6 +24,7 @@
     "start_date": "2026-10-10"
   },
   "collector": {
+    "first_date": "2026-10-09",
     "backfill_days": 7,
     "stale_after_hours": 3,
     "late_after_hour": 15

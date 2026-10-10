@@ -215,7 +215,7 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Daily record</h2>
+    <h2><span class="n">4</span>Daily API records</h2>
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:8px">Download:
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
@@ -546,7 +546,7 @@
     function Y(v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (H - T - B); }
 
     var g = svg("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img",
-      "aria-label": "Hourly API of the four stations and their average, last 4 days. The daily record table below gives the numbers." });
+      "aria-label": "Hourly API of the four stations and their average, last 4 days. The daily API records table below gives the numbers." });
 
     for (var v = ymin; v <= ymax; v += 50) {
       g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#e6e6e2", "stroke-width": 1 }));

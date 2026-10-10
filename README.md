@@ -55,6 +55,7 @@ All settings are in `config.json`.
 | `reopen_below` | Reopen when the average is below this | 150 |
 | `min_stations` | Fewest stations needed for a usable average | 3 |
 | `start_date` | First day the rule is applied. School is taken as open on this day. | 2026-10-10 |
+| `first_date` | First day that is kept and shown. Earlier readings are deleted. | 2026-10-09 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
 | `stale_after_hours` | The page shows a warning when the data is older than this | 3 |
 | `late_after_hour` | From this hour, a missing 2:00 pm reading is shown as "did not arrive" | 15 |

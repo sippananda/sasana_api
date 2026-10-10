@@ -33,19 +33,20 @@ class Collector(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def collect(self, now, start_date=None, no_school=None):
+    def collect(self, now, start_date=None, no_school=None, first_date=None):
         env = dict(os.environ,
                    MONITOR_NOW=now, MONITOR_DATA_DIR=str(self.data),
                    APIMS_RETRY_WAIT="0", NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
                    APIMS_TABLE_URL=f"http://127.0.0.1:{self.port}/api3/publicportalapims/apitablehourly",
                    APIMS_CURRENT_URL=f"http://127.0.0.1:{self.port}/MapServer/0/query")
-        if start_date or no_school:
-            cfg = json.loads((ROOT / "config.json").read_text())
-            cfg["rule"]["start_date"] = start_date or cfg["rule"]["start_date"]
-            cfg["no_school_dates"] = no_school or []
-            path = Path(self.tmp.name) / "config.json"
-            path.write_text(json.dumps(cfg))
-            env["MONITOR_CONFIG"] = str(path)
+        # Each test sets its own dates. The dates in the real config.json do not matter here.
+        cfg = json.loads((ROOT / "config.json").read_text())
+        cfg["rule"]["start_date"] = start_date or "2026-10-10"
+        cfg["no_school_dates"] = no_school or []
+        cfg["collector"]["first_date"] = first_date
+        path = Path(self.tmp.name) / "config.json"
+        path.write_text(json.dumps(cfg))
+        env["MONITOR_CONFIG"] = str(path)
         run = subprocess.run([sys.executable, str(ROOT / "scripts" / "collect.py")],
                              env=env, capture_output=True, text=True)
         status = json.loads((self.data / "status.json").read_text()) \
@@ -66,6 +67,22 @@ class Collector(unittest.TestCase):
                          ("open", "open", 0))
         self.assertEqual(st["latest"]["datetime"], "2026-10-10T15:00")
         self.assertEqual(st["latest"]["average"], 144)
+
+    def test_first_date_drops_earlier_days(self):
+        # A first run without the setting keeps the whole week.
+        run, st = self.collect("2026-10-10T15:37")
+        self.assertEqual(st["daily"][0]["date"], "2026-10-03")
+        # With the setting, the earlier days are deleted from every file.
+        run, st = self.collect("2026-10-10T15:37", first_date="2026-10-09")
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertEqual([d["date"] for d in st["daily"]], ["2026-10-09", "2026-10-10"])
+        self.assertEqual([d["average"] for d in st["daily"]], [168, 147])
+        self.assertTrue(all(h["t"] >= "2026-10-09" for h in st["hourly"]))
+        for name in ("hourly.csv", "daily.csv"):
+            rows = (self.data / name).read_text().strip().split("\n")[1:]
+            self.assertTrue(rows and all(r >= "2026-10-09" for r in rows), name)
+        self.assertEqual((st["today"]["school_status"], st["today"]["decision_next_day"]),
+                         ("open", "open"))
 
     def test_before_two_pm_decision_is_pending(self):
         run, st = self.collect("2026-10-10T13:20")
