@@ -397,9 +397,25 @@ def main():
         data_changed = True
 
     t = status["today"]
+    newest = status["latest"]["datetime"] if status["latest"] else "none"
+    summary = (f"{got_current} readings from DOE "
+               f"({'hourly table' if table_ok else 'map service' if got_current else 'no source'}). "
+               f"Newest reading {newest}. "
+               f"Today {t['date']}: 2 pm reading {t['reading_state']}, "
+               f"average {fmt(t['average']) or '-'}, school {t['school_status']}, "
+               f"next day {t['decision_next_day'] or 'not decided'}. "
+               f"{'Data changed' if data_changed else 'No change'}.")
     log(f"today {t['date']}: reading={t['reading_state']} average={fmt(t['average']) or '-'} "
         f"status={t['school_status']} next_day={t['decision_next_day']}")
     log("data changed" if data_changed else "no change")
+
+    # On GitHub, show the result on the run page without opening the log.
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        level = "notice" if got_current else "error"
+        print(f"::{level} title=Haze collector::{summary}", flush=True)
+        if os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+                fh.write(f"### Haze collector\n\n{summary}\n")
 
     if got_current == 0:
         log("ERROR: no new readings from DOE in this run.")
