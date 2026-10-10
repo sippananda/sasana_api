@@ -9,7 +9,7 @@ Everything runs on GitHub. No computer at home or at school is needed.
 
 ## What it does
 
-- Every 30 minutes, GitHub runs `scripts/collect.py`.
+- Once per hour, at minute 15, GitHub runs `scripts/collect.py`.
 - The script reads the hourly API (Air Pollutant Index) from the DOE website.
 - It keeps four stations: Batu Muda, Petaling Jaya, Shah Alam, Kuala Selangor.
 - It saves the readings in `docs/data/hourly.csv`.
@@ -18,7 +18,7 @@ Everything runs on GitHub. No computer at home or at school is needed.
 - GitHub Pages shows `docs/index.html`. The page reads `status.json`.
 
 DOE publishes one reading per hour. So the data changes once per hour.
-The second run in each hour is a safety check, in case the first run was too early.
+One run per hour is enough. A late reading is collected by the next run.
 
 ## The rule
 
