@@ -299,8 +299,8 @@
       var note2 = "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".";
       // When only that one reading is still to come, say what it would take to change the result.
       if (nsMs - DAY === nextMs && t.decision_next_day === "open") {
-        note2 += " Open, unless that average is " + ((t.streak || 0) + 1 >= rule.streak_days
-          ? rule.close_from_streak + " or above." : "above " + rule.close_above_single_day + ".");
+        var lim = (t.streak || 0) + 1 >= rule.streak_days ? rule.close_from_streak : rule.close_from_single_day;
+        note2 += " Open, unless that average is " + lim + " or above.";
       } else if (nsMs - DAY === nextMs && t.decision_next_day === "closed") {
         note2 += " Closed, unless that average is below " + rule.reopen_below + ".";
       }
@@ -380,7 +380,7 @@
     var ul = $("rule"); ul.textContent = "";
     [
       "Every day at " + readClock + ", take the API of the four stations. Average them.",
-      "Average above " + rule.close_above_single_day + " on any single day: school is closed the next day.",
+      "Average " + rule.close_from_single_day + " or above on any single day: school is closed the next day.",
       "Average " + rule.close_from_streak + " or above for " + rule.streak_days + " days in a row: school is closed the next day.",
       "While school is closed: an average below " + rule.reopen_below + " reopens school the next day.",
       "The count of " + rule.streak_days + " days restarts after school reopens."
@@ -391,7 +391,7 @@
       "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday. " +
       "The average is rounded to a whole number. 0.5 and above goes up. " +
       "So 149.5 becomes 150, and 141.4 becomes 141. An average of exactly " +
-      rule.close_from_streak + " counts as high.";
+      rule.close_from_streak + " or exactly " + rule.close_from_single_day + " counts as high.";
   }
 
   // ------------------------------------------------------------ table
@@ -432,7 +432,7 @@
     }
     st.forEach(function (x, i) { key(COLORS[i], "", x.short); });
     key("var(--ink)", "avg-key", "Average of the four");
-    key("var(--limit)", "limit-key", "Limits " + s.rule.close_from_streak + " and " + s.rule.close_above_single_day);
+    key("var(--limit)", "limit-key", "Limits " + s.rule.close_from_streak + " and " + s.rule.close_from_single_day);
 
     var W = Math.max(300, Math.round(host.clientWidth || 720));
     var H = W < 520 ? 250 : 320, L = 34, R = 34, T = 18, B = 30;
@@ -440,7 +440,7 @@
     var pts = rows.map(function (r) { return { t: parse(r.t), v: r.v, avg: r.avg }; });
     var t1 = pts[pts.length - 1].t, t0 = t1 - 96 * H1;
     pts = pts.filter(function (p) { return p.t >= t0; });
-    var max = Math.max(s.rule.close_above_single_day + 20,
+    var max = Math.max(s.rule.close_from_single_day + 20,
       Math.max.apply(null, pts.map(function (p) {
         return Math.max.apply(null, p.v.filter(function (v) { return v !== null; }));
       })));
@@ -468,7 +468,7 @@
         g.appendChild(svg("text", { x: (X(a) + X(b)) / 2, y: H - 10, "text-anchor": "middle" }, dayLabel(d)));
     }
     // limits
-    var limits = [s.rule.close_from_streak, s.rule.close_above_single_day];
+    var limits = [s.rule.close_from_streak, s.rule.close_from_single_day];
     limits.forEach(function (lim) {
       g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(lim), y2: Y(lim),
         stroke: "var(--limit)", "stroke-width": 1.25, "stroke-dasharray": "5 4" }));

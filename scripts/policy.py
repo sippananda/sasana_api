@@ -2,11 +2,11 @@
 
 The rule (from the school's "Haze Protocol Update"):
   - Each day, take the 2:00 pm API of four DOE stations and average them.
-  - School CLOSES the next day if the average is above 180 on any single day,
+  - School CLOSES the next day if the average is 180 or above on any single day,
     or 150 or above for three days in a row.
   - While closed, school REOPENS the next day when the average is below 150.
-  - An average of exactly 150 counts as high (owner's decision, 10 Oct 2026).
-    The notice itself says "above 150".
+  - An average of exactly 150 or exactly 180 counts as high (owner's decision,
+    10 Oct 2026). The notice itself says "above 150" and "above 180".
   - The count of three days restarts after school reopens.
 
 Choices this code makes where the notice is silent (see README, "Open questions"):
@@ -56,7 +56,7 @@ def evaluate(days, rule):
       reason             short code
       reason_text        one plain sentence
     """
-    hi = rule["close_above_single_day"]
+    hi = rule["close_from_single_day"]       # this value or above closes after one day
     lim = rule["close_from_streak"]          # this value or above counts as a high day
     need = rule["streak_days"]
     reopen = rule["reopen_below"]            # below this value reopens school
@@ -86,9 +86,9 @@ def evaluate(days, rule):
                     "Check the DOE website.")
         elif status == OPEN:
             streak = streak + 1 if avg >= lim else 0
-            if avg > hi:
+            if avg >= hi:
                 nxt, reason = CLOSED, "above_single_day"
-                text = f"Average is above {hi}. School closes the next day."
+                text = f"Average is {hi} or above. School closes the next day."
             elif streak >= need:
                 nxt, reason = CLOSED, "streak"
                 text = (f"Average is {lim} or above for {need} days in a row. "

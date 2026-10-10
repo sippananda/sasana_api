@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import policy  # noqa: E402
 
-RULE = {"close_above_single_day": 180, "close_from_streak": 150, "streak_days": 3,
+RULE = {"close_from_single_day": 180, "close_from_streak": 150, "streak_days": 3,
         "reopen_below": 150, "min_stations": 3, "start_date": "2026-01-01"}
 
 
@@ -27,14 +27,16 @@ class Rule(unittest.TestCase):
         self.assertEqual(col(rows, "decision_next_day"), ["open"] * 3)
         self.assertEqual(col(rows, "streak"), [0, 0, 0])
 
-    def test_single_day_above_180_closes_next_day(self):
+    def test_single_day_at_180_or_above_closes_next_day(self):
         rows = run([120, 181])
         self.assertEqual(col(rows, "school_status"), ["open", "open"])
         self.assertEqual(rows[1]["decision_next_day"], "closed")
         self.assertEqual(rows[1]["reason"], "above_single_day")
 
-    def test_exactly_180_does_not_close(self):
-        self.assertEqual(run([180])[0]["decision_next_day"], "open")
+    def test_exactly_180_closes(self):
+        self.assertEqual(run([180])[0]["decision_next_day"], "closed")
+        self.assertEqual(run([180])[0]["reason"], "above_single_day")
+        self.assertEqual(run([179])[0]["decision_next_day"], "open")
 
     def test_exactly_150_counts_as_high(self):
         rows = run([151, 151, 149, 150])
@@ -86,8 +88,8 @@ class Rule(unittest.TestCase):
 
     def test_average_is_rounded_before_the_limits(self):
         # 0.5 and above goes up. Below 0.5 goes down.
-        self.assertEqual(run([180.25])[0]["decision_next_day"], "open")    # 180
-        self.assertEqual(run([180.5])[0]["decision_next_day"], "closed")   # 181
+        self.assertEqual(run([179.25])[0]["decision_next_day"], "open")    # 179
+        self.assertEqual(run([179.5])[0]["decision_next_day"], "closed")   # 180
         self.assertEqual(run([149.25])[0]["streak"], 0)                    # 149
         self.assertEqual(run([149.5])[0]["streak"], 1)                     # 150
         self.assertEqual(run([149.5])[0]["average"], 150)
