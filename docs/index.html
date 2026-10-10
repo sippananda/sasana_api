@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Haze Monitoring and School Opening/Closure Announcement – Sasana International School</title>
+<title>Haze Monitoring and School Opening/Closure Status – Sasana International School</title>
 <meta name="description" content="School closure status from DOE air quality readings.">
 <style>
   :root {
@@ -37,12 +37,6 @@
   header { padding: 0 4px; }
   h1 { font-size: 1.6rem; line-height: 1.2; margin: 0; letter-spacing: -.015em; text-wrap: balance; }
   .sub { color: var(--ink-2); margin: 4px 0 0; }
-  .meta {
-    display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 0;
-    padding: 4px 12px 4px 10px; border: 1px solid var(--edge); border-radius: 14px;
-    background: var(--surface); color: var(--ink-2); font-size: .85rem;
-  }
-  .meta::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
   /* every section is a card */
   section {
     background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
@@ -183,9 +177,8 @@
 <body>
 <main>
   <header>
-    <h1>Haze Monitoring and School Opening/Closure Announcement</h1>
+    <h1>Haze Monitoring and School Opening/Closure Status</h1>
     <p class="sub" id="school">Sasana International School</p>
-    <p class="meta" id="updated">Loading…</p>
   </header>
   <div class="warn" id="warn" hidden></div>
 
@@ -204,14 +197,14 @@
     <h2><span class="n">2</span><span id="readTitle">2:00 pm reading</span></h2>
     <div class="tiles" id="tiles"></div>
     <p class="avg" id="avg"></p>
-    <p class="small" id="latest" style="margin-top:10px"></p>
   </section>
 
   <section>
-    <h2><span class="n">3</span>Hourly API, last 4 days</h2>
+    <h2><span class="n">3</span>Hourly API, last 4 days (for reference only)</h2>
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
     <p class="small">The black dots are the 2:00 pm averages. Only these are used for the decision.</p>
+    <p class="small" id="updated">Loading…</p>
   </section>
 
   <section>
@@ -288,8 +281,11 @@
 
     // ---- freshness
     var newest = s.latest ? parse(s.latest.datetime) : null;
+    // Shown at the bottom of section 3, with the numbers of that reading.
     $("updated").textContent = newest
-      ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
+      ? "Newest DOE reading, " + dayLabel(newest) + ", " + clock(newest) + ": " + st.map(function (x) {
+          return x.short + " " + num(s.latest.values[x.id]);
+        }).join(" · ") + " · average " + num(s.latest.average) + ". For information only."
       : "No DOE reading yet.";
     var ageH = newest ? (nowMY() - newest) / 3600e3 : Infinity;
     var warn = $("warn");
@@ -460,12 +456,6 @@
         t.reading_state === "late"
           ? "Today's " + readClock + " reading did not arrive from DOE."
           : "Today's " + readClock + " reading is not in yet. The numbers above are from the day before."));
-    }
-    var latest = $("latest");
-    if (s.latest) {
-      latest.textContent = "Latest reading, " + clock(newest) + ": " + st.map(function (x) {
-        return x.short + " " + num(s.latest.values[x.id]);
-      }).join(" · ") + " · average " + num(s.latest.average) + ". For information only.";
     }
 
     drawChart(s);
