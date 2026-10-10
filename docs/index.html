@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Haze Monitor – Sasana International School</title>
+<title>Haze Monitoring and School Opening/Closure Announcement – Sasana International School</title>
 <meta name="description" content="School closure status from DOE air quality readings.">
 <style>
   :root {
@@ -19,6 +19,7 @@
     --shadow: 0 1px 2px rgba(17,17,17,.05), 0 6px 18px rgba(17,17,17,.06);
     --closed: #c62828;  --closed-bg: #fdecea;
     --open: #2a742e;    --open-bg: #e8f5e9;
+    --high: #9a5b00;    --high-bg: #fff4e0;
     --mark: #fff3b0;
     /* chart: fixed colour per station, never re-ordered */
     --s1: #2a78d6;  /* Batu Muda */
@@ -34,7 +35,7 @@
   }
   main { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
   header { padding: 0 4px; }
-  h1 { font-size: 1.9rem; line-height: 1.15; margin: 0; letter-spacing: -.02em; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0; letter-spacing: -.015em; text-wrap: balance; }
   .sub { color: var(--ink-2); margin: 4px 0 0; }
   .meta {
     display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 0;
@@ -63,20 +64,55 @@
   .boxes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .box {
     border: 1.5px solid var(--rule); border-radius: 12px; padding: 14px 16px;
-    background: var(--tile);
+    background: var(--tile); display: flex; gap: 12px; align-items: flex-start;
+  }
+  .box .ico {
+    flex: none; width: 40px; height: 40px; border-radius: 50%; margin-top: 2px;
+    background: var(--ink-3); display: flex; align-items: center; justify-content: center;
   }
   .box .when { font-size: .9rem; color: var(--ink-2); }
+  .box .when b { color: var(--ink); }
   .box .state { font-size: 1.7rem; font-weight: 700; line-height: 1.2; margin-top: 2px; letter-spacing: -.01em; }
-  .box .note { font-size: .85rem; color: var(--ink-2); margin-top: 2px; }
+  .box .note { font-size: .9rem; color: var(--ink-2); margin-top: 4px; }
+  .box .note + .note { color: var(--ink); font-weight: 600; }
   .box.open { border-color: var(--open); background: var(--open-bg); }
   .box.open .state { color: var(--open); }
+  .box.open .ico { background: var(--open); }
   .box.closed { border-color: var(--closed); background: var(--closed-bg); }
   .box.closed .state { color: var(--closed); }
-  .reason { margin: 14px 0 6px; font-weight: 600; }
-  .count { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .box.closed .ico { background: var(--closed); }
+  .box.wait { border-style: dashed; border-color: var(--ink-3); }
+  .reason { margin: 14px 0 0; font-weight: 600; }
+  h3 { font-size: 1rem; margin: 20px 0 2px; }
+  h3 + .small { margin-bottom: 10px; }
+  /* the three levels of the 2 pm average */
+  .levels { display: grid; gap: 8px; }
+  .lv {
+    display: grid; grid-template-columns: 8px 1fr; overflow: hidden;
+    border: 1.5px solid var(--rule); border-radius: 12px; background: var(--tile);
+  }
+  .lv .bar { background: var(--c); }
+  .lv .body { padding: 9px 14px 10px; }
+  .lv .top { display: flex; align-items: center; gap: 4px 10px; flex-wrap: wrap; }
+  .lv .range { font-weight: 700; font-size: 1.05rem; }
+  .lv .now {
+    margin-left: auto; padding: 2px 10px; border-radius: 12px;
+    background: var(--c); color: #fff; font-weight: 700; font-size: .85rem;
+  }
+  .lv .mean { color: var(--ink-2); font-size: .92rem; }
+  .lv.g { --c: var(--open); --bg: var(--open-bg); }
+  .lv.a { --c: var(--high); --bg: var(--high-bg); }
+  .lv.r { --c: var(--closed); --bg: var(--closed-bg); }
+  .lv.on { border-color: var(--c); background: var(--bg); }
+  .lv.on .mean { color: var(--ink); }
+  .count { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; font-size: .92rem; }
   .pips { display: inline-flex; gap: 4px; }
-  .pip { width: 18px; height: 18px; border: 1.5px solid var(--ink); border-radius: 50%; }
-  .pip.on { background: var(--ink); }
+  .pip { width: 18px; height: 18px; border: 1.5px solid var(--high); border-radius: 50%; }
+  .pip.on { background: var(--high); }
+  .official {
+    margin: 16px 0 0; padding: 10px 14px; border-radius: 12px; background: var(--tile);
+    border: 1px solid var(--rule); font-size: .9rem;
+  }
   .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .tile {
     border: 1px solid var(--rule); background: var(--tile); border-radius: 12px;
@@ -139,6 +175,7 @@
     .tile.mean { grid-column: 1 / -1; }
     .tile.mean .name { min-height: 0; }
     main { padding: 20px 10px 40px; }
+    h1 { font-size: 1.35rem; }
     section { padding: 16px 14px 16px; border-radius: 14px; margin-top: 12px; }
   }
 </style>
@@ -146,19 +183,21 @@
 <body>
 <main>
   <header>
-    <h1>Haze Monitor</h1>
+    <h1>Haze Monitoring and School Opening/Closure Announcement</h1>
     <p class="sub" id="school">Sasana International School</p>
     <p class="meta" id="updated">Loading…</p>
   </header>
   <div class="warn" id="warn" hidden></div>
 
   <section>
-    <h2><span class="n">1</span>School status</h2>
+    <h2><span class="n">1</span>Is school open?</h2>
     <div class="boxes" id="boxes"></div>
     <p class="reason" id="reason"></p>
-    <div class="count" id="count"></div>
-    <p class="small" style="margin-top:10px">This page calculates automatically.
-      The school's email and class WhatsApp message is the official announcement.</p>
+    <h3 id="levelsTitle">What the 2:00 pm average means</h3>
+    <p class="small" id="levelsSub"></p>
+    <div class="levels" id="levels"></div>
+    <p class="official"><b>Official announcement:</b> the school's email and class WhatsApp message.
+      This page calculates automatically from DOE data.</p>
   </section>
 
   <section>
@@ -261,12 +300,29 @@
 
     // ---- 1. status boxes
     var boxes = $("boxes"); boxes.textContent = "";
-    function box(label, ms, cls, text, note) {
+    // Sign in front of each answer: tick = open, cross = closed, clock = not decided, line = no school.
+    var SIGNS = {
+      open: "M9 17.5l5.5 5.5L24 12",
+      closed: "M11 11l11 11M22 11L11 22",
+      wait: "M16.5 9.5v7.5l5 3",
+      none: "M10 16.5h13"
+    };
+    function box(label, ms, cls, text, note, note2) {
       var b = el("div", { "class": "box " + (cls || "") });
-      b.appendChild(el("div", { "class": "when" }, label + dayLabel(ms)));
-      b.appendChild(el("div", { "class": "state" }, text));
-      if (note) b.appendChild(el("div", { "class": "note" }, note));
-      boxes.appendChild(b);
+      var ico = el("div", { "class": "ico", "aria-hidden": "true" });
+      var pic = svg("svg", { width: 33, height: 33, viewBox: "0 0 33 33" });
+      pic.appendChild(svg("path", { d: SIGNS[cls] || SIGNS.none, fill: "none", stroke: "#fff",
+        "stroke-width": 3.5, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+      ico.appendChild(pic); b.appendChild(ico);
+      var body = el("div");
+      var when = el("div", { "class": "when" });
+      if (label) when.appendChild(el("b", {}, label));
+      when.appendChild(document.createTextNode((label ? " · " : "") + dayLabel(ms)));
+      body.appendChild(when);
+      body.appendChild(el("div", { "class": "state" }, text));
+      if (note) body.appendChild(el("div", { "class": "note" }, note));
+      if (note2) body.appendChild(el("div", { "class": "note" }, note2));
+      b.appendChild(body); boxes.appendChild(b);
     }
     var DAY = 24 * 3600e3;
     var started = t.date >= rule.start_date;
@@ -274,62 +330,99 @@
 
     // Box 1: today. The rule runs every day, but school only runs on school days.
     if (!started) {
-      box(isToday ? "Today · " : "", todayMs, "", "Not decided yet",
+      box(isToday ? "Today" : "", todayMs, "wait", "Not decided yet",
           "Monitoring starts on " + dayLabel(parse(rule.start_date)) + ".");
     } else if (!todayIsSchool) {
-      box(isToday ? "Today · " : "", todayMs, "", "No school",
+      box(isToday ? "Today" : "", todayMs, "none", "No school",
           t.no_school_reason === "holiday" ? "School holiday." : "Weekend.");
     } else {
-      box(isToday ? "Today · " : "", todayMs, t.school_status, "School " + word(t.school_status), "");
+      box(isToday ? "Today" : "", todayMs, t.school_status, "School " + word(t.school_status), "");
     }
 
     // Box 2: the next school day.
     var nextSchool = t.next_school_date || t.next_date;
     var nsMs = parse(nextSchool), isTomorrow = nextSchool === t.next_date;
-    var label2 = !isToday ? "" : isTomorrow ? "Tomorrow · " : "Next school day · ";
+    var label2 = !isToday ? "" : isTomorrow ? "Tomorrow" : "Next school day";
     if (isTomorrow && t.decision_next_day) {
       box(label2, nsMs, t.decision_next_day, "School " + word(t.decision_next_day),
           "From the " + readClock + " reading of " + dayLabel(todayMs) + ".");
     } else if (isTomorrow) {
-      box(label2, nsMs, "", "Not decided yet", t.reading_state === "before"
-        ? "Decided after the " + readClock + " reading."
+      box(label2, nsMs, "wait", "Not decided yet", t.reading_state === "before"
+        ? "The answer comes " + (isToday ? "today " : "") + "after " + readClock + "."
         : "Waiting for the " + readClock + " reading from DOE.");
     } else {
       // The reading on the day before the next school day decides it.
-      var note2 = "Decided by the " + readClock + " reading on " + dayLabel(nsMs - DAY) + ".";
+      var note2 = "The answer comes on " + dayLabel(nsMs - DAY) + ", after " + readClock + ".", note3 = "";
       // When only that one reading is still to come, say what it would take to change the result.
       if (nsMs - DAY === nextMs && t.decision_next_day === "open") {
         var lim = (t.streak || 0) + 1 >= rule.streak_days ? rule.close_from_streak : rule.close_from_single_day;
-        note2 += " Open, unless that average is " + lim + " or above.";
+        note3 = "School will be open, unless that average is " + lim + " or above.";
       } else if (nsMs - DAY === nextMs && t.decision_next_day === "closed") {
-        note2 += " Closed, unless that average is below " + rule.reopen_below + ".";
+        note3 = "School will be closed, unless that average is below " + rule.reopen_below + ".";
       }
-      box(label2, nsMs, "", "Not decided yet", note2);
+      box(label2, nsMs, "wait", "Not decided yet", note2, note3);
     }
 
     var reason = "";
-    if (t.decision_next_day) {
-      reason = t.reason_text;
-      if (!isTomorrow) {
-        reason = t.reason_text.split(". ")[0].replace(/\.$/, "") + ". Rule status for " + dayLabel(nextMs) +
-          ": " + word(t.decision_next_day).toLowerCase() +
-          ". That day is not a school day, but the rule still counts it.";
-      }
-    } else if (t.school_status === "closed") {
-      reason = "The rule status is closed. It changes to open after a " + readClock +
+    if (t.decision_next_day && isTomorrow) {
+      reason = "Why: " + t.reason_text.charAt(0).toLowerCase() + t.reason_text.slice(1);
+    } else if (!t.decision_next_day && t.school_status === "closed") {
+      reason = "School is closed now. It reopens the day after a " + readClock +
         " average below " + rule.reopen_below + ".";
     }
     $("reason").textContent = reason;
-    var count = $("count"); count.textContent = "";
-    // The count only runs while school is open.
-    if (t.school_status === "open" && t.streak !== null && t.streak !== undefined) {
-      count.appendChild(el("span", {}, "Days in a row at " + rule.close_from_streak + " or above:"));
-      var pips = el("span", { "class": "pips", "aria-hidden": "true" });
-      for (var i = 0; i < rule.streak_days; i++)
-        pips.appendChild(el("span", { "class": "pip" + (i < t.streak ? " on" : "") }));
-      count.appendChild(pips);
-      count.appendChild(el("b", {}, Math.min(t.streak, rule.streak_days) + " of " + rule.streak_days));
-    }
+    $("reason").hidden = !reason;
+
+    // ---- the levels: what the 2 pm average means, with the newest 2 pm average marked
+    var last = t.reading_state === "done" ? t : (s.daily.length ? s.daily[s.daily.length - 1] : null);
+    var lastAvg = last && last.average !== null && last.average !== undefined ? last.average : null;
+    // The list shows the rule for the school status of today. A reading from a day with
+    // another status (the day before school closed or reopened) is not marked in it.
+    var closedMode = t.school_status === "closed";
+    if (last && last.school_status && last.school_status !== (closedMode ? "closed" : "open")) lastAvg = null;
+    var lowT = rule.close_from_streak, hiT = rule.close_from_single_day;
+    var rows = closedMode ? [
+      { c: "g", range: "Below " + rule.reopen_below, mean: "School reopens the next day.",
+        on: lastAvg !== null && lastAvg < rule.reopen_below },
+      { c: "r", range: rule.reopen_below + " or above", mean: "School stays closed.",
+        on: lastAvg !== null && lastAvg >= rule.reopen_below }
+    ] : [
+      { c: "g", range: "Below " + lowT, mean: "Normal. School stays open.",
+        on: lastAvg !== null && lastAvg < lowT },
+      { c: "a", range: lowT + " to " + (hiT - 1),
+        mean: "High. School closes after " + rule.streak_days + " high days in a row.",
+        on: lastAvg !== null && lastAvg >= lowT && lastAvg < hiT, count: true },
+      { c: "r", range: hiT + " or above", mean: "Very high. School closes the next day.",
+        on: lastAvg !== null && lastAvg >= hiT }
+    ];
+    $("levelsTitle").textContent = "What the " + readClock + " average means" +
+      (closedMode ? " while school is closed" : "");
+    $("levelsSub").textContent = "The average of the four stations at " + readClock + " decides the next day. " +
+      (lastAvg !== null ? "The coloured box shows the newest average."
+        : "The next " + readClock + " average is not in yet.");
+    var levels = $("levels"); levels.textContent = "";
+    rows.forEach(function (r) {
+      var row = el("div", { "class": "lv " + r.c + (r.on ? " on" : "") });
+      row.appendChild(el("div", { "class": "bar" }));
+      var body = el("div", { "class": "body" });
+      var top = el("div", { "class": "top" });
+      top.appendChild(el("span", { "class": "range" }, r.range));
+      if (r.on) top.appendChild(el("span", { "class": "now" }, dayLabel(parse(last.date)) + ": " + num(lastAvg)));
+      body.appendChild(top);
+      body.appendChild(el("div", { "class": "mean" }, r.mean));
+      // The count of high days only runs while school is open.
+      if (r.count && t.streak !== null && t.streak !== undefined) {
+        var count = el("div", { "class": "count" });
+        count.appendChild(el("span", {}, "High days in a row so far:"));
+        var pips = el("span", { "class": "pips", "aria-hidden": "true" });
+        for (var i = 0; i < rule.streak_days; i++)
+          pips.appendChild(el("span", { "class": "pip" + (i < t.streak ? " on" : "") }));
+        count.appendChild(pips);
+        count.appendChild(el("b", {}, Math.min(t.streak, rule.streak_days) + " of " + rule.streak_days));
+        body.appendChild(count);
+      }
+      row.appendChild(body); levels.appendChild(row);
+    });
 
     // ---- 2. the 2 pm reading
     var haveReading = t.reading_state === "done";
