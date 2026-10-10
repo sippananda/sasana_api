@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10T22:17+08:00",
+ "generated_at": "2026-10-10T22:36+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -8,13 +8,14 @@
  },
  "reading_hour": 14,
  "stale_after_hours": 3,
+ "table_first_date": "2026-10-09",
  "rule": {
   "close_from_single_day": 180,
   "close_from_streak": 150,
   "streak_days": 3,
   "reopen_below": 150,
   "min_stations": 3,
-  "start_date": "2026-10-10"
+  "start_date": "2026-10-09"
  },
  "stations": [
   {
@@ -62,6 +63,8 @@
   "weekday": "Sat",
   "school_day": false,
   "no_school_reason": "weekend",
+  "next_school_day": false,
+  "next_no_school_reason": "weekend",
   "values": {
    "CA15W": 165,
    "CA19B": 157,
@@ -86,6 +89,8 @@
    "weekday": "Sat",
    "school_day": false,
    "no_school_reason": "weekend",
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
    "values": {
     "CA15W": 83,
     "CA19B": 71,
@@ -105,6 +110,8 @@
    "weekday": "Sun",
    "school_day": false,
    "no_school_reason": "weekend",
+   "next_school_day": true,
+   "next_no_school_reason": null,
    "values": {
     "CA15W": 99,
     "CA19B": 83,
@@ -124,6 +131,8 @@
    "weekday": "Mon",
    "school_day": true,
    "no_school_reason": null,
+   "next_school_day": true,
+   "next_no_school_reason": null,
    "values": {
     "CA15W": 97,
     "CA19B": 79,
@@ -143,6 +152,8 @@
    "weekday": "Tue",
    "school_day": true,
    "no_school_reason": null,
+   "next_school_day": true,
+   "next_no_school_reason": null,
    "values": {
     "CA15W": 153,
     "CA19B": 152,
@@ -162,6 +173,8 @@
    "weekday": "Wed",
    "school_day": true,
    "no_school_reason": null,
+   "next_school_day": true,
+   "next_no_school_reason": null,
    "values": {
     "CA15W": 182,
     "CA19B": 176,
@@ -181,6 +194,8 @@
    "weekday": "Thu",
    "school_day": true,
    "no_school_reason": null,
+   "next_school_day": true,
+   "next_no_school_reason": null,
    "values": {
     "CA15W": 167,
     "CA19B": 165,
@@ -200,6 +215,8 @@
    "weekday": "Fri",
    "school_day": true,
    "no_school_reason": null,
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
    "values": {
     "CA15W": 172,
     "CA19B": 168,
@@ -208,17 +225,19 @@
    },
    "stations_used": 4,
    "average": 168,
-   "school_status": null,
-   "decision_next_day": null,
-   "streak": null,
-   "reason": "before_start",
-   "reason_text": "Before the monitoring start date. Not counted."
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 1,
+   "reason": "counting",
+   "reason_text": "Average is 150 or above. Day 1 of 3. School stays open."
   },
   {
    "date": "2026-10-10",
    "weekday": "Sat",
    "school_day": false,
    "no_school_reason": "weekend",
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
    "values": {
     "CA15W": 165,
     "CA19B": 157,

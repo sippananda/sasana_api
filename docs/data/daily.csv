@@ -5,5 +5,5 @@ date,weekday,batu_muda,petaling_jaya,shah_alam,kuala_selangor,stations_used,aver
 2026-10-06,Tue,153,152,153,71,4,132,yes,,,,before_start
 2026-10-07,Wed,182,176,178,152,4,172,yes,,,,before_start
 2026-10-08,Thu,167,165,171,141,4,161,yes,,,,before_start
-2026-10-09,Fri,172,168,176,155,4,168,yes,,,,before_start
+2026-10-09,Fri,172,168,176,155,4,168,yes,open,open,1,counting
 2026-10-10,Sat,165,157,162,102,4,147,weekend,open,open,0,below
