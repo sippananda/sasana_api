@@ -389,7 +389,7 @@
       { c: "r", range: rule.reopen_below + " or above", mean: "School stays closed.",
         on: lastAvg !== null && lastAvg >= rule.reopen_below }
     ] : [
-      { c: "g", range: "Below " + lowT, mean: "Normal. School stays open.",
+      { c: "g", range: "Below " + lowT, mean: "Normal. School stays open (except weekends, public holidays or school announced holidays).",
         on: lastAvg !== null && lastAvg < lowT },
       { c: "a", range: lowT + " to " + (hiT - 1),
         mean: "High. School closes after " + rule.streak_days + " high days in a row.",
