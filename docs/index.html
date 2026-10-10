@@ -63,7 +63,7 @@
   .pips { display: inline-flex; gap: 4px; }
   .pip { width: 18px; height: 18px; border: 1.5px solid var(--ink); border-radius: 4px; }
   .pip.on { background: var(--ink); }
-  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .tile {
     border: 1px solid var(--rule); background: var(--tile); border-radius: 8px;
     padding: 8px 6px; text-align: center;
@@ -72,6 +72,7 @@
                 display: flex; align-items: center; justify-content: center; }
   .tile .val { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
   .tile .km { font-size: .75rem; color: var(--ink-2); }
+  .tile.mean { background: #fff; border: 1.5px solid var(--ink); }
   .avg { margin: 12px 0 0; font-size: 1.05rem; }
   .avg b { font-size: 1.35rem; }
   .flag { background: var(--mark); padding: 1px 6px; border-radius: 3px; font-weight: 600; }
@@ -110,6 +111,8 @@
   @media (max-width: 520px) {
     .boxes { grid-template-columns: 1fr; }
     .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tile.mean { grid-column: 1 / -1; }
+    .tile.mean .name { min-height: 0; }
   }
 </style>
 </head>
@@ -313,12 +316,17 @@
       d.appendChild(el("div", { "class": "km" }, x.distance_km + " km from school"));
       tiles.appendChild(d);
     });
+    // Fifth box: the average. This is the number the rule uses.
+    var hasAvg = shown && shown.average !== null && shown.average !== undefined;
+    var m = el("div", { "class": "tile mean" });
+    m.appendChild(el("div", { "class": "name" }, "Average"));
+    m.appendChild(el("div", { "class": "val" }, hasAvg ? num(shown.average) : "–"));
+    m.appendChild(el("div", { "class": "km" },
+      "of " + (hasAvg ? shown.stations_used : st.length) + " stations"));
+    tiles.appendChild(m);
     var avg = $("avg"); avg.textContent = "";
-    if (shown && shown.average !== null) {
-      avg.appendChild(document.createTextNode("Average of the four = "));
-      avg.appendChild(el("b", {}, num(shown.average)));
+    if (hasAvg) {
       if (shown.stations_used < st.length) {
-        avg.appendChild(document.createTextNode(" "));
         avg.appendChild(el("span", { "class": "flag" },
           "Only " + shown.stations_used + " of " + st.length + " stations reported."));
       }
