@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10T20:15+08:00",
+ "generated_at": "2026-10-10T20:41+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -9,10 +9,10 @@
  "reading_hour": 14,
  "stale_after_hours": 3,
  "rule": {
-  "close_above_single_day": 180,
-  "close_above_streak": 150,
+  "close_from_single_day": 180,
+  "close_from_streak": 150,
   "streak_days": 3,
-  "reopen_at_or_below": 150,
+  "reopen_below": 150,
   "min_stations": 3,
   "start_date": "2026-10-10"
  },
@@ -55,7 +55,7 @@
    "CA18B": 86
   },
   "stations_used": 4,
-  "average": 137.75
+  "average": 138
  },
  "today": {
   "date": "2026-10-10",
@@ -69,13 +69,13 @@
    "CA18B": 102
   },
   "stations_used": 4,
-  "average": 146.5,
+  "average": 147,
   "reading_state": "done",
   "school_status": "open",
   "decision_next_day": "open",
   "streak": 0,
   "reason": "below",
-  "reason_text": "Average is 150 or below. School stays open.",
+  "reason_text": "Average is below 150. School stays open.",
   "next_date": "2026-10-11",
   "next_weekday": "Sun",
   "next_school_date": "2026-10-12"
@@ -93,7 +93,7 @@
     "CA18B": 55
    },
    "stations_used": 4,
-   "average": 71.75,
+   "average": 72,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -112,7 +112,7 @@
     "CA18B": 69
    },
    "stations_used": 4,
-   "average": 85.75,
+   "average": 86,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -131,7 +131,7 @@
     "CA18B": 69
    },
    "stations_used": 4,
-   "average": 84.5,
+   "average": 85,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -150,7 +150,7 @@
     "CA18B": 71
    },
    "stations_used": 4,
-   "average": 132.25,
+   "average": 132,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -169,7 +169,7 @@
     "CA18B": 152
    },
    "stations_used": 4,
-   "average": 172.0,
+   "average": 172,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -188,7 +188,7 @@
     "CA18B": 141
    },
    "stations_used": 4,
-   "average": 161.0,
+   "average": 161,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -207,7 +207,7 @@
     "CA18B": 155
    },
    "stations_used": 4,
-   "average": 167.75,
+   "average": 168,
    "school_status": null,
    "decision_next_day": null,
    "streak": null,
@@ -226,13 +226,13 @@
     "CA18B": 102
    },
    "stations_used": 4,
-   "average": 146.5,
+   "average": 147,
    "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
    "reason": "below",
-   "reason_text": "Average is 150 or below. School stays open."
+   "reason_text": "Average is below 150. School stays open."
   }
  ],
  "hourly": [
@@ -244,7 +244,7 @@
     178,
     152
    ],
-   "avg": 172.0
+   "avg": 172
   },
   {
    "t": "2026-10-08T14:00",
@@ -254,7 +254,7 @@
     171,
     141
    ],
-   "avg": 161.0
+   "avg": 161
   },
   {
    "t": "2026-10-08T19:00",
@@ -454,7 +454,7 @@
     176,
     155
    ],
-   "avg": 167.75
+   "avg": 168
   },
   {
    "t": "2026-10-09T15:00",
@@ -464,7 +464,7 @@
     177,
     155
    ],
-   "avg": 168.5
+   "avg": 169
   },
   {
    "t": "2026-10-09T16:00",
@@ -474,7 +474,7 @@
     176,
     155
    ],
-   "avg": 167.5
+   "avg": 168
   },
   {
    "t": "2026-10-09T17:00",
@@ -484,7 +484,7 @@
     175,
     156
    ],
-   "avg": 167.5
+   "avg": 168
   },
   {
    "t": "2026-10-09T18:00",
@@ -494,7 +494,7 @@
     174,
     155
    ],
-   "avg": 166.75
+   "avg": 167
   },
   {
    "t": "2026-10-09T19:00",
@@ -504,7 +504,7 @@
     174,
     155
    ],
-   "avg": 166.25
+   "avg": 166
   },
   {
    "t": "2026-10-09T20:00",
@@ -514,7 +514,7 @@
     174,
     155
    ],
-   "avg": 166.0
+   "avg": 166
   },
   {
    "t": "2026-10-09T21:00",
@@ -524,7 +524,7 @@
     174,
     155
    ],
-   "avg": 166.0
+   "avg": 166
   },
   {
    "t": "2026-10-09T22:00",
@@ -534,7 +534,7 @@
     173,
     155
    ],
-   "avg": 165.75
+   "avg": 166
   },
   {
    "t": "2026-10-09T23:00",
@@ -544,7 +544,7 @@
     173,
     155
    ],
-   "avg": 165.75
+   "avg": 166
   },
   {
    "t": "2026-10-10T00:00",
@@ -554,7 +554,7 @@
     173,
     155
    ],
-   "avg": 165.5
+   "avg": 166
   },
   {
    "t": "2026-10-10T01:00",
@@ -564,7 +564,7 @@
     172,
     155
    ],
-   "avg": 165.25
+   "avg": 165
   },
   {
    "t": "2026-10-10T02:00",
@@ -574,7 +574,7 @@
     172,
     154
    ],
-   "avg": 165.0
+   "avg": 165
   },
   {
    "t": "2026-10-10T03:00",
@@ -584,7 +584,7 @@
     171,
     154
    ],
-   "avg": 164.75
+   "avg": 165
   },
   {
    "t": "2026-10-10T04:00",
@@ -594,7 +594,7 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164
   },
   {
    "t": "2026-10-10T05:00",
@@ -604,7 +604,7 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164
   },
   {
    "t": "2026-10-10T06:00",
@@ -614,7 +614,7 @@
     170,
     154
    ],
-   "avg": 164.25
+   "avg": 164
   },
   {
    "t": "2026-10-10T07:00",
@@ -624,7 +624,7 @@
     170,
     154
    ],
-   "avg": 164.0
+   "avg": 164
   },
   {
    "t": "2026-10-10T08:00",
@@ -634,7 +634,7 @@
     169,
     154
    ],
-   "avg": 163.75
+   "avg": 164
   },
   {
    "t": "2026-10-10T09:00",
@@ -644,7 +644,7 @@
     168,
     153
    ],
-   "avg": 163.0
+   "avg": 163
   },
   {
    "t": "2026-10-10T10:00",
@@ -654,7 +654,7 @@
     167,
     152
    ],
-   "avg": 162.25
+   "avg": 162
   },
   {
    "t": "2026-10-10T11:00",
@@ -664,7 +664,7 @@
     166,
     152
    ],
-   "avg": 162.0
+   "avg": 162
   },
   {
    "t": "2026-10-10T12:00",
@@ -674,7 +674,7 @@
     165,
     144
    ],
-   "avg": 159.0
+   "avg": 159
   },
   {
    "t": "2026-10-10T13:00",
@@ -684,7 +684,7 @@
     164,
     120
    ],
-   "avg": 152.5
+   "avg": 153
   },
   {
    "t": "2026-10-10T14:00",
@@ -694,7 +694,7 @@
     162,
     102
    ],
-   "avg": 146.5
+   "avg": 147
   },
   {
    "t": "2026-10-10T15:00",
@@ -704,7 +704,7 @@
     160,
     98
    ],
-   "avg": 143.75
+   "avg": 144
   },
   {
    "t": "2026-10-10T16:00",
@@ -714,7 +714,7 @@
     159,
     96
    ],
-   "avg": 142.5
+   "avg": 143
   },
   {
    "t": "2026-10-10T17:00",
@@ -724,7 +724,7 @@
     158,
     92
    ],
-   "avg": 140.5
+   "avg": 141
   },
   {
    "t": "2026-10-10T18:00",
@@ -734,7 +734,7 @@
     157,
     90
    ],
-   "avg": 139.75
+   "avg": 140
   },
   {
    "t": "2026-10-10T19:00",
@@ -744,7 +744,7 @@
     157,
     88
    ],
-   "avg": 138.75
+   "avg": 139
   },
   {
    "t": "2026-10-10T20:00",
@@ -754,7 +754,7 @@
     156,
     86
    ],
-   "avg": 137.75
+   "avg": 138
   }
  ]
 }
