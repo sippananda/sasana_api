@@ -50,7 +50,7 @@ All settings are in `config.json`.
 |---|---|---|
 | `reading_hour` | Hour of the daily reading, Malaysia time | 14 |
 | `school_days` | Days with school. Other days show "No school". | Mon to Fri |
-| `no_school_dates` | Extra days without school, for example `"2026-12-25"` | none |
+| `no_school_dates` | Extra days without school. An entry is a date, `"2026-12-25"`, or a date with a name, `{"date": "2026-10-26", "name": "Public holiday in Selangor"}` | 26 Oct 2026 |
 | `close_from_single_day` | Close when the average is this or above on one day | 180 |
 | `close_from_streak` | Count a day when the average is this or above | 150 |
 | `streak_days` | Days in a row needed to close | 3 |

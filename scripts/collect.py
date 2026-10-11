@@ -188,9 +188,24 @@ def fmt(x):
     return f"{x:.2f}".rstrip("0").rstrip(".")
 
 
+def holidays(cfg):
+    """Days without school from "no_school_dates", as {date: name}.
+
+    An entry is a date ("2026-12-25"), or a date with a name:
+    {"date": "2026-10-26", "name": "Public holiday in Selangor"}.
+    """
+    out = {}
+    for item in cfg.get("no_school_dates", []):
+        if isinstance(item, dict):
+            out[item["date"]] = item.get("name") or ""
+        else:
+            out[str(item)] = ""
+    return out
+
+
 def no_school_reason(d, cfg):
     """None on a school day. Otherwise "weekend" or "holiday"."""
-    if d.isoformat() in cfg.get("no_school_dates", []):
+    if d.isoformat() in holidays(cfg):
         return "holiday"
     if d.strftime("%a") not in cfg.get("school_days", ["Mon", "Tue", "Wed", "Thu", "Fri"]):
         return "weekend"
@@ -234,6 +249,8 @@ def build_days(hourly, cfg, now):
             "weekday": d.strftime("%a"),
             "school_day": no_school_reason(d, cfg) is None,
             "no_school_reason": no_school_reason(d, cfg),
+            # The name of the holiday, when the settings give one.
+            "no_school_name": holidays(cfg).get(d.isoformat()) or None,
             # The day after. The page shows "Closed (weekend)" for it when it is not a school day.
             "next_school_day": no_school_reason(d + timedelta(days=1), cfg) is None,
             "next_no_school_reason": no_school_reason(d + timedelta(days=1), cfg),
@@ -325,6 +342,11 @@ def build_status(hourly, cfg, now):
         "stations": cfg["stations"],
         "latest": latest,
         "today": today_out,
+        # Days without school that are still to come (today included), for the notes on the page.
+        "holidays": [{"date": day, "weekday": datetime.strptime(day, "%Y-%m-%d").strftime("%a"),
+                      "name": name or None}
+                     for day, name in sorted(holidays(cfg).items())
+                     if day >= now.date().isoformat()][:12],
         "daily": evaluated[-30:],
         # Every day on record, short form: [date, 2 pm average]. For the dot graph in
         # section 2. It can show a longer time than the 30 days in "daily".

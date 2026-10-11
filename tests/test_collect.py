@@ -143,6 +143,22 @@ class Collector(unittest.TestCase):
                                no_school=["2026-10-12", "2026-10-09"])
         self.assertEqual(st["today"]["no_school_reason"], "holiday")
         self.assertEqual(st["today"]["next_school_date"], "2026-10-13")
+        self.assertIsNone(st["today"]["no_school_name"])
+
+    def test_a_holiday_can_have_a_name(self):
+        run, st = self.collect("2026-10-09T15:10", start_date="2026-10-03", no_school=[
+            {"date": "2026-10-12", "name": "Public holiday in Selangor"},
+            {"date": "2026-10-09", "name": "Sports day"},
+            "2026-10-01"])                                   # a day in the past, without a name
+        t = st["today"]
+        self.assertEqual((t["school_day"], t["no_school_reason"], t["no_school_name"]),
+                         (False, "holiday", "Sports day"))
+        # Monday is a holiday. So the next school day after Friday is Tuesday.
+        self.assertEqual(t["next_school_date"], "2026-10-13")
+        # The page gets the days that are still to come. The past day is left out.
+        self.assertEqual(st["holidays"], [
+            {"date": "2026-10-09", "weekday": "Fri", "name": "Sports day"},
+            {"date": "2026-10-12", "weekday": "Mon", "name": "Public holiday in Selangor"}])
 
     def test_no_reading_by_three_pm_is_flagged(self):
         run, st = self.collect("2026-10-11T14:20")

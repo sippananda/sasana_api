@@ -8,7 +8,9 @@
   "timezone_offset_hours": 8,
   "reading_hour": 14,
   "school_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
-  "no_school_dates": [],
+  "no_school_dates": [
+    {"date": "2026-10-26", "name": "Replacement public holiday in Selangor (Sultan's Silver Jubilee)"}
+  ],
   "table_first_date": "2026-10-09",
   "stations": [
     {"id": "CA15W", "name": "Batu Muda, Kuala Lumpur", "short": "Batu Muda", "state_id": 14, "distance_km": 19},
