@@ -319,7 +319,7 @@ def build_status(hourly, cfg, now):
         "school": cfg["school"],
         "reading_hour": cfg["reading_hour"],
         "stale_after_hours": cfg["collector"]["stale_after_hours"],
-        # First day in the table of section 4. Older days stay in the files and in the chart.
+        # First day in the table of section 5. Older days stay in the files and in the chart.
         "table_first_date": cfg.get("table_first_date"),
         "rule": rule,
         "stations": cfg["stations"],

@@ -207,7 +207,13 @@
   </section>
 
   <section>
-    <h2><span class="n">3</span>Hourly API, last 4 days (for reference only)</h2>
+    <h2><span class="n">3</span>The rule</h2>
+    <ul id="rule"></ul>
+    <p class="small" id="notes"></p>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Hourly API, last 4 days (for reference only)</h2>
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
     <p class="small">The black dots are the 2:00 pm averages. Only these are used for the decision.</p>
@@ -215,18 +221,12 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Daily API records</h2>
+    <h2><span class="n">5</span>Daily API records</h2>
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
       this day means for the following day. School is always closed on weekends and holidays.</p>
     <p class="small" style="margin-top:8px">Download:
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
-  </section>
-
-  <section>
-    <h2><span class="n">5</span>The rule</h2>
-    <ul id="rule"></ul>
-    <p class="small" id="notes"></p>
   </section>
 
   <footer class="small">
@@ -291,7 +291,7 @@
     $("updated").textContent = newest
       ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
       : "No DOE reading yet.";
-    // The numbers of that reading, at the bottom of section 3.
+    // The numbers of that reading, at the bottom of section 4.
     $("latest").textContent = newest
       ? "Latest reading, " + clock(newest) + ": " + st.map(function (x) {
           return x.short + " " + num(s.latest.values[x.id]);
