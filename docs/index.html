@@ -56,6 +56,15 @@
     display: inline-flex; align-items: center; justify-content: center;
   }
   p { margin: 0 0 10px; }
+  /* heading line between the decision (sections 1 to 3) and the information (sections 4 and 5) */
+  .group { margin: 30px 4px 0; text-align: center; }
+  .group .line {
+    display: flex; align-items: center; gap: 12px;
+    font-size: .82rem; font-weight: 700; letter-spacing: .08em; color: var(--ink-2);
+  }
+  .group .line::before, .group .line::after { content: ""; flex: 1; border-top: 1px solid #a9a9a3; }
+  .group p { margin: 4px 0 0; font-size: .9rem; color: var(--ink-2); }
+  section.info h2 .n { background: var(--ink-3); }   /* grey number: not part of the decision */
   .small { font-size: .9rem; color: var(--ink-2); }
   .warn {
     margin-top: 16px; padding: 12px 16px; border: 1px solid #b26a00;
@@ -227,7 +236,13 @@
     <p class="small" id="notes"></p>
   </section>
 
-  <section>
+  <!-- From here on: information only. Sections 4 and 5 do not make the decision. -->
+  <div class="group" role="note">
+    <div class="line">FOR INFORMATION ONLY</div>
+    <p>Sections 4 and 5 do not decide school closure. They show the trend and the records.</p>
+  </div>
+
+  <section class="info">
     <h2><span class="n">4</span>Hourly API and Trend</h2>
     <p class="small" id="latest"></p>
     <div class="tiles four" id="nowTiles"></div>
@@ -236,7 +251,7 @@
     <p class="small">The chart shows the last 4 days.</p>
   </section>
 
-  <section>
+  <section class="info">
     <h2><span class="n">5</span>Daily API records</h2>
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
@@ -307,15 +322,23 @@
     $("updated").textContent = newest
       ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
       : "No DOE reading yet.";
-    // The numbers of that reading, in four boxes at the top of section 4. No average here.
-    $("latest").textContent = newest
-      ? "Newest reading: " + dayLabel(newest) + ", " + clock(newest) + ". For information only."
-      : "";
+    // Four boxes at the top of section 4: the newest hour that has all four stations.
+    // DOE sometimes publishes the stations of one hour at different minutes. A box with
+    // no number would then look like a fault. No average here.
+    var full = null;
+    for (var q = s.hourly.length - 1; q >= 0 && !full; q--) {
+      if (s.hourly[q].v.every(function (v) { return v !== null && v !== undefined; })) full = s.hourly[q];
+    }
+    var boxVals = full ? full.v : st.map(function (x) { return s.latest ? s.latest.values[x.id] : null; });
+    var boxTime = full ? parse(full.t) : newest;
+    $("latest").textContent = boxTime === null ? ""
+      : "Newest reading: " + dayLabel(boxTime) + ", " + clock(boxTime) + "." +
+        (newest > boxTime ? " The " + clock(newest) + " reading is not complete yet." : "");
     var nowTiles = $("nowTiles"); nowTiles.textContent = "";
-    st.forEach(function (x) {
+    st.forEach(function (x, i) {
       var d = el("div", { "class": "tile" });
       d.appendChild(el("div", { "class": "name" }, x.short));
-      d.appendChild(el("div", { "class": "val" }, newest ? num(s.latest.values[x.id]) : "–"));
+      d.appendChild(el("div", { "class": "val" }, num(boxVals[i])));
       d.appendChild(el("div", { "class": "km" }, x.distance_km + " km from school"));
       nowTiles.appendChild(d);
     });
