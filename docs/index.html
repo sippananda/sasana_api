@@ -556,10 +556,7 @@
       "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday.",
       "The average is rounded to a whole number. 0.5 and above goes up. So 149.5 becomes 150, and 141.4 becomes 141.",
       "An average of exactly " + rule.close_from_streak + " or exactly " + rule.close_from_single_day + " counts as high."
-    ].concat((s.holidays || []).map(function (h) {
-      // Days without school that are still to come, from "no_school_dates" in config.json.
-      return "No school on " + dayLabel(parse(h.date)) + (h.name ? ": " + h.name + "." : ".");
-    })).forEach(function (x) { notes.appendChild(el("li", {}, x)); });
+    ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });
   }
 
   // ------------------------------------------------------------ table
