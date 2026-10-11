@@ -5,6 +5,11 @@ on:
     # Minute 15 of every hour. GitHub may start a run some minutes late.
     - cron: "15 * * * *"
   workflow_dispatch:
+    inputs:
+      retry:
+        description: "Second try after a late reading. The workflow sets this itself. Leave it empty."
+        required: false
+        default: ""
   push:
     branches: [main]
     paths:
@@ -17,18 +22,20 @@ permissions:
   contents: write    # save new data files in this repository
   pages: write       # publish the website
   id-token: write    # needed by the GitHub Pages publish step
-
-# Never run two collections at the same time.
-concurrency:
-  group: collect
-  cancel-in-progress: false
+  actions: write     # start one more run when a reading was late
 
 jobs:
   collect:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Never run two collections at the same time.
+    concurrency:
+      group: collect
+      cancel-in-progress: false
     environment:
       name: github-pages
+    outputs:
+      complete: ${{ steps.collect.outputs.complete }}
     steps:
       - name: Get the repository
         uses: actions/checkout@v7
@@ -72,3 +79,19 @@ jobs:
         run: |
           echo "The collector could not read new data from DOE. See the step above."
           exit 1
+
+  # A late reading: at least one of the four stations had no reading for this hour.
+  # Then wait 15 minutes and start one more run. The second run never starts a third one.
+  retry:
+    needs: collect
+    if: always() && needs.collect.outputs.complete == 'false' && inputs.retry != 'yes'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait 15 minutes
+        run: sleep 900
+
+      - name: Start one more run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run collect.yml --repo "$GITHUB_REPOSITORY" --ref main -f retry=yes

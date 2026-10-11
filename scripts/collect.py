@@ -428,11 +428,21 @@ def main():
         STATUS_JSON.write_text(json.dumps(status, indent=1) + "\n", encoding="utf-8")
         data_changed = True
 
+    # Is the reading of this hour in for all stations? DOE sometimes publishes the
+    # stations at different minutes. The workflow starts one more run 15 minutes later
+    # when a station is still missing.
+    have_now = hourly.get(this_hour.strftime(KEY), {})
+    missing = [s["short"] for s in cfg["stations"] if have_now.get(s["id"]) is None]
+    if missing:
+        log(f"reading {this_hour:%H}:00 is not complete. Missing: {', '.join(missing)}")
+
     t = status["today"]
     newest = status["latest"]["datetime"] if status["latest"] else "none"
     summary = (f"{got_current} readings from DOE "
                f"({'hourly table' if table_ok else 'map service' if got_current else 'no source'}). "
                f"Newest reading {newest}. "
+               + (f"Reading {this_hour:%H}:00 not complete, missing: {', '.join(missing)}. "
+                  if missing else f"Reading {this_hour:%H}:00 complete. ") +
                f"Today {t['date']}: 2 pm reading {t['reading_state']}, "
                f"average {fmt(t['average']) or '-'}, rule status {t['school_status']}, "
                f"rule for next day {t['decision_next_day'] or 'not decided'}, "
@@ -449,6 +459,11 @@ def main():
         if os.environ.get("GITHUB_STEP_SUMMARY"):
             with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
                 fh.write(f"### Haze collector\n\n{summary}\n")
+
+    # Tell the workflow whether one more run is needed.
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+            fh.write(f"complete={'false' if missing else 'true'}\n")
 
     if got_current == 0:
         log("ERROR: no new readings from DOE in this run.")

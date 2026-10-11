@@ -18,7 +18,9 @@ Everything runs on GitHub. No computer at home or at school is needed.
 - GitHub Pages shows `docs/index.html`. The page reads `status.json`.
 
 DOE publishes one reading per hour. So the data changes once per hour.
-One run per hour is enough. A late reading is collected by the next run.
+One run per hour is enough in most hours. Sometimes a station reading is late.
+Then the run waits 15 minutes and starts one more run by itself. This happens one time only.
+A reading that is still missing after that is collected by the run of the next hour.
 
 ## The rule
 

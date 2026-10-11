@@ -33,7 +33,7 @@ class Collector(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def collect(self, now, start_date=None, no_school=None, table_first_date=None):
+    def collect(self, now, start_date=None, no_school=None, table_first_date=None, extra_env=None):
         env = dict(os.environ,
                    MONITOR_NOW=now, MONITOR_DATA_DIR=str(self.data),
                    APIMS_RETRY_WAIT="0", NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
@@ -47,6 +47,10 @@ class Collector(unittest.TestCase):
         path = Path(self.tmp.name) / "config.json"
         path.write_text(json.dumps(cfg))
         env["MONITOR_CONFIG"] = str(path)
+        # The tests also run on GitHub. They must not write into the files of the real run.
+        for name in ("GITHUB_ACTIONS", "GITHUB_OUTPUT", "GITHUB_STEP_SUMMARY"):
+            env.pop(name, None)
+        env.update(extra_env or {})
         run = subprocess.run([sys.executable, str(ROOT / "scripts" / "collect.py")],
                              env=env, capture_output=True, text=True)
         status = json.loads((self.data / "status.json").read_text()) \
@@ -147,6 +151,20 @@ class Collector(unittest.TestCase):
         t = st["today"]
         self.assertEqual((t["reading_state"], t["reason"]), ("late", "no_data"))
         self.assertEqual(t["decision_next_day"], t["school_status"])
+
+    def test_workflow_is_told_when_the_reading_of_this_hour_is_not_complete(self):
+        out = Path(self.tmp.name) / "github_output"
+        # 3:37 pm: the 3:00 pm reading of all four stations is in. No second run is needed.
+        gh = {"GITHUB_OUTPUT": str(out), "GITHUB_ACTIONS": "true"}
+        run, _ = self.collect("2026-10-10T15:37", extra_env=gh)
+        self.assertEqual(out.read_text(), "complete=true\n")
+        self.assertIn("Reading 15:00 complete", run.stdout)
+        # The next day at 2:20 pm: DOE has no 2:00 pm reading yet. One more run is needed.
+        out.unlink()
+        run, _ = self.collect("2026-10-11T14:20", extra_env=gh)
+        self.assertEqual(out.read_text(), "complete=false\n")
+        self.assertIn("Reading 14:00 not complete, missing: Batu Muda, Petaling Jaya, Shah Alam, Kuala Selangor",
+                      run.stdout)
 
     def test_fallback_when_hourly_table_is_down(self):
         fake_apims.BROKEN["table"] = True
