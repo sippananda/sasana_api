@@ -188,7 +188,10 @@
   ul { margin: 0 0 10px; padding-left: 20px; }
   li { margin-bottom: 4px; }
   a { color: #0b57d0; }
-  footer { margin-top: 18px; padding: 0 4px; }
+  footer { margin-top: 22px; padding: 0 4px; }
+  footer p { margin: 0 0 4px; color: var(--ink); }
+  footer ul { margin-bottom: 14px; }
+  footer li { margin-bottom: 2px; }
   @media (max-width: 520px) {
     .boxes { grid-template-columns: 1fr; }
     .tiles, .tiles.four { grid-template-columns: repeat(2, 1fr); }
@@ -261,9 +264,23 @@
   </section>
 
   <footer class="small">
-    Data: Department of Environment Malaysia (DOE), Air Pollutant Index Management System,
-    <a href="https://eqms.doe.gov.my/APIMS/main">eqms.doe.gov.my</a>.
-    Times are Malaysia time. This page checks for new data every 30 minutes.
+    <p><b>About the data</b></p>
+    <ul>
+      <li>Source: Department of Environment Malaysia (DOE), Air Pollutant Index Management System,
+        <a href="https://eqms.doe.gov.my/APIMS/main">eqms.doe.gov.my</a>.</li>
+      <li>New readings are collected once per hour, at about 15 minutes past the hour.</li>
+      <li>If a station reading is late, one more collection runs about 15 minutes later.</li>
+      <li>A reading that is still missing after that is collected in the next hour.</li>
+      <li>Times are Malaysia time. This page refreshes by itself every 5 minutes.</li>
+    </ul>
+    <p><b>Disclaimer</b></p>
+    <ul>
+      <li>A parent made this page as a personal initiative. The school did not make it.</li>
+      <li>This page is not an official announcement. The official announcement comes from the school,
+        by email and class WhatsApp.</li>
+      <li>The page works automatically. The DOE data can be late, missing or wrong.</li>
+      <li>If this page and the school's announcement are different, follow the school.</li>
+    </ul>
   </footer>
 </main>
 
