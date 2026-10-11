@@ -876,7 +876,13 @@
       });
   }
   var lastStatus = null, timer = null;
+  // Redraw the two graphs only when the width of the window changes. A phone also sends
+  // "resize" each time its address bar hides or shows during scrolling. The width is then
+  // the same, and a redraw would only make the phone work for nothing.
+  var lastWidth = window.innerWidth;
   window.addEventListener("resize", function () {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
     clearTimeout(timer);
     timer = setTimeout(function () { if (lastStatus) { drawDots(lastStatus); drawChart(lastStatus); } }, 150);
   });
