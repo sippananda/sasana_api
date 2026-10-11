@@ -94,6 +94,7 @@
   .reason { margin: 14px 0 0; font-weight: 600; }
   h3 { font-size: 1rem; margin: 20px 0 2px; }
   h3 + .small { margin-bottom: 10px; }
+  h3 + ul { margin-top: 6px; }
   /* the three levels of the 2 pm average */
   .levels { display: grid; gap: 8px; }
   .lv {
@@ -236,7 +237,8 @@
   <section>
     <h2><span class="n">3</span>The rule</h2>
     <ul id="rule"></ul>
-    <p class="small" id="notes"></p>
+    <h3>Notes</h3>
+    <ul class="small" id="notes"></ul>
   </section>
 
   <!-- From here on: information only. Sections 4 and 5 do not make the decision. -->
@@ -543,13 +545,15 @@
       "While school is closed: an average below " + rule.reopen_below + " reopens school the next day.",
       "The count of " + rule.streak_days + " days restarts after school reopens."
     ].forEach(function (x) { ul.appendChild(el("li", {}, x)); });
-    $("notes").textContent = "Stations: " + st.map(function (x) { return x.name; }).join("; ") +
-      ". Cheras is left out because it is close to two of the other stations. " +
-      "Kuala Selangor is used instead, although it is the farthest. " +
-      "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday. " +
-      "The average is rounded to a whole number. 0.5 and above goes up. " +
-      "So 149.5 becomes 150, and 141.4 becomes 141. An average of exactly " +
-      rule.close_from_streak + " or exactly " + rule.close_from_single_day + " counts as high.";
+    var notes = $("notes"); notes.textContent = "";
+    [
+      "Stations: " + st.map(function (x) { return x.name; }).join("; ") + ".",
+      "Cheras is left out because it is close to two of the other stations.",
+      "Kuala Selangor is used instead, although it is the farthest.",
+      "The rule counts every calendar day, weekends too. So the Sunday reading decides Monday.",
+      "The average is rounded to a whole number. 0.5 and above goes up. So 149.5 becomes 150, and 141.4 becomes 141.",
+      "An average of exactly " + rule.close_from_streak + " or exactly " + rule.close_from_single_day + " counts as high."
+    ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });
   }
 
   // ------------------------------------------------------------ table
