@@ -326,6 +326,9 @@ def build_status(hourly, cfg, now):
         "latest": latest,
         "today": today_out,
         "daily": evaluated[-30:],
+        # Every day on record, short form: [date, 2 pm average]. For the dot graph in
+        # section 2. It can show a longer time than the 30 days in "daily".
+        "averages": [[d["date"], d["average"]] for d in evaluated if d["average"] is not None],
         "hourly": recent,
     }, evaluated
 

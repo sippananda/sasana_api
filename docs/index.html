@@ -124,6 +124,7 @@
   .tile:nth-child(2)::before { background: var(--s2); }
   .tile:nth-child(3)::before { background: var(--s3); }
   .tile:nth-child(4)::before { background: var(--s4); }
+  .tiles.four { grid-template-columns: repeat(4, 1fr); margin-bottom: 14px; }
   .tile .name { font-weight: 600; font-size: .85rem; line-height: 1.25; min-height: 2.5em;
                 display: flex; align-items: center; justify-content: center; }
   .tile .val { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
@@ -153,6 +154,16 @@
   .tip div { display: flex; align-items: center; gap: 6px; }
   .tip i { width: 12px; height: 0; border-top: 2px solid; display: inline-block; }
   .tip b { margin-left: auto; padding-left: 14px; }
+  /* buttons that set how many days the dot graph shows */
+  .ranges { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 8px; font-size: .85rem; color: var(--ink-2); }
+  .ranges button {
+    font: inherit; color: var(--ink); background: var(--tile); cursor: pointer;
+    border: 1px solid var(--edge); border-radius: 14px; padding: 3px 12px;
+  }
+  .ranges button:hover { border-color: var(--ink-3); }
+  .ranges button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .tip i.dot-key { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--ink); }
+  .tip .lvl { color: var(--ink-2); }
   .scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: .875rem; }
   th, td { padding: 6px 7px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
@@ -171,7 +182,7 @@
   footer { margin-top: 18px; padding: 0 4px; }
   @media (max-width: 520px) {
     .boxes { grid-template-columns: 1fr; }
-    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tiles, .tiles.four { grid-template-columns: repeat(2, 1fr); }
     .tile.mean { grid-column: 1 / -1; }
     .tile.mean .name { min-height: 0; }
     main { padding: 20px 10px 40px; }
@@ -204,6 +215,10 @@
     <h3 id="levelsTitle">What the 2:00 pm average means</h3>
     <p class="small" id="levelsSub"></p>
     <div class="levels" id="levels"></div>
+    <h3 id="dotsTitle">2:00 pm average, day by day</h3>
+    <p class="small" id="dotsSub"></p>
+    <div class="ranges" id="ranges" hidden></div>
+    <div class="chart" id="dots"></div>
   </section>
 
   <section>
@@ -213,11 +228,12 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Hourly API, last 4 days (for reference only)</h2>
+    <h2><span class="n">4</span>Hourly API and Trend</h2>
+    <p class="small" id="latest"></p>
+    <div class="tiles four" id="nowTiles"></div>
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
-    <p class="small">The black dots are the 2:00 pm averages. Only these are used for the decision.</p>
-    <p class="small" id="latest"></p>
+    <p class="small">The chart shows the last 4 days.</p>
   </section>
 
   <section>
@@ -291,12 +307,18 @@
     $("updated").textContent = newest
       ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
       : "No DOE reading yet.";
-    // The numbers of that reading, at the bottom of section 4.
+    // The numbers of that reading, in four boxes at the top of section 4. No average here.
     $("latest").textContent = newest
-      ? "Latest reading, " + clock(newest) + ": " + st.map(function (x) {
-          return x.short + " " + num(s.latest.values[x.id]);
-        }).join(" · ") + " · average " + num(s.latest.average) + ". For information only."
+      ? "Newest reading: " + dayLabel(newest) + ", " + clock(newest) + ". For information only."
       : "";
+    var nowTiles = $("nowTiles"); nowTiles.textContent = "";
+    st.forEach(function (x) {
+      var d = el("div", { "class": "tile" });
+      d.appendChild(el("div", { "class": "name" }, x.short));
+      d.appendChild(el("div", { "class": "val" }, newest ? num(s.latest.values[x.id]) : "–"));
+      d.appendChild(el("div", { "class": "km" }, x.distance_km + " km from school"));
+      nowTiles.appendChild(d);
+    });
     var ageH = newest ? (nowMY() - newest) / 3600e3 : Infinity;
     var warn = $("warn");
     if (ageH > s.stale_after_hours) {
@@ -468,6 +490,7 @@
           : "Today's " + readClock + " reading is not in yet. The numbers above are from the day before."));
     }
 
+    drawDots(s);
     drawChart(s);
     drawTable(s);
 
@@ -517,6 +540,169 @@
     });
   }
 
+  // ------------------------------------------------------------ dot graph (section 2)
+  // One dot per day: the 2 pm average. No line. The graph is made to grow:
+  //  - it takes every day on record (status.averages), not only the newest days;
+  //  - buttons set how many days are shown: 14, 30, 90 or all;
+  //  - dot size, value labels and date labels thin out by themselves when the days get close.
+  var RANGES = [14, 30, 90];
+  var dotRange = 14;                       // 0 means all days
+  try { var kept = localStorage.getItem("dotRange"); if (kept !== null && !isNaN(+kept)) dotRange = +kept; } catch (e) {}
+
+  function drawDots(s) {
+    var host = $("dots"); host.textContent = "";
+    var bar = $("ranges"); bar.textContent = "";
+    var rule = s.rule, DAY = 24 * 3600e3;
+    var readClock = clock(Date.UTC(2000, 0, 1, s.reading_hour));
+    var lowT = rule.close_from_streak, hiT = rule.close_from_single_day;
+    $("dotsTitle").textContent = readClock + " average, day by day";
+    $("dotsSub").textContent = "One dot is one day. The dashed lines are the limits " + lowT + " and " + hiT + ".";
+
+    var src = s.averages || s.daily.map(function (d) { return [d.date, d.average]; });
+    var all = src.filter(function (a) { return a[1] !== null && a[1] !== undefined; })
+                 .map(function (a) { return { t: parse(a[0]), v: a[1] }; });
+    if (!all.length) { bar.hidden = true; host.textContent = "No " + readClock + " average yet."; return; }
+
+    var end = all[all.length - 1].t;
+    var have = Math.round((end - all[0].t) / DAY) + 1;        // days on record
+    var shownDays = dotRange && dotRange < have ? dotRange : have;
+
+    // The buttons appear when there are more days on record than the smallest view.
+    bar.hidden = have <= RANGES[0];
+    if (!bar.hidden) {
+      bar.appendChild(el("span", {}, "Show:"));
+      RANGES.filter(function (n) { return n < have; }).concat([0]).forEach(function (n) {
+        var on = n ? shownDays === n : shownDays === have;
+        var b = el("button", { type: "button", "aria-pressed": on ? "true" : "false" },
+          n ? "Last " + n + " days" : "All " + have + " days");
+        b.addEventListener("click", function () {
+          dotRange = n;
+          try { localStorage.setItem("dotRange", String(n)); } catch (e) {}
+          drawDots(s);
+        });
+        bar.appendChild(b);
+      });
+    }
+
+    var span = Math.max(7, shownDays);                         // day slots on the x-axis
+    var start = end - (span - 1) * DAY;
+    var pts = all.filter(function (p) { return p.t >= start; });
+
+    var W = Math.max(300, Math.round(host.clientWidth || 720));
+    var H = W < 520 ? 210 : 230, L = 34, R = 34, T = 20, B = 32;
+    var step = (W - L - R) / span;                             // width of one day
+    function X(t) { return L + (Math.round((t - start) / DAY) + 0.5) * step; }
+    var vals = pts.map(function (p) { return p.v; });
+    var ymax = Math.ceil(Math.max(hiT + 20, Math.max.apply(null, vals)) / 50) * 50;
+    // Both limits are always inside the picture, also when every day is far above or below them.
+    var ymin = Math.max(0, Math.floor((Math.min(lowT, Math.min.apply(null, vals)) - 10) / 50) * 50);
+    function Y(v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (H - T - B); }
+
+    var g = svg("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img",
+      "aria-label": readClock + " average API of the four stations, one dot per day, " +
+        dayLabel(pts[0].t) + " to " + dayLabel(end) + ". The download daily.csv gives the numbers." });
+
+    for (var v = ymin; v <= ymax; v += 50) {
+      g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#e6e6e2", "stroke-width": 1 }));
+      g.appendChild(svg("text", { x: L - 6, y: Y(v) + 4, "text-anchor": "end" }, String(v)));
+    }
+    g.appendChild(svg("line", { x1: L, x2: W - R, y1: H - B, y2: H - B, stroke: "var(--rule)", "stroke-width": 1 }));
+
+    // ---- date labels: every day when there is room, then every 2, 3, 4 days,
+    //      then Mondays, then the first day of a month, of a quarter, of a year.
+    function shortDay(ms) { var d = new Date(ms); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]; }
+    function tick(ms, label) {
+      var x = X(ms);
+      g.appendChild(svg("line", { x1: x, x2: x, y1: H - B, y2: H - B + 4, stroke: "var(--ink-3)", "stroke-width": 1 }));
+      g.appendChild(svg("text", { x: x, y: H - 12, "text-anchor": "middle" }, label));
+    }
+    var d, k;
+    if (step >= 64) {
+      for (d = start; d <= end; d += DAY) tick(d, dayLabel(d));
+    } else {
+      k = [1, 2, 3, 4, 7, 14].filter(function (n) { return n * step >= 42; })[0];
+      if (k && k < 7) {
+        for (d = end; d >= start; d -= k * DAY) tick(d, shortDay(d));       // the newest day always has a label
+      } else if (k) {
+        var n = 0;
+        for (d = start; d <= end; d += DAY) {
+          if (new Date(d).getUTCDay() !== 1) continue;                      // Mondays
+          if (n++ % (k / 7) === 0) tick(d, shortDay(d));
+        }
+      } else {
+        var every = 30 * step >= 44 ? 1 : 91 * step >= 44 ? 3 : 12, first = true;   // months per label
+        for (d = start; d <= end; d += DAY) {
+          var dd = new Date(d);
+          if (dd.getUTCDate() !== 1 || dd.getUTCMonth() % every) continue;
+          tick(d, MONTHS[dd.getUTCMonth()] + (first || dd.getUTCMonth() === 0 ? " " + dd.getUTCFullYear() : ""));
+          first = false;
+        }
+      }
+    }
+
+    // ---- limits
+    var limits = [lowT, hiT];
+    limits.forEach(function (lim) {
+      g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(lim), y2: Y(lim),
+        stroke: "var(--limit)", "stroke-width": 1.25, "stroke-dasharray": "5 4" }));
+      g.appendChild(svg("text", { x: W - R + 5, y: Y(lim) + 4, style: "fill:var(--ink);font-weight:600" }, String(lim)));
+    });
+
+    // ---- dots. They get smaller when the days get close.
+    var r = step >= 24 ? 5 : step >= 10 ? 4 : step >= 5 ? 3 : 2.5;
+    pts.forEach(function (p) {
+      g.appendChild(svg("circle", { cx: X(p.t), cy: Y(p.v), r: r, fill: "var(--ink)",
+        stroke: "var(--surface)", "stroke-width": r >= 4 ? 2 : 1 }));
+    });
+    // ---- numbers: on every dot when there is room. Otherwise only on the newest day.
+    //      The other numbers show when the pointer is on a dot.
+    (step >= 30 ? pts : [pts[pts.length - 1]]).forEach(function (p) {
+      var x = X(p.t), y = Y(p.v);
+      var blocked = y - 26 < T || limits.some(function (lim) { return Y(lim) > y - 27 && Y(lim) < y - 1; });
+      var edge = x > W - R - 14;
+      g.appendChild(svg("text", { x: edge ? x + r : x, y: blocked ? y + r + 16 : y - r - 6,
+        "text-anchor": edge ? "end" : "middle",
+        style: "fill:var(--ink);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:3px" },
+        num(p.v)));
+    });
+
+    // ---- hover layer: the nearest day
+    var cross = svg("line", { y1: T, y2: H - B, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" });
+    g.insertBefore(cross, g.querySelector("circle"));
+    var ring = svg("circle", { r: r + 3, fill: "none", stroke: "var(--ink)", "stroke-width": 1.5, visibility: "hidden" });
+    g.appendChild(ring);
+    var hit = svg("rect", { x: L, y: T, width: W - L - R, height: H - T - B, fill: "transparent" });
+    g.appendChild(hit);
+    host.appendChild(g);
+    var tip = el("div", { "class": "tip" }); tip.hidden = true; host.appendChild(tip);
+
+    function move(ev) {
+      var box = g.getBoundingClientRect();
+      var x = (ev.clientX - box.left) / box.width * W, best = pts[0];
+      pts.forEach(function (p) { if (Math.abs(X(p.t) - x) < Math.abs(X(best.t) - x)) best = p; });
+      var bx = X(best.t);
+      cross.setAttribute("x1", bx); cross.setAttribute("x2", bx); cross.setAttribute("visibility", "visible");
+      ring.setAttribute("cx", bx); ring.setAttribute("cy", Y(best.v)); ring.setAttribute("visibility", "visible");
+      tip.textContent = "";
+      var year = new Date(best.t).getUTCFullYear();
+      tip.appendChild(el("div", { "class": "t" },
+        dayLabel(best.t) + (year !== new Date(end).getUTCFullYear() ? " " + year : "")));
+      var row = el("div"); row.appendChild(el("i", { "class": "dot-key" }));
+      row.appendChild(document.createTextNode(readClock + " average"));
+      row.appendChild(el("b", {}, num(best.v))); tip.appendChild(row);
+      tip.appendChild(el("div", { "class": "lvl" }, best.v >= hiT ? hiT + " or above: very high"
+        : best.v >= lowT ? lowT + " to " + (hiT - 1) + ": high" : "Below " + lowT + ": normal"));
+      tip.hidden = false;
+      var px = bx / W * box.width, tw = tip.offsetWidth;
+      var left = px + 12 + tw > box.width ? px - 12 - tw : px + 12;
+      tip.style.transform = "translate(" + Math.max(0, left) + "px, 8px)";
+    }
+    function leave() { cross.setAttribute("visibility", "hidden"); ring.setAttribute("visibility", "hidden"); tip.hidden = true; }
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", leave);
+  }
+
   // ------------------------------------------------------------ chart
   function drawChart(s) {
     var host = $("chart"); host.textContent = "";
@@ -552,7 +738,7 @@
     function Y(v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (H - T - B); }
 
     var g = svg("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img",
-      "aria-label": "Hourly API of the four stations and their average, last 4 days. The daily API records table below gives the numbers." });
+      "aria-label": "Hourly API of the four stations and their average, last 4 days. The download hourly.csv gives the numbers." });
 
     for (var v = ymin; v <= ymax; v += 50) {
       g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#e6e6e2", "stroke-width": 1 }));
@@ -575,7 +761,8 @@
     });
 
     // one line per series; a gap in the data breaks the line; a lone point is a dot
-    function series(get, color, width) {
+    // "dots" = false: a lone point is not drawn (used for the average: it has no dots).
+    function series(get, color, width, dots) {
       var dpath = "", prev = null, run = 0, lone = [];
       pts.forEach(function (p) {
         var val = get(p);
@@ -589,30 +776,12 @@
       if (prev && run === 1) lone.push(prev);
       g.appendChild(svg("path", { d: dpath, fill: "none", stroke: color, "stroke-width": width,
         "stroke-linejoin": "round", "stroke-linecap": "round" }));
-      lone.forEach(function (q) {
+      if (dots !== false) lone.forEach(function (q) {
         g.appendChild(svg("circle", { cx: X(q.t), cy: Y(q.val), r: width, fill: color }));
       });
     }
     st.forEach(function (x, i) { series(function (p) { return p.v[i]; }, COLORS[i], 1.75); });
-    series(function (p) { return p.avg; }, "var(--ink)", 2.75);
-
-    // 2 pm averages: the decision points
-    s.daily.forEach(function (day) {
-      var t = parse(day.date) + s.reading_hour * H1;
-      if (day.average === null || t < t0 || t > t1) return;
-      g.appendChild(svg("circle", { cx: X(t), cy: Y(day.average), r: 5, fill: "var(--ink)",
-        stroke: "var(--surface)", "stroke-width": 2 }));
-      // Label above the dot. Go below when a limit line or the top edge is in the way.
-      var y = Y(day.average), x = X(t);
-      var blocked = y - 26 < T || limits.some(function (lim) {
-        return Y(lim) > y - 27 && Y(lim) < y - 1;
-      });
-      var edge = x > W - R - 26;
-      g.appendChild(svg("text", { x: edge ? x + 4 : x, y: blocked ? y + 21 : y - 11,
-        "text-anchor": edge ? "end" : "middle",
-        style: "fill:var(--ink);font-weight:700;paint-order:stroke;stroke:var(--surface);stroke-width:3px" },
-        num(day.average)));
-    });
+    series(function (p) { return p.avg; }, "var(--ink)", 2.75, false);
 
     // hover layer
     var cross = svg("line", { y1: T, y2: H - B, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" });
@@ -665,7 +834,7 @@
   var lastStatus = null, timer = null;
   window.addEventListener("resize", function () {
     clearTimeout(timer);
-    timer = setTimeout(function () { if (lastStatus) drawChart(lastStatus); }, 150);
+    timer = setTimeout(function () { if (lastStatus) { drawDots(lastStatus); drawChart(lastStatus); } }, 150);
   });
   load();
   setInterval(load, 5 * 60 * 1000);

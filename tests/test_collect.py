@@ -60,6 +60,9 @@ class Collector(unittest.TestCase):
                          [f"2026-10-{n:02d}" for n in range(3, 11)])
         self.assertEqual([d["average"] for d in st["daily"]],
                          [72, 86, 85, 132, 172, 161, 168, 147])
+        # The dot graph gets every day on record in a short form.
+        self.assertEqual(st["averages"],
+                         [[d["date"], d["average"]] for d in st["daily"]])
         t = st["today"]
         self.assertEqual((t["reading_state"], t["average"], t["stations_used"]),
                          ("done", 147, 4))
