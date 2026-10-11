@@ -94,6 +94,7 @@
   .box.closed .ico { background: var(--closed); }
   .box.wait { border-style: dashed; border-color: var(--ink-3); }
   .reason { margin: 14px 0 0; font-weight: 600; }
+  .between { margin: 12px 0 0; font-size: .95rem; }
   h3 { font-size: 1rem; margin: 20px 0 2px; }
   h3 + .small { margin-bottom: 10px; }
   h3 + ul { margin-top: 6px; }
@@ -219,6 +220,7 @@
     <h2><span class="n">1</span>Is school open?</h2>
     <div class="boxes" id="boxes"></div>
     <p class="reason" id="reason"></p>
+    <p class="between" id="between" hidden></p>
     <p class="official"><b>Official announcement:</b> the school's email and class WhatsApp message.
       This page calculates automatically from DOE data.</p>
   </section>
@@ -414,11 +416,19 @@
       box(isToday ? "Today" : "", todayMs, t.school_status, "School " + word(t.school_status), "");
     }
 
-    // Box 2: the next school day.
+    // Box 2: tomorrow, or the next school day.
     var nextSchool = t.next_school_date || t.next_date;
     var nsMs = parse(nextSchool), isTomorrow = nextSchool === t.next_date;
     var label2 = !isToday ? "" : isTomorrow ? "Tomorrow" : "Next school day";
-    if (isTomorrow && t.decision_next_day) {
+    // Names of the days without school that are still to come (from config.json).
+    var holidayName = {};
+    (s.holidays || []).forEach(function (h) { holidayName[h.date] = h.name || ""; });
+    function holidayNote(date) { return holidayName[date] ? holidayName[date] + "." : "School holiday."; }
+    var between = "";      // a holiday that lies before the next school day and is not in a box
+    if (t.next_no_school_reason === "holiday") {
+      // Tomorrow is a holiday. Show tomorrow itself. Do not jump to the next school day.
+      box(isToday ? "Tomorrow" : "", nextMs, "none", "No school", holidayNote(t.next_date));
+    } else if (isTomorrow && t.decision_next_day) {
       box(label2, nsMs, t.decision_next_day, "School " + word(t.decision_next_day),
           "From the " + readClock + " reading of " + dayLabel(todayMs) + ".");
     } else if (isTomorrow) {
@@ -436,7 +446,15 @@
         note3 = "School will be closed, unless that average is below " + rule.reopen_below + ".";
       }
       box(label2, nsMs, "wait", "Not decided yet", note2, note3);
+      // Tomorrow is a weekend day. Name each holiday between now and the next school day,
+      // so that nobody asks why that day is left out.
+      (s.holidays || []).forEach(function (h) {
+        if (h.date > t.date && h.date < nextSchool)
+          between += (between ? " " : "") + "No school on " + dayLabel(parse(h.date)) + ": " + holidayNote(h.date);
+      });
     }
+    $("between").textContent = between;
+    $("between").hidden = !between;
 
     var reason = "";
     if (t.decision_next_day && isTomorrow) {
