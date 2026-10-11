@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-11T21:16+08:00",
+ "generated_at": "2026-10-11T21:52+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -63,6 +63,7 @@
   "weekday": "Sun",
   "school_day": false,
   "no_school_reason": "weekend",
+  "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
@@ -83,12 +84,20 @@
   "next_weekday": "Mon",
   "next_school_date": "2026-10-12"
  },
+ "holidays": [
+  {
+   "date": "2026-10-26",
+   "weekday": "Mon",
+   "name": "Replacement public holiday in Selangor (Sultan's Silver Jubilee)"
+  }
+ ],
  "daily": [
   {
    "date": "2026-10-03",
    "weekday": "Sat",
    "school_day": false,
    "no_school_reason": "weekend",
+   "no_school_name": null,
    "next_school_day": false,
    "next_no_school_reason": "weekend",
    "values": {
@@ -110,6 +119,7 @@
    "weekday": "Sun",
    "school_day": false,
    "no_school_reason": "weekend",
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
@@ -131,6 +141,7 @@
    "weekday": "Mon",
    "school_day": true,
    "no_school_reason": null,
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
@@ -152,6 +163,7 @@
    "weekday": "Tue",
    "school_day": true,
    "no_school_reason": null,
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
@@ -173,6 +185,7 @@
    "weekday": "Wed",
    "school_day": true,
    "no_school_reason": null,
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
@@ -194,6 +207,7 @@
    "weekday": "Thu",
    "school_day": true,
    "no_school_reason": null,
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
@@ -215,6 +229,7 @@
    "weekday": "Fri",
    "school_day": true,
    "no_school_reason": null,
+   "no_school_name": null,
    "next_school_day": false,
    "next_no_school_reason": "weekend",
    "values": {
@@ -236,6 +251,7 @@
    "weekday": "Sat",
    "school_day": false,
    "no_school_reason": "weekend",
+   "no_school_name": null,
    "next_school_day": false,
    "next_no_school_reason": "weekend",
    "values": {
@@ -257,6 +273,7 @@
    "weekday": "Sun",
    "school_day": false,
    "no_school_reason": "weekend",
+   "no_school_name": null,
    "next_school_day": true,
    "next_no_school_reason": null,
    "values": {
