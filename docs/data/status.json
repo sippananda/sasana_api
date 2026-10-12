@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-12T23:16+08:00",
+ "generated_at": "2026-10-13T00:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -48,41 +48,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-12T23:00",
+  "datetime": "2026-10-13T00:00",
   "values": {
-   "CA15W": 81,
-   "CA19B": 69,
-   "CA20B": 80,
-   "CA18B": 64
+   "CA15W": 82,
+   "CA19B": 70,
+   "CA20B": 82,
+   "CA18B": 65
   },
   "stations_used": 4,
-  "average": 74
+  "average": 75
  },
  "today": {
-  "date": "2026-10-12",
-  "weekday": "Mon",
+  "date": "2026-10-13",
+  "weekday": "Tue",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 76,
-   "CA19B": 66,
-   "CA20B": 75,
-   "CA18B": 61
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 70,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-13",
-  "next_weekday": "Tue",
-  "next_school_date": "2026-10-13"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-14",
+  "next_weekday": "Wed",
+  "next_school_date": "2026-10-14"
  },
  "holidays": [
   {
@@ -306,7 +306,6 @@
    },
    "stations_used": 4,
    "average": 70,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -357,16 +356,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-08T23:00",
-   "v": [
-    173,
-    null,
-    null,
-    94
-   ],
-   "avg": null
-  },
   {
    "t": "2026-10-09T00:00",
    "v": [
@@ -1326,6 +1315,16 @@
     64
    ],
    "avg": 74
+  },
+  {
+   "t": "2026-10-13T00:00",
+   "v": [
+    82,
+    70,
+    82,
+    65
+   ],
+   "avg": 75
   }
  ]
 }
