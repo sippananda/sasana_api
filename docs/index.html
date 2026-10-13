@@ -137,7 +137,7 @@
   .tile:nth-child(2)::before { background: var(--s2); }
   .tile:nth-child(3)::before { background: var(--s3); }
   .tile:nth-child(4)::before { background: var(--s4); }
-  .tiles.four { grid-template-columns: repeat(4, 1fr); margin-bottom: 14px; }
+  .tiles.now { margin-bottom: 14px; }
   .tile .name { font-weight: 600; font-size: .85rem; line-height: 1.25; min-height: 2.5em;
                 display: flex; align-items: center; justify-content: center; }
   .tile .val { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
@@ -198,7 +198,7 @@
   footer li { margin-bottom: 2px; }
   @media (max-width: 520px) {
     .boxes { grid-template-columns: 1fr; }
-    .tiles, .tiles.four { grid-template-columns: repeat(2, 1fr); }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
     .tile.mean { grid-column: 1 / -1; }
     .tile.mean .name { min-height: 0; }
     main { padding: 20px 10px 40px; }
@@ -254,7 +254,7 @@
   <section class="info">
     <h2><span class="n">4</span>Hourly API and Trend</h2>
     <p class="small" id="latest"></p>
-    <div class="tiles four" id="nowTiles"></div>
+    <div class="tiles now" id="nowTiles"></div>
     <div class="legend" id="legend"></div>
     <div class="chart" id="chart"></div>
     <p class="small">The chart shows the last 4 days.</p>
@@ -345,7 +345,7 @@
     $("updated").textContent = newest
       ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
       : "No DOE reading yet.";
-    // Four boxes at the top of section 4: the newest hour that has all four stations.
+    // Five boxes at the top of section 4: the newest hour that has all four stations, and its average.
     // DOE sometimes publishes the stations of one hour at different minutes. A box with
     // no number would then look like a fault. No average here.
     var full = null;
@@ -365,6 +365,14 @@
       d.appendChild(el("div", { "class": "km" }, x.distance_km + " km from school"));
       nowTiles.appendChild(d);
     });
+    // Fifth box: the average of that hour (owner's request, 13 Oct). For information only.
+    var nowAvg = full ? full.avg : (s.latest ? s.latest.average : null);
+    var nowUsed = full ? st.length : (s.latest ? s.latest.stations_used : 0);
+    var mt = el("div", { "class": "tile mean" });
+    mt.appendChild(el("div", { "class": "name" }, "Average"));
+    mt.appendChild(el("div", { "class": "val" }, num(nowAvg)));
+    mt.appendChild(el("div", { "class": "km" }, "of " + nowUsed + " stations"));
+    nowTiles.appendChild(mt);
     var ageH = newest ? (nowMY() - newest) / 3600e3 : Infinity;
     var warn = $("warn");
     if (ageH > s.stale_after_hours) {
