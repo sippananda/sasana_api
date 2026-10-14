@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-14T23:16+08:00",
+ "generated_at": "2026-10-15T00:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -48,41 +48,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-14T23:00",
+  "datetime": "2026-10-15T00:00",
   "values": {
-   "CA15W": 168,
-   "CA19B": 172,
-   "CA20B": 180,
-   "CA18B": 155
+   "CA15W": 169,
+   "CA19B": 173,
+   "CA20B": 182,
+   "CA18B": 156
   },
   "stations_used": 4,
-  "average": 169
+  "average": 170
  },
  "today": {
-  "date": "2026-10-14",
-  "weekday": "Wed",
+  "date": "2026-10-15",
+  "weekday": "Thu",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 164,
-   "CA19B": 156,
-   "CA20B": 163,
-   "CA18B": 92
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 144,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-15",
-  "next_weekday": "Thu",
-  "next_school_date": "2026-10-15"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-16",
+  "next_weekday": "Fri",
+  "next_school_date": "2026-10-16"
  },
  "holidays": [
   {
@@ -350,7 +350,6 @@
    },
    "stations_used": 4,
    "average": 144,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -409,16 +408,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-10T23:00",
-   "v": [
-    155,
-    141,
-    153,
-    83
-   ],
-   "avg": 133
-  },
   {
    "t": "2026-10-11T00:00",
    "v": [
@@ -1378,6 +1367,16 @@
     155
    ],
    "avg": 169
+  },
+  {
+   "t": "2026-10-15T00:00",
+   "v": [
+    169,
+    173,
+    182,
+    156
+   ],
+   "avg": 170
   }
  ]
 }
