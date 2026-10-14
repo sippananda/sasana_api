@@ -18,6 +18,11 @@
     {"id": "CA20B", "name": "Shah Alam", "short": "Shah Alam", "state_id": 10, "distance_km": 24},
     {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33}
   ],
+  "sensor": {
+    "id": "A2871205",
+    "name": "Jalan Anggun 3P, Selayang (GAIA low-cost sensor, aqicn.org)",
+    "note": "For information only. Index values are on a US EPA style scale, not the DOE API."
+  },
   "rule": {
     "close_from_single_day": 180,
     "close_from_streak": 150,
