@@ -49,6 +49,12 @@ jobs:
         continue-on-error: true
         run: python3 scripts/collect.py
 
+      - name: Collect the nearby sensor from aqicn (information only)
+        continue-on-error: true
+        env:
+          WAQI_TOKEN: ${{ secrets.WAQI_TOKEN }}
+        run: python3 scripts/collect_sensor.py
+
       - name: Save new data in the repository
         id: save
         run: |
