@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-15T23:16+08:00",
+ "generated_at": "2026-10-16T00:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -48,41 +48,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-15T23:00",
+  "datetime": "2026-10-16T00:00",
   "values": {
-   "CA15W": 165,
-   "CA19B": 163,
-   "CA20B": 169,
-   "CA18B": 159
+   "CA15W": 164,
+   "CA19B": 162,
+   "CA20B": 167,
+   "CA18B": 158
   },
   "stations_used": 4,
-  "average": 164
+  "average": 163
  },
  "today": {
-  "date": "2026-10-15",
-  "weekday": "Thu",
+  "date": "2026-10-16",
+  "weekday": "Fri",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
-  "next_school_day": true,
-  "next_no_school_reason": null,
+  "next_school_day": false,
+  "next_no_school_reason": "weekend",
   "values": {
-   "CA15W": 163,
-   "CA19B": 169,
-   "CA20B": 181,
-   "CA18B": 160
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 168,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 1,
-  "reason": "counting",
-  "reason_text": "Average is 150 or above. Day 1 of 3. School stays open.",
-  "next_date": "2026-10-16",
-  "next_weekday": "Fri",
-  "next_school_date": "2026-10-16"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-17",
+  "next_weekday": "Sat",
+  "next_school_date": "2026-10-19"
  },
  "holidays": [
   {
@@ -372,7 +372,6 @@
    },
    "stations_used": 4,
    "average": 168,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 1,
@@ -435,16 +434,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-11T23:00",
-   "v": [
-    77,
-    68,
-    72,
-    69
-   ],
-   "avg": 72
-  },
   {
    "t": "2026-10-12T00:00",
    "v": [
@@ -1404,6 +1393,16 @@
     159
    ],
    "avg": 164
+  },
+  {
+   "t": "2026-10-16T00:00",
+   "v": [
+    164,
+    162,
+    167,
+    158
+   ],
+   "avg": 163
   }
  ]
 }
