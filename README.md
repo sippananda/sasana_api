@@ -32,7 +32,8 @@ A reading that is still missing after that is collected by the run of the next h
   the median of the newest 10 haze days (API 100 or above), looking back up to 60 days.
   Older haze days are kept, so the factor is still right when haze comes back after a clean spell.
 - It converts PM2.5 to API with the DOE formula and averages the four stations.
-- It writes `docs/data/forecast.json`. The page shows the chart, a table, wind and rain.
+- It writes `docs/data/forecast.json`. Section 6 of the page shows the chart, wind and rain, and a table.
+  The page `forecast.html` explains the method, with the current correction factors.
 - Every run is also added to `docs/data/forecast_history.jsonl`, to check the forecast later.
 - The forecast never feeds the rule. A failure of the forecast run never stops the hourly collection.
 
@@ -120,6 +121,7 @@ The notice does not say what to do in these cases. The code makes a choice. Each
 | `scripts/collect.py` | Reads DOE, saves data, builds the status |
 | `scripts/forecast.py` | Reads CAMS through Open-Meteo, writes the forecast |
 | `docs/index.html` | The web page |
+| `docs/forecast.html` | How the forecast is made (linked from section 6). It reads `forecast.json` for the current correction factors. |
 | `docs/data/` | The data: `hourly.csv`, `daily.csv`, `status.json`, `forecast.json`, `forecast_history.jsonl` |
 | `.github/workflows/collect.yml` | The hourly collection |
 | `.github/workflows/forecast.yml` | The forecast, twice a day |

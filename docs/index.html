@@ -185,6 +185,7 @@
   .legend i.fc-key { border-top-style: dashed; border-top-width: 2px; }
   .legend i.band-key { width: 18px; height: 10px; border: 0; background: #d5d5cf; }
   td.conf { color: var(--ink-2); text-transform: capitalize; }
+  .method { margin: 12px 0 0; font-size: .9rem; }
   table.factors { min-width: 560px; }
   table.factors td, table.factors th { text-align: left; white-space: normal; vertical-align: top; }
   table.factors td:first-child { font-weight: 600; white-space: nowrap; }
@@ -306,73 +307,8 @@
     <div class="chart" id="fcChart"></div>
     <p class="small">Weather under the forecast days: ECMWF forecast for the school. The arrow points where the wind blows to. The letters say where it comes from (W = from the west).</p>
     <div class="scroll"><table id="fcTable"></table></div>
-    <h3>How the forecast is made</h3>
-    <ul class="small" id="fcNotes"></ul>
-    <h3>What the CAMS model takes into account</h3>
-    <p class="small">CAMS starts a new run twice a day. Each run uses the items below.</p>
-    <div class="scroll"><table class="factors">
-      <tr><th>Factor</th><th>What CAMS uses</th><th>Note for our area</th></tr>
-      <tr><td>Fire hotspots</td><td>Satellites measure the heat of each fire. CAMS turns the heat into an amount of smoke (GFAS fire data).</td>
-        <td>Peat fires burn slowly with little heat, and cloud often hides them. So CAMS sees too little smoke. The same fire level is used for all 5 days.</td></tr>
-      <tr><td>Smoke height</td><td>How high the smoke rises above each fire.</td>
-        <td>Smoke high up travels far but does not reach the ground at once.</td></tr>
-      <tr><td>Haze seen from space</td><td>Satellites measure how hazy the air is. Each run corrects its starting point with this.</td>
-        <td>Cloud blocks this measurement too. On cloudy days the correction is weak.</td></tr>
-      <tr><td>Wind</td><td>The ECMWF weather forecast. Wind moves the smoke from cell to cell, every hour.</td>
-        <td>A south-west wind brings smoke from Sumatra. A wind from the east or north usually brings cleaner air.</td></tr>
-      <tr><td>Rain</td><td>Rain washes particles out of the air.</td>
-        <td>Rain forecasts for single storms are uncertain. A missed storm gives a forecast that is too high.</td></tr>
-      <tr><td>Mixing height</td><td>How deep the layer of air is that mixes the smoke. A deep layer dilutes it.</td>
-        <td>The layer is shallow at night and in the early morning, and deep in the afternoon.</td></tr>
-      <tr><td>Fixed sources</td><td>Tables of emissions from traffic, industry and power plants, as monthly averages.</td>
-        <td>Daily changes, such as rush hour or a holiday, are not in the tables.</td></tr>
-      <tr><td>Dust and sea salt</td><td>Worked out from the wind.</td>
-        <td>Sea salt matters more at Kuala Selangor, near the coast.</td></tr>
-      <tr><td>Chemistry</td><td>Some gases turn into fine particles in the air.</td>
-        <td>A small part of PM2.5 in haze.</td></tr>
-    </table></div>
-    <p class="small" style="margin-top:8px"><b>Not in the model:</b> fires that start after the run;
-      small local burning that satellites do not see; anything smaller than one 44 km cell, such as hills, towns or a single road.</p>
-    <h3>The CAMS grid over our stations</h3>
-    <p class="small">Drawn to scale. CAMS gives one value for each square of about 44 km × 44 km.</p>
-    <div class="chart grid-map">
-      <svg viewBox="0 0 560 325" role="img" aria-label="Map of the two CAMS grid cells. Kuala Selangor lies in the KS cell. Batu Muda, Petaling Jaya, Shah Alam and the school lie in the KL cell.">
-        <!-- 1 degree = 600 px. x = 20 + (lon - 101.0) * 600. y = 30 + (3.4 - lat) * 600. -->
-        <rect x="20" y="30" width="240" height="240" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
-        <rect x="260" y="30" width="240" height="240" fill="var(--tile)" stroke="var(--ink-2)" stroke-width="2"/>
-        <text x="140" y="258" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink)">KS cell</text>
-        <text x="380" y="258" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink)">KL cell</text>
-        <!-- model grid points, where Open-Meteo takes the value -->
-        <path d="M133 150h14M140 143v14" stroke="var(--ink-3)" stroke-width="2"/>
-        <path d="M373 150h14M380 143v14" stroke="var(--ink-3)" stroke-width="2"/>
-        <!-- stations -->
-        <circle cx="173.7" cy="77.2" r="6" fill="var(--ink)"/>
-        <text x="164" y="73" text-anchor="end" style="font-size:13px;fill:var(--ink)">Kuala Selangor</text>
-        <circle cx="429.3" cy="142.6" r="6" fill="var(--ink)"/>
-        <text x="438" y="138" style="font-size:13px;fill:var(--ink)">Batu Muda</text>
-        <circle cx="385.2" cy="191.5" r="6" fill="var(--ink)"/>
-        <text x="394" y="188" style="font-size:13px;fill:var(--ink)">Petaling Jaya</text>
-        <circle cx="353.7" cy="207.1" r="6" fill="var(--ink)"/>
-        <text x="344" y="226" text-anchor="end" style="font-size:13px;fill:var(--ink)">Shah Alam</text>
-        <!-- school -->
-        <rect x="343" y="71" width="14" height="14" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>
-        <text x="364" y="74" style="font-size:13px;fill:var(--ink)">School</text>
-        <!-- scale bar: 20 km = 0.18 degree = 108 px -->
-        <path d="M20 296h108M20 291v10M128 291v10" stroke="var(--ink)" stroke-width="1.5" fill="none"/>
-        <text x="74" y="318" text-anchor="middle" style="font-size:12px">20 km</text>
-      </svg>
-    </div>
-    <div class="legend map-key">
-      <span><b class="k-st"></b>DOE station</span>
-      <span><b class="k-sc"></b>School</span>
-      <span><b class="k-gp">+</b>Model grid point (the forecast value is taken here)</span>
-    </div>
-    <ul class="small">
-      <li>Batu Muda, Petaling Jaya and Shah Alam lie in the KL cell. So they get the same forecast number.</li>
-      <li>In the real readings, these three stations differ by about 5 to 18 API points on the same day. The forecast cannot show this.</li>
-      <li>The school lies in the KL cell too. No DOE station is at the school. The nearest one is 19 km away.</li>
-      <li>Kuala Selangor lies in the KS cell, near the sea.</li>
-    </ul>
+    <p class="method" id="fcMethod">CAMS haze model, corrected with our own station readings.
+      <a href="forecast.html">How the forecast is made →</a></p>
   </section>
 
   <footer class="small">
@@ -1014,7 +950,6 @@
     var host = $("fcChart"); host.textContent = "";
     var legend = $("fcLegend"); legend.textContent = "";
     var tb = $("fcTable"); tb.textContent = "";
-    var notes = $("fcNotes"); notes.textContent = "";
     var count = $("fcCount"); count.textContent = "";
     var rule = s.rule, DAY = 24 * 3600e3, st = s.stations;
     var readClock = clock(Date.UTC(2000, 0, 1, s.reading_hour));
@@ -1206,26 +1141,13 @@
       tb.appendChild(tr);
     });
 
-    // ---- notes
+    // ---- one short line. The full explanation is on forecast.html.
     var cells = Object.keys(f.cells || {});
-    var kText = cells.map(function (c) {
-      var k = cal[c] || {};
-      return c + " cell: ×" + num(k.k) + " (range ×" + num(k.min) + " to ×" + num(k.max) + ", " + (k.n || 0) + " " + (k.basis === "haze days" ? "haze days" : "days") +
-        (k.first ? ", " + dayLabel(parse(k.first)).replace(/^\w+ /, "") + " to " + dayLabel(parse(k.last)).replace(/^\w+ /, "") : "") + ")";
-    }).join("; ");
-    [
-      "CAMS is the European haze model (Copernicus Atmosphere Monitoring Service, run by ECMWF). It forecasts fine dust (PM2.5) five days ahead, in cells of about 40 km.",
-      "Batu Muda, Petaling Jaya and Shah Alam lie in one cell. Kuala Selangor lies in another. So three stations get the same forecast number.",
-      "For each day, the 24 hours of CAMS PM2.5 ending at " + readClock + " are averaged, like the DOE API. The result is converted to API with the DOE formula.",
-      "CAMS reads low in peat haze. The forecast is multiplied by a factor from the newest " + (cal.haze_days || 10) +
-        " haze days in the real readings (2:00 pm API " + (cal.haze_day_api || 100) + " or above), looking back up to " + (cal.lookback_days || 60) +
-        " days. So the factor stays ready after a clean spell. Now: " + kText + ".",
-      "On clean days CAMS often reads high. Clean-day factor of the last " + (cal.clean_days || 14) + " days: " + cells.map(function (c) {
-        var k = cal[c] || {}; return c + " ×" + (k.k_clean === null || k.k_clean === undefined ? "–" : num(k.k_clean)) + " (" + (k.n_clean || 0) + " days)";
-      }).join("; ") + ". This is for information. The forecast uses the haze factor, because school closure only happens in haze.",
-      "The grey range uses the smallest and largest factor of those days. The direction of change (clearing or building) is more reliable than the exact number.",
-      "CAMS assumes the fires stay as they are. It cannot predict new fires. Confidence: high for days 1 and 2 after 7 or more haze days; medium for days 3 and 4; low for day 5."
-    ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });
+    var m = $("fcMethod"); m.textContent = "";
+    m.appendChild(document.createTextNode("CAMS haze model, corrected with our own station readings. Correction now: " +
+      cells.map(function (c) { var k = cal[c] || {}; return c + " ×" + num(k.k); }).join(", ") +
+      " (from " + nHaze + " haze day" + (nHaze === 1 ? "" : "s") + "). "));
+    m.appendChild(el("a", { href: "forecast.html" }, "How the forecast is made →"));
   }
 
   function load() {
