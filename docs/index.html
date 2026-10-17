@@ -185,6 +185,14 @@
   .legend i.fc-key { border-top-style: dashed; border-top-width: 2px; }
   .legend i.band-key { width: 18px; height: 10px; border: 0; background: #d5d5cf; }
   td.conf { color: var(--ink-2); text-transform: capitalize; }
+  .grid-map svg { width: 100%; max-width: 560px; margin: 4px 0 8px; }
+  .grid-map text { font-size: 13px; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+  @media (max-width: 520px) { .grid-map svg text { font-size: 17px !important; } }
+  .map-key { margin-bottom: 10px; }
+  .map-key b { display: inline-block; flex: none; }
+  .map-key .k-st { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
+  .map-key .k-sc { width: 11px; height: 11px; border: 2px solid var(--ink); background: var(--surface); }
+  .map-key .k-gp { font-weight: 400; font-size: 1.1rem; line-height: 1; color: var(--ink-3); }
   .scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: .875rem; }
   th, td { padding: 6px 7px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
@@ -288,6 +296,46 @@
     <div class="scroll"><table id="fcTable"></table></div>
     <h3>How the forecast is made</h3>
     <ul class="small" id="fcNotes"></ul>
+    <h3>The CAMS grid over our stations</h3>
+    <p class="small">Drawn to scale. CAMS gives one value for each square of about 44 km × 44 km.</p>
+    <div class="chart grid-map">
+      <svg viewBox="0 0 560 325" role="img" aria-label="Map of the two CAMS grid cells. Kuala Selangor lies in the KS cell. Batu Muda, Petaling Jaya, Shah Alam and the school lie in the KL cell.">
+        <!-- 1 degree = 600 px. x = 20 + (lon - 101.0) * 600. y = 30 + (3.4 - lat) * 600. -->
+        <rect x="20" y="30" width="240" height="240" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
+        <rect x="260" y="30" width="240" height="240" fill="var(--tile)" stroke="var(--ink-2)" stroke-width="2"/>
+        <text x="140" y="258" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink)">KS cell</text>
+        <text x="380" y="258" text-anchor="middle" style="font-size:14px;font-weight:700;fill:var(--ink)">KL cell</text>
+        <!-- model grid points, where Open-Meteo takes the value -->
+        <path d="M133 150h14M140 143v14" stroke="var(--ink-3)" stroke-width="2"/>
+        <path d="M373 150h14M380 143v14" stroke="var(--ink-3)" stroke-width="2"/>
+        <!-- stations -->
+        <circle cx="173.7" cy="77.2" r="6" fill="var(--ink)"/>
+        <text x="164" y="73" text-anchor="end" style="font-size:13px;fill:var(--ink)">Kuala Selangor</text>
+        <circle cx="429.3" cy="142.6" r="6" fill="var(--ink)"/>
+        <text x="438" y="138" style="font-size:13px;fill:var(--ink)">Batu Muda</text>
+        <circle cx="385.2" cy="191.5" r="6" fill="var(--ink)"/>
+        <text x="394" y="188" style="font-size:13px;fill:var(--ink)">Petaling Jaya</text>
+        <circle cx="353.7" cy="207.1" r="6" fill="var(--ink)"/>
+        <text x="344" y="226" text-anchor="end" style="font-size:13px;fill:var(--ink)">Shah Alam</text>
+        <!-- school -->
+        <rect x="343" y="71" width="14" height="14" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>
+        <text x="364" y="74" style="font-size:13px;fill:var(--ink)">School</text>
+        <!-- scale bar: 20 km = 0.18 degree = 108 px -->
+        <path d="M20 296h108M20 291v10M128 291v10" stroke="var(--ink)" stroke-width="1.5" fill="none"/>
+        <text x="74" y="318" text-anchor="middle" style="font-size:12px">20 km</text>
+      </svg>
+    </div>
+    <div class="legend map-key">
+      <span><b class="k-st"></b>DOE station</span>
+      <span><b class="k-sc"></b>School</span>
+      <span><b class="k-gp">+</b>Model grid point (the forecast value is taken here)</span>
+    </div>
+    <ul class="small">
+      <li>Batu Muda, Petaling Jaya and Shah Alam lie in the KL cell. So they get the same forecast number.</li>
+      <li>In the real readings, these three stations differ by about 5 to 18 API points on the same day. The forecast cannot show this.</li>
+      <li>The school lies in the KL cell too. No DOE station is at the school. The nearest one is 19 km away.</li>
+      <li>Kuala Selangor lies in the KS cell, near the sea.</li>
+    </ul>
   </section>
 
   <footer class="small">
