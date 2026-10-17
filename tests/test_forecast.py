@@ -110,6 +110,39 @@ class Script(unittest.TestCase):
         self.assertEqual([d["date"] for d in out["days"]],
                          ["2026-10-18", "2026-10-19", "2026-10-20", "2026-10-21"])
 
+    def test_same_day_starts_from_latest_reading(self):
+        # Today's real case: 7:00 am average 146 (159, 168, 168, 89).
+        with open(self.data / "hourly.csv", "a") as fh:
+            fh.write("2026-10-17T06:00,158,167,167,88\n2026-10-17T07:00,159,168,168,89\n")
+        out, log = self.run_script("2026-10-17T07:30")
+        self.assertEqual(out["anchor"]["time"], "2026-10-17T07:00")
+        self.assertEqual(out["anchor"]["avg_api"], 146)
+        d1, d2 = out["days"][0], out["days"][1]
+        self.assertEqual(d1["method"], "from latest reading")
+        self.assertEqual(d1["hours_after_latest_reading"], 7)
+        self.assertEqual(d1["confidence"], "high")
+        # The fake CAMS falls a little today, so day 1 is a little below 146.
+        self.assertTrue(138 <= d1["avg_2pm"]["mid"] <= 146, d1["avg_2pm"])
+        self.assertLessEqual(d1["avg_2pm"]["low"], d1["avg_2pm"]["mid"] - 5)
+        self.assertGreaterEqual(d1["avg_2pm"]["high"], d1["avg_2pm"]["mid"] + 5)
+        # Each station keeps its own level: Kuala Selangor stays far below the others.
+        self.assertLess(d1["api_2pm"]["CA18B"], d1["api_2pm"]["CA19B"] - 50)
+        self.assertNotEqual(d1["api_2pm"]["CA15W"], d1["api_2pm"]["CA19B"])
+        # Day 2 mixes the newest real ratio with the haze factor.
+        self.assertEqual(d2["method"], "mixed factor")
+        self.assertAlmostEqual(d2["latest_ratio_weight"], 0.52, places=2)
+        # The weight falls with each day ahead.
+        weights = [d["latest_ratio_weight"] for d in out["days"][1:]]
+        self.assertEqual(weights, sorted(weights, reverse=True))
+        hist = json.loads((self.data / "forecast_history.jsonl").read_text().splitlines()[-1])
+        self.assertEqual(hist["anchor"], "2026-10-17T07:00")
+
+    def test_old_reading_is_not_used(self):
+        # The newest complete hour is 9:00 am on 16 Oct, far older than 6 hours.
+        out, _ = self.run_script("2026-10-17T07:30")
+        self.assertIsNone(out["anchor"])
+        self.assertEqual(out["days"][0]["method"], "haze factor")
+
     def test_haze_factor_kept_after_clean_spell(self):
         # Haze 35 to 31 days ago, then 20 clean days. The haze days must still set the factor.
         rows = ["datetime_myt,CA15W,CA19B,CA20B,CA18B"]

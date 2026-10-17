@@ -31,6 +31,9 @@ A reading that is still missing after that is collected by the run of the next h
 - It multiplies by a calibration factor: observed PM2.5 (from the DOE API) divided by CAMS PM2.5,
   the median of the newest 10 haze days (API 100 or above), looking back up to 60 days.
   Older haze days are kept, so the factor is still right when haze comes back after a clean spell.
+- Same day (morning run): the forecast starts from the newest real hourly reading of each station
+  and adds only the change CAMS expects until 2:00 pm. Later days mix the newest real ratio of each
+  station with the haze factor; the newest ratio counts less for each day ahead.
 - It converts PM2.5 to API with the DOE formula and averages the four stations.
 - It writes `docs/data/forecast.json`. Section 6 of the page shows the chart, wind and rain, and a table.
   The page `forecast.html` explains the method, with the current correction factors.
@@ -79,6 +82,9 @@ All settings are in `config.json`.
 | `forecast.calibration_lookback_days` | How far back to look for those haze days | 60 |
 | `forecast.calibration_clean_days` | Days used for the clean-day factor (information only) | 14 |
 | `forecast.haze_day_api` | A day with observed API at or above this is a haze day | 100 |
+| `forecast.anchor_max_age_hours` | Newest reading used as a starting point only when it is this new or newer | 6 |
+| `forecast.latest_ratio_hours` | How fast the newest real ratio loses weight (weight = e^(-hours ahead / this)) | 48 |
+| `forecast.ratio_limits` | Limits for the newest real ratio | 0.5 to 3.5 |
 | `forecast.min_calibration_days` | Fewest haze days needed. With fewer, all days of the last 14 are used. | 3 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
 | `stale_after_hours` | The page shows a warning when the data is older than this | 3 |

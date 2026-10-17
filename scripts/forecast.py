@@ -11,6 +11,9 @@ How it works, for each forecast day and each CAMS grid cell:
   2. Multiply by a calibration factor k. CAMS reads low in peat haze.
      k = median of (observed PM2.5 / CAMS PM2.5) over the newest haze days
      on record (up to 10 days, looking back up to 60 days).
+     Days ahead use a mix of this factor and the newest real ratio.
+     The same day starts from the newest real hourly reading instead
+     (see station_pm).
   3. Convert PM2.5 to API with the DOE breakpoints.
   4. Average the four stations. Three stations share the KL cell, so
      the average is (3 x API_KL + API_KS) / 4.
@@ -23,6 +26,7 @@ docs/data/forecast_history.jsonl (to check the forecast later).
 All times are Malaysia time (UTC+8). Uses only the Python standard library.
 """
 import json
+import math
 import os
 import statistics
 import sys
@@ -178,7 +182,11 @@ def read_hourly(ids):
 
 def trailing24(series, day, hh):
     """Mean of the 24 CAMS hours ending at hh:00 on `day`. None with too few values."""
-    end = datetime.combine(day, datetime.min.time()).replace(hour=hh)
+    return trailing24_at(series, datetime.combine(day, datetime.min.time()).replace(hour=hh))
+
+
+def trailing24_at(series, end):
+    """Mean of the 24 CAMS hours ending at the hour `end`. None with too few values."""
     vals = []
     for back in range(24):
         v = series.get((end - timedelta(hours=back)).strftime(KEY))
@@ -261,10 +269,41 @@ def calibrate(cell, cams, hourly, cfg, now):
 
 # ---------------------------------------------------------------- forecast
 
-def confidence(offset, cal, cams_ok):
+def find_anchor(hourly, cams, cfg, now):
+    """The newest real hourly reading, as a starting point for the forecast.
+
+    Returns None when no hour with all four stations is found in the last
+    `anchor_max_age_hours`. Otherwise, for each station:
+      obs_pm  observed 24-hour PM2.5 now (inverse DOE formula from the API)
+      ratio   obs_pm / CAMS 24-hour PM2.5 of its cell at the same hour
+    """
+    fc = cfg["forecast"]
+    ids = [s["id"] for s in cfg["stations"]]
+    hour = now.replace(minute=0, second=0, microsecond=0)
+    for back in range(fc["anchor_max_age_hours"] + 1):
+        t = hour - timedelta(hours=back)
+        vals = hourly.get(t.strftime(KEY), {})
+        if not all(sid in vals for sid in ids):
+            continue
+        out = {"time": t.strftime(KEY), "stations": {}}
+        for s in cfg["stations"]:
+            c_now = trailing24_at(cams[s["cell"]], t)
+            if not c_now:
+                return None
+            obs_pm = pm_from_api(vals[s["id"]])
+            out["stations"][s["id"]] = {"api": vals[s["id"]], "obs_pm": obs_pm, "cams_pm": c_now,
+                                        "ratio": obs_pm / c_now}
+        out["avg_api"] = policy.round_half_up(sum(vals[i] for i in ids) / len(ids))
+        return out
+    return None
+
+
+def confidence(offset, cal, cams_ok, method=None, lead_hours=None):
     """offset: 1 = the first forecast day."""
     if not cams_ok:
         return "low"
+    if method == "from latest reading" and lead_hours is not None and lead_hours <= 9:
+        return "high"
     enough = min(c["n_haze"] for c in cal.values()) >= 7
     if offset <= 2 and enough:
         return "high"
@@ -273,12 +312,44 @@ def confidence(offset, cal, cams_ok):
     return "low"
 
 
-def build(cfg, now, cams, grids, cal, wind, wdir, rain):
+def station_pm(s, target, model, cal, anchor, fc):
+    """Forecast 24-hour PM2.5 for one station: (mid, low, high, method, weight).
+
+    Same day (the target is less than 24 hours after the newest reading):
+      start from the real reading and add the change CAMS expects until the
+      target hour, scaled by the haze factor:  obs + k x (CAMS_target - CAMS_now).
+      Most of the 24 hours of the target average are then already measured.
+    Later days: the factor is a mix of the newest real ratio of the station and
+      the haze factor. The newest ratio counts less the further ahead the day is:
+      weight = exp(-hours ahead / latest_ratio_hours).
+    Without a recent reading: the haze factor alone.
+    """
+    c = cal[s["cell"]]
+    m = model[s["cell"]]
+    if m is None:
+        return None, None, None, None, None
+    if anchor:
+        a = anchor["stations"][s["id"]]
+        t0 = datetime.fromisoformat(anchor["time"])
+        lead = (target - t0).total_seconds() / 3600
+        if lead < 24:
+            delta = m - a["cams_pm"]
+            vals = [a["obs_pm"] + f * delta for f in (c["k"], c["min"], c["max"])]
+            vals = [max(0.0, v) for v in vals]
+            return vals[0], min(vals), max(vals), "from latest reading", None
+        w = math.exp(-lead / fc["latest_ratio_hours"])
+        r = min(max(a["ratio"], fc["ratio_limits"][0]), fc["ratio_limits"][1])
+        k_eff = w * r + (1 - w) * c["k"]
+        lo, hi = k_eff * c["min"] / c["k"], k_eff * c["max"] / c["k"]
+        return m * k_eff, m * min(lo, k_eff), m * max(hi, k_eff), "mixed factor", round(w, 2)
+    return m * c["k"], m * c["min"], m * c["max"], "haze factor", 0.0
+
+
+def build(cfg, now, cams, grids, cal, wind, wdir, rain, anchor=None):
     fc = cfg["forecast"]
     hh = cfg["reading_hour"]
     rule = cfg["rule"]
     stations = cfg["stations"]
-    cell_of = {s["id"]: s["cell"] for s in stations}
 
     # The first forecast day is today when the 2 pm reading is still to come.
     first = now.date() if now.hour < hh else now.date() + timedelta(days=1)
@@ -287,30 +358,40 @@ def build(cfg, now, cams, grids, cal, wind, wdir, rain):
         day = first + timedelta(days=i)
         if len(days) >= fc["forecast_days"]:
             break
+        target = datetime.combine(day, datetime.min.time()).replace(hour=hh)
         model = {name: trailing24(cams[name], day, hh) for name in cams}
         cams_ok = all(v is not None for v in model.values())
         if not cams_ok and i > 0:
             # CAMS ends about 5 days ahead. Days without data are left out.
             continue
         api_mid, api_low, api_high = {}, {}, {}
-        for sid, name in cell_of.items():
-            m = model[name]
-            c = cal[name]
-            api_mid[sid] = None if m is None else policy.round_half_up(api_from_pm(m * c["k"]))
-            api_low[sid] = None if m is None else policy.round_half_up(api_from_pm(m * c["min"]))
-            api_high[sid] = None if m is None else policy.round_half_up(api_from_pm(m * c["max"]))
+        method = weight = None
+        for s in stations:
+            pm, lo, hi, method, weight = station_pm(s, target, model, cal, anchor, fc)
+            api_mid[s["id"]] = None if pm is None else policy.round_half_up(api_from_pm(pm))
+            api_low[s["id"]] = None if lo is None else policy.round_half_up(api_from_pm(lo))
+            api_high[s["id"]] = None if hi is None else policy.round_half_up(api_from_pm(hi))
 
         def avg(d):
             vals = [v for v in d.values() if v is not None]
             return policy.round_half_up(sum(vals) / len(vals)) if len(vals) == len(d) else None
         mid, low, high = avg(api_mid), avg(api_low), avg(api_high)
-        stamp = datetime.combine(day, datetime.min.time()).replace(hour=hh).strftime(KEY)
+        lead = None
+        if anchor:
+            lead = round((target - datetime.fromisoformat(anchor["time"])).total_seconds() / 3600)
+        if method == "from latest reading" and mid is not None:
+            # Hours still to come can differ from CAMS. Keep the range at least +-5.
+            low, high = min(low, mid - 5), max(high, mid + 5)
+        stamp = target.strftime(KEY)
         days.append({
             "date": day.isoformat(),
             "weekday": day.strftime("%a"),
             "cams_pm25_24h": {n: None if v is None else round(v, 1) for n, v in model.items()},
             "api_2pm": api_mid,
             "avg_2pm": {"mid": mid, "low": low, "high": high},
+            "method": method,
+            "latest_ratio_weight": weight,
+            "hours_after_latest_reading": lead,
             "weather_2pm": {
                 "wind_kmh": None if wind.get(stamp) is None else round(wind[stamp], 1),
                 "wind_from_deg": None if wdir.get(stamp) is None else round(wdir[stamp]),
@@ -320,7 +401,7 @@ def build(cfg, now, cams, grids, cal, wind, wdir, rain):
                 "at_or_above_streak": mid is not None and mid >= rule["close_from_streak"],
                 "at_or_above_single_day": mid is not None and mid >= rule["close_from_single_day"],
             },
-            "confidence": confidence(i + 1, cal, cams_ok),
+            "confidence": confidence(i + 1, cal, cams_ok, method, lead),
         })
     return {
         "issued": now.strftime("%Y-%m-%dT%H:%M") + "+08:00",
@@ -337,6 +418,10 @@ def build(cfg, now, cams, grids, cal, wind, wdir, rain):
             # One row per day and cell: what CAMS said and what DOE measured.
             "days": [dict(r, cell=n) for n, c in cal.items() for r in c["days"]],
         },
+        "anchor": None if not anchor else {
+            "time": anchor["time"], "avg_api": anchor["avg_api"],
+            "stations": {sid: {"api": v["api"], "ratio": round(v["ratio"], 3)}
+                         for sid, v in anchor["stations"].items()}},
         "days": days,
         "credit": "Contains modified Copernicus Atmosphere Monitoring Service information (CAMS, ECMWF). "
                   "Weather: ECMWF open data. Both via Open-Meteo.",
@@ -376,7 +461,13 @@ def main():
         log(f"calibration {name}: k={c['k']} range {c['min']}-{c['max']}, "
             f"{c['n']} days used ({c['basis']}), {c['n_haze']} haze days")
 
-    out = build(cfg, now, cams, grids, cal, wind, wdir, rain)
+    anchor = find_anchor(hourly, cams, cfg, now)
+    if anchor:
+        log(f"latest reading {anchor['time']}: average {anchor['avg_api']}, ratio "
+            + ", ".join(f"{sid} {v['ratio']:.2f}" for sid, v in anchor["stations"].items()))
+    else:
+        log("no recent reading with all stations. Haze factor alone.")
+    out = build(cfg, now, cams, grids, cal, wind, wdir, rain, anchor)
     if not out["days"]:
         raise RuntimeError("no forecast day has CAMS data")
 
@@ -384,6 +475,7 @@ def main():
     FORECAST_JSON.write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
     line = {"issued": out["issued"],
             "k": {n: c["k"] for n, c in cal.items()},
+            "anchor": out["anchor"]["time"] if out["anchor"] else None,
             "days": [[d["date"], d["avg_2pm"]["mid"], d["avg_2pm"]["low"], d["avg_2pm"]["high"]]
                      for d in out["days"]]}
     with open(HISTORY_JSONL, "a", encoding="utf-8") as fh:

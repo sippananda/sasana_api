@@ -966,7 +966,9 @@
     var nHaze = Math.min.apply(null, Object.keys(f.cells || {}).map(function (c) { return cal[c] ? cal[c].n_haze : 0; }));
     $("fcIssued").textContent = "Forecast issued " + dayLabel(issued) + ", " + clock(issued) + "." +
       (ageH > 36 ? " It is old: no new forecast for " + Math.floor(ageH) + " hours." : "") +
-      " Calibrated on " + nHaze + " haze day" + (nHaze === 1 ? "" : "s") + ".";
+      " Calibrated on " + nHaze + " haze day" + (nHaze === 1 ? "" : "s") + "." +
+      (f.anchor ? " Starts from the real reading of " + dayLabel(parse(f.anchor.time)) + ", " + clock(parse(f.anchor.time)) +
+        " (average " + f.anchor.avg_api + ")." : "");
 
     // The count of high days in a row, from the real readings.
     var t = s.today;

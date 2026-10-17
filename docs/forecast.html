@@ -278,9 +278,16 @@
     <h2><span class="n">3</span>From CAMS to our forecast number</h2>
     <ol>
       <li><b>24-hour average.</b> For each day, take the 24 hours of CAMS PM2.5 that end at 2:00 pm. The DOE API is also a 24-hour average, so one hour alone would not compare.</li>
-      <li><b>Correction.</b> Multiply by the correction factor of the square (section 4).</li>
+      <li><b>Correction.</b> CAMS reads too low in peat haze, so its value is corrected (section 4):
+        <ul>
+          <li><b>Same day</b> (the morning run): start from the newest real hourly reading of each station.
+            Add only the change that CAMS expects until 2:00 pm. The DOE API is a 24-hour average, so at 7:00 am
+            about 17 of the 24 hours of the 2:00 pm value are already measured.</li>
+          <li><b>Later days:</b> multiply by a mix of two factors: the newest real ratio of the station, and the haze factor.
+            The newest ratio counts for about half on the next day, and less on each day after.</li>
+        </ul></li>
       <li><b>DOE formula.</b> Turn PM2.5 into API with the DOE table.</li>
-      <li><b>Average of the four stations.</b> Batu Muda, Petaling Jaya and Shah Alam lie in one square, so they get the same number. Average = (3 × KL square + KS square) ÷ 4.</li>
+      <li><b>Average of the four stations.</b> Batu Muda, Petaling Jaya and Shah Alam lie in one CAMS square. They still get slightly different numbers, because each starts from its own real reading.</li>
     </ol>
   </section>
 
@@ -293,6 +300,8 @@
       <li>Older haze days are kept on purpose. After a clean spell, the factor is still ready when the haze comes back.</li>
       <li>On clean days CAMS often reads high. The clean-day factor is shown for information only. School closure only happens in haze.</li>
       <li>The correction runs by itself, at every forecast run.</li>
+      <li><b>Why the newest reading matters (17 Oct):</b> CAMS said 85 for the 2:00 pm average. The real value was 150.
+        The 7:00 am reading was already 146. Since 17 Oct the forecast starts from the newest reading.</li>
     </ul>
     <h3>Correction now</h3>
     <p class="small" id="calIssued">Loading…</p>
@@ -303,8 +312,8 @@
   <section>
     <h2><span class="n">5</span>The range and the confidence</h2>
     <ul>
-      <li>The grey band in the chart uses the smallest and the largest factor of the haze days used.</li>
-      <li><b>High:</b> days 1 and 2, after 7 or more haze days in both squares.</li>
+      <li>The grey band in the chart uses the smallest and the largest factor of the haze days used. On the same day the band is at least ±5.</li>
+      <li><b>High:</b> the same day, when the newest real reading is 9 hours old or less. Also days 1 and 2 after 7 or more haze days in both squares.</li>
       <li><b>Medium:</b> days 1 to 4 otherwise.</li>
       <li><b>Low:</b> day 5, or a day with missing CAMS data.</li>
       <li>CAMS keeps today's fire level for all 5 days. It cannot know new fires, or fires put out by rain. This is why later days are less certain.</li>
