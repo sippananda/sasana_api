@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-18T00:16+08:00",
+ "generated_at": "2026-10-18T01:01+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -490,16 +490,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-14T00:00",
-   "v": [
-    157,
-    99,
-    153,
-    86
-   ],
-   "avg": 124
-  },
   {
    "t": "2026-10-14T01:00",
    "v": [
