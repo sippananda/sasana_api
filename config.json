@@ -18,6 +18,10 @@
     {"id": "CA20B", "name": "Shah Alam", "short": "Shah Alam", "state_id": 10, "distance_km": 24, "cell": "KL"},
     {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33, "cell": "KS"}
   ],
+  "extra_stations": [
+    {"id": "CA16W", "name": "Cheras, Kuala Lumpur", "short": "Cheras", "state_id": 14, "distance_km": 30,
+     "note": "Collected for the experimental sensor page only. Not part of the rule."}
+  ],
   "sensor": {
     "id": "A2872234",
     "name": "Jalan Anggun 3P, Rawang Anggun (GAIA low-cost sensor, aqicn.org)",

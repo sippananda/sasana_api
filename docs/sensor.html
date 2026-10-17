@@ -118,14 +118,22 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Time shift</h2>
+    <h2><span class="n">4</span>Which stations follow the sensor best?</h2>
+    <p class="small">Each DOE station, and some averages, compared with the sensor. Higher r means a closer
+      match. The main page and the rule still use the 4-station average.</p>
+    <div id="stationTable"></div>
+    <p class="small" id="stationNote"></p>
+  </section>
+
+  <section>
+    <h2><span class="n">5</span>Time shift</h2>
     <p class="small">The sensor reading is moved later by 0 to 6 hours before the comparison. The
       best shift shows how many hours the sensor runs ahead of the DOE numbers.</p>
     <div id="lagTable"></div>
   </section>
 
   <section>
-    <h2><span class="n">5</span>How to read this page</h2>
+    <h2><span class="n">6</span>How to read this page</h2>
     <ul class="small">
       <li><b>Sensor:</b> “Jalan Anggun 3P”, a GAIA low-cost sensor in Rawang Anggun, a few kilometres from the
         school. Data from the World Air Quality Index project,
@@ -138,13 +146,15 @@
         18 of the 24 hours.</li>
       <li><b>r</b> runs from −1 to 1. Above 0.9 is a close match. Below 0.7 is a weak match.</li>
       <li>DOE average: the mean of Batu Muda, Petaling Jaya, Shah Alam and Kuala Selangor, only in
-        hours with all four readings.</li>
+        hours with all four readings. This is the average of the rule.</li>
+      <li><b>Cheras</b> is collected for this page only, from 17 Oct 2026. It is not part of the rule.</li>
       <li>Some sensor hours come from the aqicn map search (“map” in the data file). Those hours have
         the overall index only, which is the PM2.5 index for this sensor.</li>
       <li>The sensor is not checked by DOE. Low-cost sensors can read high in very humid air.</li>
     </ul>
     <p class="small">Data files: <a href="data/sensor.csv">sensor.csv</a> ·
-      <a href="data/hourly.csv">hourly.csv</a></p>
+      <a href="data/hourly.csv">hourly.csv</a> ·
+      <a href="data/hourly_extra.csv">hourly_extra.csv</a> (Cheras)</p>
   </section>
 
   <p class="bottom-back"><a href="./">← Back to the main page</a></p>
@@ -221,15 +231,34 @@
     return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
   }
 
-  function build(hourly, sensor) {
-    var doe = {}, sen = {}, mean24 = {};
-    var stations = ["CA15W", "CA19B", "CA20B", "CA18B"];
-    hourly.forEach(function (r) {
-      var v = stations.map(function (k) { return num(r[k]); });
-      if (v.every(function (x) { return x !== null; })) {
-        doe[hourIndex(r.datetime_myt)] = v.reduce(function (a, b) { return a + b; }, 0) / 4;
-      }
+  // Series compared in section 4. "rule" marks the average that the rule uses.
+  var SERIES = [
+    { name: "Batu Muda", ids: ["CA15W"] },
+    { name: "Petaling Jaya", ids: ["CA19B"] },
+    { name: "Shah Alam", ids: ["CA20B"] },
+    { name: "Kuala Selangor", ids: ["CA18B"] },
+    { name: "Cheras (not in the rule)", ids: ["CA16W"] },
+    { name: "4-station average (the rule)", ids: ["CA15W", "CA19B", "CA20B", "CA18B"], rule: true },
+    { name: "3 stations, without Kuala Selangor", ids: ["CA15W", "CA19B", "CA20B"] },
+    { name: "3 stations + Cheras, without Kuala Selangor", ids: ["CA15W", "CA19B", "CA20B", "CA16W"] }
+  ];
+
+  function build(hourly, sensor, extra) {
+    var doe = {}, sen = {}, mean24 = {}, byHour = {};
+    hourly.concat(extra).forEach(function (r) {
+      if (!r.datetime_myt) return;
+      var h = hourIndex(r.datetime_myt), o = byHour[h] || (byHour[h] = {});
+      Object.keys(r).forEach(function (k) { if (k !== "datetime_myt" && num(r[k]) !== null) o[k] = num(r[k]); });
     });
+    function series(ids) {
+      var out = {};
+      Object.keys(byHour).forEach(function (k) {
+        var o = byHour[k], v = ids.map(function (id) { return o[id] === undefined ? null : o[id]; });
+        if (v.every(function (x) { return x !== null; })) out[k] = v.reduce(function (a, b) { return a + b; }, 0) / v.length;
+      });
+      return out;
+    }
+    doe = series(["CA15W", "CA19B", "CA20B", "CA18B"]);
     sensor.forEach(function (r) {
       var v = num(r.pm25_aqi);
       if (v !== null && r.datetime_myt) sen[hourIndex(r.datetime_myt)] = v;
@@ -240,15 +269,15 @@
       for (var i = 0; i < 24; i++) if (sen[h - i] !== undefined) { s += sen[h - i]; n++; }
       if (n >= 18) mean24[h] = s / n;
     });
-    function pairs(src, lag) {
-      var out = [];
-      Object.keys(doe).forEach(function (k) {
+    function pairs(src, lag, target) {
+      var out = [], t = target || doe;
+      Object.keys(t).forEach(function (k) {
         var h = Number(k), x = src[h - lag];
-        if (x !== undefined) out.push([x, doe[h], h]);
+        if (x !== undefined) out.push([x, t[h], h]);
       });
       return out;
     }
-    return { doe: doe, sen: sen, mean24: mean24, senHours: senHours, pairs: pairs };
+    return { doe: doe, sen: sen, mean24: mean24, senHours: senHours, pairs: pairs, series: series };
   }
 
   function fmtR(r) { return r === null ? "–" : r.toFixed(2); }
@@ -381,6 +410,38 @@
       : pts.length + " hours.";
   }
 
+  // ---------- section 4: per station ----------
+  function showStations(d) {
+    var rows = SERIES.map(function (s) {
+      var t = d.series(s.ids), p1 = d.pairs(d.sen, 0, t), p24 = d.pairs(d.mean24, 0, t);
+      var base = p24.length ? p24 : p1;
+      return { s: s, r1: pearson(p1), r24: pearson(p24), n: p1.length,
+               ratio: median(base.map(function (p) { return p[1] / p[0]; })) };
+    });
+    if (rows.every(function (r) { return r.n === 0; })) {
+      $("stationTable").innerHTML = '<p class="small">The table fills in when there are matching hours.</p>';
+      $("stationNote").textContent = "";
+      return;
+    }
+    var key = rows.some(function (r) { return r.r24 !== null; }) ? "r24" : "r1";
+    var best = null;
+    rows.forEach(function (r, i) { if (r[key] !== null && (best === null || r[key] > rows[best][key])) best = i; });
+    var html = '<div style="overflow-x:auto"><table><thead><tr><th>Compared with the sensor</th><th>r, 24-hour mean</th>' +
+      '<th>r, hourly</th><th>DOE ÷ sensor</th><th>Hours</th></tr></thead><tbody>';
+    rows.forEach(function (r, i) {
+      var name = esc(r.s.name) + (i === best ? " ← best" : "");
+      html += '<tr' + (i === best ? ' class="best"' : '') + '><td>' + (r.s.rule ? "<b>" + name + "</b>" : name) + '</td><td>' +
+        fmtR(r.r24) + '</td><td>' + fmtR(r.r1) + '</td><td>' + (r.ratio === null ? "–" : "×" + r.ratio.toFixed(2)) +
+        '</td><td>' + r.n + '</td></tr>';
+      if (i === 4) html += '<tr><td colspan="5" style="padding:2px;border:0"></td></tr>';
+    });
+    html += '</tbody></table></div>';
+    $("stationTable").innerHTML = html;
+    var n = rows[5].n;
+    $("stationNote").textContent = (n < MIN_HOURS ? "Too few hours to compare yet (" + n + "). " : "") +
+      "Small differences in r (less than about 0.03) do not mean much.";
+  }
+
   // ---------- lag table ----------
   function showLag(d) {
     var rows = [], best = null;
@@ -407,15 +468,16 @@
   var state = null, lastWidth = 0;
   function render() {
     if (!state) return;
-    showResult(state); drawTime(state); drawScatter(state); showLag(state);
+    showResult(state); drawTime(state); drawScatter(state); showStations(state); showLag(state);
   }
   function load() {
     var bust = "?t=" + Date.now();
     Promise.all([
       fetch("data/hourly.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; }),
-      fetch("data/sensor.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; })
+      fetch("data/sensor.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; }),
+      fetch("data/hourly_extra.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; }).catch(function () { return ""; })
     ]).then(function (t) {
-      state = build(parseCsv(t[0]), parseCsv(t[1]));
+      state = build(parseCsv(t[0]), parseCsv(t[1]), parseCsv(t[2]));
       render();
     }).catch(function (e) {
       $("result").innerHTML = '<p>Could not read the data files: ' + esc(e.message || e) + '</p>';

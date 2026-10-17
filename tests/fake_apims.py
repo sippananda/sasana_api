@@ -12,7 +12,10 @@ from urllib.parse import parse_qs, urlparse
 
 FIX = Path(__file__).parent / "fixtures" / "doe_readings_2026-10-03_to_10.json"
 READINGS = json.loads(FIX.read_text())["readings"]
-STATE = {"CA15W": 14, "CA19B": 10, "CA20B": 10, "CA18B": 10}
+STATE = {"CA15W": 14, "CA19B": 10, "CA20B": 10, "CA18B": 10, "CA16W": 14}
+# Cheras is not in the fixture. Invent it from Batu Muda (same state), for the
+# test of stations that are collected for information only.
+READINGS["CA16W"] = {h: v + 5 for h, v in READINGS["CA15W"].items()}
 BROKEN = {"table": False}   # tests can switch the hourly table off
 
 

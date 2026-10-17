@@ -31,6 +31,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = Path(os.environ.get("MONITOR_DATA_DIR", ROOT / "docs" / "data"))
 CONFIG = Path(os.environ.get("MONITOR_CONFIG", ROOT / "config.json"))
 HOURLY_CSV = DATA / "hourly.csv"
+# Stations collected for information only (test page). They never enter the rule.
+EXTRA_CSV = DATA / "hourly_extra.csv"
 DAILY_CSV = DATA / "daily.csv"
 STATUS_JSON = DATA / "status.json"
 
@@ -147,11 +149,12 @@ def fetch_current(wanted):
 
 # ---------------------------------------------------------------- storage
 
-def read_hourly(ids):
+def read_hourly(ids, path=None):
+    path = path or HOURLY_CSV
     data = {}
-    if not HOURLY_CSV.exists():
+    if not path.exists():
         return data
-    with open(HOURLY_CSV, newline="", encoding="utf-8") as fh:
+    with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             hour = row.get("datetime_myt")
             if not hour:
@@ -378,8 +381,10 @@ def daily_csv_text(evaluated, cfg):
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     ids = [s["id"] for s in cfg["stations"]]
-    wanted = set(ids)
-    states = sorted({s["state_id"] for s in cfg["stations"]})
+    extra = [s for s in cfg.get("extra_stations", []) if s["id"] not in ids]
+    extra_ids = [s["id"] for s in extra]
+    wanted = set(ids) | set(extra_ids)
+    states = sorted({s["state_id"] for s in cfg["stations"] + extra})
     hh = cfg["reading_hour"]
     now = now_local(cfg)
     this_hour = now.replace(minute=0, second=0, microsecond=0)
@@ -387,11 +392,17 @@ def main():
 
     hourly = read_hourly(ids)
     before = hourly_csv_text(hourly, ids)
+    extra_hourly = read_hourly(extra_ids, EXTRA_CSV) if extra_ids else {}
 
     def merge(rows):
+        n = 0
         for sid, hour, api in rows:
-            hourly.setdefault(hour, {})[sid] = api
-        return len(rows)
+            if sid in extra_ids:
+                extra_hourly.setdefault(hour, {})[sid] = api
+            else:
+                hourly.setdefault(hour, {})[sid] = api
+                n += 1
+        return n
 
     # 1. The newest 24 hours.
     got_current = 0
@@ -422,7 +433,7 @@ def main():
             continue
         for state in states:
             if all(s["id"] in have for s in cfg["stations"] if s["state_id"] == state):
-                continue
+                continue   # also skips a state that has only extra stations
             try:
                 n = merge(fetch_window(day, state, wanted))
                 log(f"backfill {day:%Y-%m-%d} state {state}: {n} readings")
@@ -432,6 +443,9 @@ def main():
     # 3. Save and compute.
     after = hourly_csv_text(hourly, ids)
     data_changed = write_text_if_changed(HOURLY_CSV, after) or before != after
+    if extra_ids and extra_hourly:
+        if write_text_if_changed(EXTRA_CSV, hourly_csv_text(extra_hourly, extra_ids)):
+            log(f"saved {EXTRA_CSV.name} (information only: {', '.join(extra_ids)})")
 
     status, evaluated = build_status(hourly, cfg, now)
     write_text_if_changed(DAILY_CSV, daily_csv_text(evaluated, cfg))

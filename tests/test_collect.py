@@ -57,6 +57,18 @@ class Collector(unittest.TestCase):
             if (self.data / "status.json").exists() else None
         return run, status
 
+    def test_extra_station_is_kept_apart(self):
+        run, st = self.collect("2026-10-10T15:37")
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        head = (self.data / "hourly.csv").read_text().splitlines()[0]
+        self.assertNotIn("CA16W", head)
+        extra = (self.data / "hourly_extra.csv").read_text().splitlines()
+        self.assertEqual(extra[0], "datetime_myt,CA16W")
+        self.assertGreaterEqual(len(extra), 24)
+        self.assertNotIn("cheras", (self.data / "daily.csv").read_text().lower())
+        # The rule result is the same as without Cheras (see the test below).
+        self.assertEqual(st["daily"][-1]["average"], 147)
+
     def test_first_run_backfills_a_week(self):
         run, st = self.collect("2026-10-10T15:37")
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
