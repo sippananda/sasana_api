@@ -304,6 +304,7 @@
     <div class="count" id="fcCount"></div>
     <div class="legend" id="fcLegend"></div>
     <div class="chart" id="fcChart"></div>
+    <p class="small">Weather under the forecast days: ECMWF forecast for the school. The arrow points where the wind blows to. The letters say where it comes from (W = from the west).</p>
     <div class="scroll"><table id="fcTable"></table></div>
     <h3>How the forecast is made</h3>
     <ul class="small" id="fcNotes"></ul>
@@ -1070,7 +1071,7 @@
 
     var W = Math.max(300, Math.round(host.clientWidth || 720));
     var narrow = W < 520;
-    var H = narrow ? 300 : 320, L = 34, R = 34, T = 20, B = 92;   // B holds the day labels, wind and rain
+    var H = narrow ? 330 : 350, L = 34, R = 34, T = 20, B = 112;  // B holds the day labels and the weather table
     var step = (W - L - R) / span;
     function X(tm) { return L + (Math.round((tm - start) / DAY) + 0.5) * step; }
     var vals = all.map(function (p) { return p.v; }).concat(fc.map(function (p) { return p.hi; }));
@@ -1129,33 +1130,58 @@
         num(p.v)));
     });
 
-    // ---- under the axis: day label, then wind arrow and speed, then rain
+    // ---- under the axis: the day labels
     all.forEach(function (p) {
       var x = X(p.t);
       g.appendChild(svg("line", { x1: x, x2: x, y1: Y0, y2: Y0 + 4, stroke: "var(--ink-3)", "stroke-width": 1 }));
       // "Sat 10 Oct" when there is room, otherwise "Sat 10", or "10" on a phone.
       var lbl = step >= 64 ? dayLabel(p.t) : step >= 34 ? dayLabel(p.t).replace(/ \w+$/, "") : String(new Date(p.t).getUTCDate());
       g.appendChild(svg("text", { x: x, y: Y0 + 18, "text-anchor": "middle" }, lbl));
-      if (!p.d || !p.d.weather_2pm) return;
-      var wx = p.d.weather_2pm;
-      if (wx.wind_from_deg !== null && wx.wind_from_deg !== undefined) {
-        // The arrow points where the wind goes. Wind "from 200" goes to 20 (north-north-east).
-        var to = (wx.wind_from_deg + 180) % 360;
-        var ay = Y0 + 42;
-        var arrow = svg("path", { d: "M0 8 L0 -8 M-4 -4 L0 -8 L4 -4", fill: "none", stroke: "var(--ink)",
-          "stroke-width": 1.6, "stroke-linecap": "round", "stroke-linejoin": "round",
-          transform: "translate(" + x.toFixed(1) + " " + ay + ") rotate(" + to + ")" });
-        g.appendChild(arrow);
-        g.appendChild(svg("text", { x: x, y: ay + 22, "text-anchor": "middle" },
-          (wx.wind_kmh === null || wx.wind_kmh === undefined ? "" : Math.round(wx.wind_kmh) + (step >= 50 ? " km/h" : ""))));
-      }
-      if (wx.rain_mm_day !== null && wx.rain_mm_day !== undefined) {
-        g.appendChild(svg("text", { x: x, y: Y0 + 80, "text-anchor": "middle" }, Math.round(wx.rain_mm_day) + (step >= 50 ? " mm" : "")));
-      }
     });
+
+    // ---- weather table under the forecast days: one column per day, lined up with the chart.
+    //      Rows: wind direction at 2 pm, wind speed at 2 pm, rain in the day.
+    //      The row names sit in one wide cell under the observed days (they have no weather).
     if (fc.length) {
-      g.appendChild(svg("text", { x: L, y: Y0 + 46, style: "fill:var(--ink-3)" }, narrow ? "wind" : "wind at " + readClock + (step < 50 ? ", km/h" : "")));
-      g.appendChild(svg("text", { x: L, y: Y0 + 80, style: "fill:var(--ink-3)" }, "rain per day" + (step < 50 ? ", mm" : "")));
+      var DIR8 = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      var rowH = 26, top = Y0 + 28;
+      var rows = [
+        { name: "Wind from (" + readClock + ")", cell: function (wx, x, y) {
+            if (wx.wind_from_deg === null || wx.wind_from_deg === undefined) return;
+            var to = (wx.wind_from_deg + 180) % 360;     // the arrow points where the wind goes
+            var ax = step >= 50 ? x - 12 : x;
+            g.appendChild(svg("path", { d: "M0 7 L0 -7 M-4 -3 L0 -7 L4 -3", fill: "none", stroke: "var(--ink)",
+              "stroke-width": 1.6, "stroke-linecap": "round", "stroke-linejoin": "round",
+              transform: "translate(" + ax.toFixed(1) + " " + y + ") rotate(" + to + ")" }));
+            if (step >= 50) g.appendChild(svg("text", { x: x + 2, y: y + 4, style: "fill:var(--ink)" },
+              DIR8[Math.round(wx.wind_from_deg / 45) % 8]));
+          } },
+        { name: "Wind speed, km/h", cell: function (wx, x, y) {
+            if (wx.wind_kmh === null || wx.wind_kmh === undefined) return;
+            g.appendChild(svg("text", { x: x, y: y + 4, "text-anchor": "middle", style: "fill:var(--ink)" }, String(Math.round(wx.wind_kmh))));
+          } },
+        { name: "Rain in the day, mm", cell: function (wx, x, y) {
+            if (wx.rain_mm_day === null || wx.rain_mm_day === undefined) return;
+            g.appendChild(svg("text", { x: x, y: y + 4, "text-anchor": "middle", style: "fill:var(--ink)" }, String(Math.round(wx.rain_mm_day))));
+          } }
+      ];
+      var x0 = X(fc[0].t) - step / 2, xEnd = X(fc[fc.length - 1].t) + step / 2;
+      var bottom = top + rows.length * rowH;
+      // name cells (grey) and the outer frame
+      g.appendChild(svg("rect", { x: L, y: top, width: x0 - L, height: bottom - top, fill: "var(--tile)" }));
+      g.appendChild(svg("rect", { x: L, y: top, width: xEnd - L, height: bottom - top, fill: "none",
+        stroke: "var(--rule)", "stroke-width": 1 }));
+      rows.forEach(function (r, i) {
+        var y = top + i * rowH;
+        if (i) g.appendChild(svg("line", { x1: L, x2: xEnd, y1: y, y2: y, stroke: "var(--rule)", "stroke-width": 1 }));
+        g.appendChild(svg("text", { x: x0 - 8, y: y + rowH / 2 + 4, "text-anchor": "end",
+          style: "fill:var(--ink);font-weight:600" }, r.name));
+        fc.forEach(function (p) { if (p.d && p.d.weather_2pm) r.cell(p.d.weather_2pm, X(p.t), y + rowH / 2); });
+      });
+      fc.forEach(function (p, i) {
+        var xv = X(p.t) - step / 2;
+        g.appendChild(svg("line", { x1: xv, x2: xv, y1: top, y2: bottom, stroke: "var(--rule)", "stroke-width": 1 }));
+      });
     }
     host.appendChild(g);
 
