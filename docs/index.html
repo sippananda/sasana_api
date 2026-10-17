@@ -185,6 +185,17 @@
   .legend i.fc-key { border-top-style: dashed; border-top-width: 2px; }
   .legend i.band-key { width: 18px; height: 10px; border: 0; background: #d5d5cf; }
   td.conf { color: var(--ink-2); text-transform: capitalize; }
+  table.factors { min-width: 560px; }
+  table.factors td, table.factors th { text-align: left; white-space: normal; vertical-align: top; }
+  table.factors td:first-child { font-weight: 600; white-space: nowrap; }
+  table.factors td:last-child { color: var(--ink-2); }
+  @media (max-width: 520px) {
+    table.factors { min-width: 0; }
+    table.factors tr:first-child { display: none; }
+    table.factors tr { display: block; border-bottom: 1px solid var(--rule); padding: 8px 0; }
+    table.factors td { display: block; border: 0; padding: 1px 0; }
+    table.factors td:last-child::before { content: "Our area: "; font-weight: 600; color: var(--ink); }
+  }
   .grid-map svg { width: 100%; max-width: 560px; margin: 4px 0 8px; }
   .grid-map text { font-size: 13px; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
   @media (max-width: 520px) { .grid-map svg text { font-size: 17px !important; } }
@@ -296,6 +307,31 @@
     <div class="scroll"><table id="fcTable"></table></div>
     <h3>How the forecast is made</h3>
     <ul class="small" id="fcNotes"></ul>
+    <h3>What the CAMS model takes into account</h3>
+    <p class="small">CAMS starts a new run twice a day. Each run uses the items below.</p>
+    <div class="scroll"><table class="factors">
+      <tr><th>Factor</th><th>What CAMS uses</th><th>Note for our area</th></tr>
+      <tr><td>Fire hotspots</td><td>Satellites measure the heat of each fire. CAMS turns the heat into an amount of smoke (GFAS fire data).</td>
+        <td>Peat fires burn slowly with little heat, and cloud often hides them. So CAMS sees too little smoke. The same fire level is used for all 5 days.</td></tr>
+      <tr><td>Smoke height</td><td>How high the smoke rises above each fire.</td>
+        <td>Smoke high up travels far but does not reach the ground at once.</td></tr>
+      <tr><td>Haze seen from space</td><td>Satellites measure how hazy the air is. Each run corrects its starting point with this.</td>
+        <td>Cloud blocks this measurement too. On cloudy days the correction is weak.</td></tr>
+      <tr><td>Wind</td><td>The ECMWF weather forecast. Wind moves the smoke from cell to cell, every hour.</td>
+        <td>A south-west wind brings smoke from Sumatra. A wind from the east or north usually brings cleaner air.</td></tr>
+      <tr><td>Rain</td><td>Rain washes particles out of the air.</td>
+        <td>Rain forecasts for single storms are uncertain. A missed storm gives a forecast that is too high.</td></tr>
+      <tr><td>Mixing height</td><td>How deep the layer of air is that mixes the smoke. A deep layer dilutes it.</td>
+        <td>The layer is shallow at night and in the early morning, and deep in the afternoon.</td></tr>
+      <tr><td>Fixed sources</td><td>Tables of emissions from traffic, industry and power plants, as monthly averages.</td>
+        <td>Daily changes, such as rush hour or a holiday, are not in the tables.</td></tr>
+      <tr><td>Dust and sea salt</td><td>Worked out from the wind.</td>
+        <td>Sea salt matters more at Kuala Selangor, near the coast.</td></tr>
+      <tr><td>Chemistry</td><td>Some gases turn into fine particles in the air.</td>
+        <td>A small part of PM2.5 in haze.</td></tr>
+    </table></div>
+    <p class="small" style="margin-top:8px"><b>Not in the model:</b> fires that start after the run;
+      small local burning that satellites do not see; anything smaller than one 44 km cell, such as hills, towns or a single road.</p>
     <h3>The CAMS grid over our stations</h3>
     <p class="small">Drawn to scale. CAMS gives one value for each square of about 44 km × 44 km.</p>
     <div class="chart grid-map">
