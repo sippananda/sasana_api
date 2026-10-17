@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-17T23:15+08:00",
+ "generated_at": "2026-10-18T00:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,7 +52,7 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-17T23:00",
+  "datetime": "2026-10-18T00:00",
   "values": {
    "CA15W": 160,
    "CA19B": 165,
@@ -63,29 +63,29 @@
   "average": 147
  },
  "today": {
-  "date": "2026-10-17",
-  "weekday": "Sat",
+  "date": "2026-10-18",
+  "weekday": "Sun",
   "school_day": false,
   "no_school_reason": "weekend",
   "no_school_name": null,
-  "next_school_day": false,
-  "next_no_school_reason": "weekend",
+  "next_school_day": true,
+  "next_no_school_reason": null,
   "values": {
-   "CA15W": 162,
-   "CA19B": 170,
-   "CA20B": 170,
-   "CA18B": 98
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 150,
-  "reading_state": "done",
-  "school_status": "open",
-  "decision_next_day": "closed",
-  "streak": 3,
-  "reason": "streak",
-  "reason_text": "Average is 150 or above for 3 days in a row. School closes the next day.",
-  "next_date": "2026-10-18",
-  "next_weekday": "Sun",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
+  "school_status": "closed",
+  "decision_next_day": null,
+  "streak": 0,
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-19",
+  "next_weekday": "Mon",
   "next_school_date": "2026-10-19"
  },
  "holidays": [
@@ -420,7 +420,6 @@
    },
    "stations_used": 4,
    "average": 150,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "closed",
    "streak": 3,
@@ -491,16 +490,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-13T23:00",
-   "v": [
-    156,
-    98,
-    153,
-    87
-   ],
-   "avg": 124
-  },
   {
    "t": "2026-10-14T00:00",
    "v": [
@@ -1453,6 +1442,16 @@
   },
   {
    "t": "2026-10-17T23:00",
+   "v": [
+    160,
+    165,
+    166,
+    97
+   ],
+   "avg": 147
+  },
+  {
+   "t": "2026-10-18T00:00",
    "v": [
     160,
     165,
