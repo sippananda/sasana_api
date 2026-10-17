@@ -63,6 +63,9 @@ class Script(unittest.TestCase):
                    NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
                    OPEN_METEO_AQ_URL=f"http://127.0.0.1:{self.port}/v1/air-quality",
                    OPEN_METEO_WX_URL=f"http://127.0.0.1:{self.port}/v1/forecast")
+        # Keep test forecasts off the real GitHub run page.
+        for name in ("GITHUB_ACTIONS", "GITHUB_OUTPUT", "GITHUB_STEP_SUMMARY"):
+            env.pop(name, None)
         r = subprocess.run([sys.executable, str(ROOT / "scripts" / "forecast.py")],
                            env=env, capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)

@@ -61,6 +61,9 @@ class SensorCollector(unittest.TestCase):
 
     def run_collector(self, token=TOKEN):
         env = dict(os.environ)
+        # Keep test runs off the real GitHub run page.
+        for name in ("GITHUB_ACTIONS", "GITHUB_OUTPUT", "GITHUB_STEP_SUMMARY"):
+            env.pop(name, None)
         env.update({
             "MONITOR_DATA_DIR": str(self.data),
             "WAQI_FEED_URL": f"http://127.0.0.1:{self.server.server_address[1]}/feed/{{id}}/",
