@@ -13,10 +13,10 @@
   ],
   "table_first_date": "2026-10-09",
   "stations": [
-    {"id": "CA15W", "name": "Batu Muda, Kuala Lumpur", "short": "Batu Muda", "state_id": 14, "distance_km": 19},
-    {"id": "CA19B", "name": "Petaling Jaya", "short": "Petaling Jaya", "state_id": 10, "distance_km": 22},
-    {"id": "CA20B", "name": "Shah Alam", "short": "Shah Alam", "state_id": 10, "distance_km": 24},
-    {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33}
+    {"id": "CA15W", "name": "Batu Muda, Kuala Lumpur", "short": "Batu Muda", "state_id": 14, "distance_km": 19, "cell": "KL"},
+    {"id": "CA19B", "name": "Petaling Jaya", "short": "Petaling Jaya", "state_id": 10, "distance_km": 22, "cell": "KL"},
+    {"id": "CA20B", "name": "Shah Alam", "short": "Shah Alam", "state_id": 10, "distance_km": 24, "cell": "KL"},
+    {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33, "cell": "KS"}
   ],
   "sensor": {
     "id": "A2871205",
@@ -30,6 +30,17 @@
     "reopen_below": 150,
     "min_stations": 3,
     "start_date": "2026-10-09"
+  },
+  "forecast": {
+    "cells": {
+      "KL": {"latitude": 3.2, "longitude": 101.6},
+      "KS": {"latitude": 3.2, "longitude": 101.2}
+    },
+    "forecast_days": 5,
+    "past_days": 16,
+    "calibration_days": 14,
+    "haze_day_api": 100,
+    "min_calibration_days": 3
   },
   "collector": {
     "backfill_days": 7,

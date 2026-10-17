@@ -1,0 +1,62 @@
+name: Forecast air quality (CAMS)
+
+# Twice a day, after the new CAMS run has reached Open-Meteo:
+# 07:30 and 19:30 Malaysia time (23:30 and 11:30 UTC).
+# This is separate from the hourly DOE collection. A failure here never
+# stops the collection, and the forecast never feeds the closure rule.
+on:
+  schedule:
+    - cron: "30 23 * * *"
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write    # save forecast.json in this repository
+  pages: write       # publish the website
+  id-token: write    # needed by the GitHub Pages publish step
+
+jobs:
+  forecast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Never save or publish at the same time as the hourly collection.
+    concurrency:
+      group: collect
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+    steps:
+      - name: Get the repository
+        uses: actions/checkout@v7
+
+      - name: Run the tests
+        if: github.event_name != 'schedule'
+        run: python3 -m unittest discover -s tests
+
+      - name: Make the forecast from CAMS (Open-Meteo)
+        run: python3 scripts/forecast.py
+
+      - name: Save the forecast in the repository
+        id: save
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/forecast.json docs/data/forecast_history.jsonl
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No new forecast."
+          else
+            git commit -m "Forecast: $(TZ=Asia/Kuala_Lumpur date '+%Y-%m-%d %H:%M') Malaysia time"
+            git push || (git pull --rebase && git push)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pack the website
+        if: steps.save.outputs.changed == 'true'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+
+      - name: Publish the website
+        if: steps.save.outputs.changed == 'true'
+        uses: actions/deploy-pages@v5

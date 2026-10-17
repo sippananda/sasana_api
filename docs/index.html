@@ -177,6 +177,14 @@
   .ranges button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
   .tip i.dot-key { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--ink); }
   .tip .lvl { color: var(--ink-2); }
+  /* section 6: the forecast is for planning only */
+  .plan {
+    margin: 0 0 10px; padding: 8px 12px; border-radius: 10px; font-size: .9rem;
+    border: 1px solid var(--ink-3); background: var(--tile);
+  }
+  .legend i.fc-key { border-top-style: dashed; border-top-width: 2px; }
+  .legend i.band-key { width: 18px; height: 10px; border: 0; background: #d5d5cf; }
+  td.conf { color: var(--ink-2); text-transform: capitalize; }
   .scroll { overflow-x: auto; }
   table { border-collapse: collapse; width: 100%; font-size: .875rem; }
   th, td { padding: 6px 7px; border-bottom: 1px solid var(--rule); text-align: right; white-space: nowrap; }
@@ -188,6 +196,7 @@
   th:first-child, td:first-child, th.l, td.l { text-align: left; }
   td.closed { color: var(--closed); font-weight: 600; }
   td.open { color: var(--open); font-weight: 600; }
+  td.high { color: var(--high); font-weight: 600; }
   tr.muted td { color: var(--ink-3); }
   ul { margin: 0 0 10px; padding-left: 20px; }
   li { margin-bottom: 4px; }
@@ -248,7 +257,7 @@
   <!-- From here on: information only. Sections 4 and 5 do not make the decision. -->
   <div class="group" role="note">
     <div class="line">FOR INFORMATION ONLY</div>
-    <p>Sections 4 and 5 do not decide school closure. They show the trend and the records.</p>
+    <p>Sections 4, 5 and 6 do not decide school closure. They show the trend, the records and a forecast.</p>
   </div>
 
   <section class="info">
@@ -269,6 +278,18 @@
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
   </section>
 
+  <section class="info" id="forecastSection">
+    <h2><span class="n">6</span><span id="fcTitle">5-day forecast of the 2:00 pm average</span></h2>
+    <p class="plan"><b>Forecast for planning only.</b> Closure decisions use the real DOE readings at 2:00 pm.</p>
+    <p class="small" id="fcIssued"></p>
+    <div class="count" id="fcCount"></div>
+    <div class="legend" id="fcLegend"></div>
+    <div class="chart" id="fcChart"></div>
+    <div class="scroll"><table id="fcTable"></table></div>
+    <h3>How the forecast is made</h3>
+    <ul class="small" id="fcNotes"></ul>
+  </section>
+
   <footer class="small">
     <p><b>About the data</b></p>
     <ul>
@@ -278,6 +299,10 @@
       <li>If a station reading is late, one more collection runs about 15 minutes later.</li>
       <li>A reading that is still missing after that is collected in the next hour.</li>
       <li>Times are Malaysia time. This page refreshes by itself every 5 minutes.</li>
+      <li>Forecast (section 6): contains modified Copernicus Atmosphere Monitoring Service information
+        (CAMS, run by ECMWF). Weather from ECMWF open data. Both through
+        <a href="https://open-meteo.com/">Open-Meteo</a>. The forecast is made twice a day, at about
+        7:30 am and 7:30 pm.</li>
     </ul>
     <p><b>Disclaimer</b></p>
     <ul>
@@ -895,16 +920,215 @@
     hit.addEventListener("pointerleave", leave);
   }
 
+  // ------------------------------------------------------------ forecast (section 6)
+  // Observed 2 pm averages of the last 7 days (solid line, filled dots) and the CAMS
+  // forecast for the next days (dashed line, open dots, grey band for the range).
+  // Everything is black and grey; the limits are the same dashed red as elsewhere.
+  // Colour never carries the meaning alone: solid against dashed, filled against open.
+  function drawForecast(s, f) {
+    var host = $("fcChart"); host.textContent = "";
+    var legend = $("fcLegend"); legend.textContent = "";
+    var tb = $("fcTable"); tb.textContent = "";
+    var notes = $("fcNotes"); notes.textContent = "";
+    var count = $("fcCount"); count.textContent = "";
+    var rule = s.rule, DAY = 24 * 3600e3, st = s.stations;
+    var readClock = clock(Date.UTC(2000, 0, 1, s.reading_hour));
+    var lowT = rule.close_from_streak, hiT = rule.close_from_single_day;
+    $("fcTitle").textContent = "5-day forecast of the " + readClock + " average";
+
+    if (!f || !f.days || !f.days.length) {
+      $("fcIssued").textContent = "No forecast yet.";
+      return;
+    }
+    var issued = parse(f.issued);
+    var ageH = (nowMY() - issued) / 3600e3;
+    var cal = f.calibration || {};
+    var nHaze = Math.min.apply(null, Object.keys(f.cells || {}).map(function (c) { return cal[c] ? cal[c].n_haze : 0; }));
+    $("fcIssued").textContent = "Forecast issued " + dayLabel(issued) + ", " + clock(issued) + "." +
+      (ageH > 36 ? " It is old: no new forecast for " + Math.floor(ageH) + " hours." : "") +
+      " Calibrated on " + nHaze + " haze day" + (nHaze === 1 ? "" : "s") + ".";
+
+    // The count of high days in a row, from the real readings.
+    var t = s.today;
+    if (t.streak !== null && t.streak !== undefined && t.school_status === "open") {
+      count.appendChild(el("span", {}, "High days in a row so far (real readings):"));
+      var pips = el("span", { "class": "pips", "aria-hidden": "true" });
+      for (var i = 0; i < rule.streak_days; i++)
+        pips.appendChild(el("span", { "class": "pip" + (i < t.streak ? " on" : "") }));
+      count.appendChild(pips);
+      count.appendChild(el("b", {}, Math.min(t.streak, rule.streak_days) + " of " + rule.streak_days));
+    } else if (t.school_status === "closed") {
+      count.appendChild(el("span", {}, "School is closed now. It reopens the day after an average below " + rule.reopen_below + "."));
+    }
+
+    function key(css, cls, label) {
+      var sp = el("span"); var i = el("i", cls ? { "class": cls } : {});
+      i.style.borderTopColor = css; sp.appendChild(i);
+      sp.appendChild(document.createTextNode(label)); legend.appendChild(sp);
+    }
+    key("var(--ink)", "avg-key", "Observed " + readClock + " average");
+    key("var(--ink)", "fc-key", "Forecast");
+    key("", "band-key", "Forecast range");
+    key("var(--limit)", "limit-key", "Limits " + lowT + " and " + hiT);
+
+    // ---- points: observed (last 7 days) then forecast
+    var obs = (s.averages || []).filter(function (a) { return a[1] !== null && a[1] !== undefined; })
+      .slice(-7).map(function (a) { return { t: parse(a[0]), v: a[1], obs: true }; });
+    var fc = f.days.filter(function (d) { return d.avg_2pm && d.avg_2pm.mid !== null; })
+      .map(function (d) { return { t: parse(d.date), v: d.avg_2pm.mid, lo: d.avg_2pm.low, hi: d.avg_2pm.high, d: d }; });
+    // A forecast for a day that already has a real reading is shown with the reading, not both.
+    var seen = {}; obs.forEach(function (p) { seen[p.t] = true; });
+    fc = fc.filter(function (p) { return !seen[p.t]; });
+    var all = obs.concat(fc);
+    if (!all.length) { host.textContent = "No data."; return; }
+    var start = all[0].t, end = all[all.length - 1].t;
+    var span = Math.round((end - start) / DAY) + 1;
+
+    var W = Math.max(300, Math.round(host.clientWidth || 720));
+    var narrow = W < 520;
+    var H = narrow ? 300 : 320, L = 34, R = 34, T = 20, B = 92;   // B holds the day labels, wind and rain
+    var step = (W - L - R) / span;
+    function X(tm) { return L + (Math.round((tm - start) / DAY) + 0.5) * step; }
+    var vals = all.map(function (p) { return p.v; }).concat(fc.map(function (p) { return p.hi; }));
+    var ymax = Math.ceil(Math.max(hiT + 20, Math.max.apply(null, vals)) / 50) * 50;
+    var ymin = Math.max(0, Math.floor((Math.min(lowT, Math.min.apply(null, all.map(function (p) { return p.v; }).concat(fc.map(function (p) { return p.lo; })))) - 10) / 50) * 50);
+    var Y0 = H - B;
+    function Y(v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (Y0 - T); }
+
+    var g = svg("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, role: "img",
+      "aria-label": "Observed " + readClock + " average of the last 7 days and the forecast for the next " +
+        fc.length + " days, with the forecast range. The table below gives the numbers." });
+
+    for (var v = ymin; v <= ymax; v += 50) {
+      g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#e6e6e2", "stroke-width": 1 }));
+      g.appendChild(svg("text", { x: L - 6, y: Y(v) + 4, "text-anchor": "end" }, String(v)));
+    }
+    g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y0, y2: Y0, stroke: "var(--rule)", "stroke-width": 1 }));
+    // the border between the observed days and the forecast
+    if (obs.length && fc.length) {
+      var xb = (X(obs[obs.length - 1].t) + X(fc[0].t)) / 2;
+      g.appendChild(svg("line", { x1: xb, x2: xb, y1: T, y2: Y0, stroke: "var(--ink-3)", "stroke-width": 1, "stroke-dasharray": "2 3" }));
+      g.appendChild(svg("text", { x: xb + 4, y: T + 10 }, "forecast →"));
+    }
+
+    // ---- the range band, then the lines
+    if (fc.length) {
+      var up = fc.map(function (p) { return X(p.t).toFixed(1) + " " + Y(p.hi).toFixed(1); });
+      var down = fc.slice().reverse().map(function (p) { return X(p.t).toFixed(1) + " " + Y(p.lo).toFixed(1); });
+      g.appendChild(svg("path", { d: "M" + up.concat(down).join(" L") + " Z", fill: "#d5d5cf", "fill-opacity": .7 }));
+    }
+    function line(pts, dash, w) {
+      if (pts.length < 2) return;
+      g.appendChild(svg("path", { d: "M" + pts.map(function (p) { return X(p.t).toFixed(1) + " " + Y(p.v).toFixed(1); }).join(" L"),
+        fill: "none", stroke: "var(--ink)", "stroke-width": w, "stroke-dasharray": dash || "none",
+        "stroke-linejoin": "round", "stroke-linecap": "round" }));
+    }
+    line(obs, "", 2.5);
+    // the dashed line starts at the last observed day, so the two parts join
+    line((obs.length ? [obs[obs.length - 1]] : []).concat(fc), "6 5", 2);
+
+    // ---- limits
+    [lowT, hiT].forEach(function (lim) {
+      g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y(lim), y2: Y(lim),
+        stroke: "var(--limit)", "stroke-width": 1.25, "stroke-dasharray": "5 4" }));
+      g.appendChild(svg("text", { x: W - R + 5, y: Y(lim) + 4, style: "fill:var(--ink);font-weight:600" }, String(lim)));
+    });
+
+    // ---- dots and numbers
+    var r = narrow ? 4 : 5;
+    all.forEach(function (p) {
+      var x = X(p.t), y = Y(p.v);
+      g.appendChild(svg("circle", { cx: x, cy: y, r: r, fill: p.obs ? "var(--ink)" : "var(--surface)",
+        stroke: "var(--ink)", "stroke-width": 2 }));
+      g.appendChild(svg("text", { x: x, y: y - r - 6, "text-anchor": "middle",
+        style: "fill:var(--ink);font-weight:" + (p.obs ? "700" : "500") + ";paint-order:stroke;stroke:var(--surface);stroke-width:3px" },
+        num(p.v)));
+    });
+
+    // ---- under the axis: day label, then wind arrow and speed, then rain
+    all.forEach(function (p) {
+      var x = X(p.t);
+      g.appendChild(svg("line", { x1: x, x2: x, y1: Y0, y2: Y0 + 4, stroke: "var(--ink-3)", "stroke-width": 1 }));
+      // "Sat 10 Oct" when there is room, otherwise "Sat 10", or "10" on a phone.
+      var lbl = step >= 64 ? dayLabel(p.t) : step >= 34 ? dayLabel(p.t).replace(/ \w+$/, "") : String(new Date(p.t).getUTCDate());
+      g.appendChild(svg("text", { x: x, y: Y0 + 18, "text-anchor": "middle" }, lbl));
+      if (!p.d || !p.d.weather_2pm) return;
+      var wx = p.d.weather_2pm;
+      if (wx.wind_from_deg !== null && wx.wind_from_deg !== undefined) {
+        // The arrow points where the wind goes. Wind "from 200" goes to 20 (north-north-east).
+        var to = (wx.wind_from_deg + 180) % 360;
+        var ay = Y0 + 42;
+        var arrow = svg("path", { d: "M0 8 L0 -8 M-4 -4 L0 -8 L4 -4", fill: "none", stroke: "var(--ink)",
+          "stroke-width": 1.6, "stroke-linecap": "round", "stroke-linejoin": "round",
+          transform: "translate(" + x.toFixed(1) + " " + ay + ") rotate(" + to + ")" });
+        g.appendChild(arrow);
+        g.appendChild(svg("text", { x: x, y: ay + 22, "text-anchor": "middle" },
+          (wx.wind_kmh === null || wx.wind_kmh === undefined ? "" : Math.round(wx.wind_kmh) + (step >= 50 ? " km/h" : ""))));
+      }
+      if (wx.rain_mm_day !== null && wx.rain_mm_day !== undefined) {
+        g.appendChild(svg("text", { x: x, y: Y0 + 80, "text-anchor": "middle" }, Math.round(wx.rain_mm_day) + (step >= 50 ? " mm" : "")));
+      }
+    });
+    if (fc.length) {
+      g.appendChild(svg("text", { x: L, y: Y0 + 46, style: "fill:var(--ink-3)" }, narrow ? "wind" : "wind at " + readClock + (step < 50 ? ", km/h" : "")));
+      g.appendChild(svg("text", { x: L, y: Y0 + 80, style: "fill:var(--ink-3)" }, "rain per day" + (step < 50 ? ", mm" : "")));
+    }
+    host.appendChild(g);
+
+    // ---- table
+    var head = el("tr");
+    ["Day", "Forecast", "Range"].concat(st.map(function (x) { return x.short; }), ["Wind " + readClock, "Rain", "Confidence"])
+      .forEach(function (h, i) { head.appendChild(el("th", i === 0 || i === 2 || i >= 7 ? { "class": "l" } : {}, h)); });
+    tb.appendChild(head);
+    var DIRS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+    f.days.forEach(function (d) {
+      var tr = el("tr");
+      tr.appendChild(el("td", {}, dayLabel(parse(d.date))));
+      var mid = d.avg_2pm ? d.avg_2pm.mid : null;
+      tr.appendChild(el("td", { "class": "strong " + (mid === null ? "" : mid >= hiT ? "closed" : mid >= lowT ? "high" : "") }, num(mid)));
+      tr.appendChild(el("td", { "class": "l" }, d.avg_2pm && d.avg_2pm.low !== null ? num(d.avg_2pm.low) + " to " + num(d.avg_2pm.high) : "–"));
+      st.forEach(function (x) { tr.appendChild(el("td", {}, num(d.api_2pm ? d.api_2pm[x.id] : null))); });
+      var wx = d.weather_2pm || {};
+      tr.appendChild(el("td", { "class": "l" }, wx.wind_from_deg === null || wx.wind_from_deg === undefined ? "–"
+        : "from " + DIRS[Math.round(wx.wind_from_deg / 45) % 8] + ", " + Math.round(wx.wind_kmh) + " km/h"));
+      tr.appendChild(el("td", {}, wx.rain_mm_day === null || wx.rain_mm_day === undefined ? "–" : num(Math.round(wx.rain_mm_day)) + " mm"));
+      tr.appendChild(el("td", { "class": "l conf" }, d.confidence || "–"));
+      tb.appendChild(tr);
+    });
+
+    // ---- notes
+    var cells = Object.keys(f.cells || {});
+    var kText = cells.map(function (c) {
+      var k = cal[c] || {};
+      return c + " cell: ×" + num(k.k) + " (range ×" + num(k.min) + " to ×" + num(k.max) + ", " + (k.n || 0) + " days)";
+    }).join("; ");
+    [
+      "CAMS is the European haze model (Copernicus Atmosphere Monitoring Service, run by ECMWF). It forecasts fine dust (PM2.5) five days ahead, in cells of about 40 km.",
+      "Batu Muda, Petaling Jaya and Shah Alam lie in one cell. Kuala Selangor lies in another. So three stations get the same forecast number.",
+      "For each day, the 24 hours of CAMS PM2.5 ending at " + readClock + " are averaged, like the DOE API. The result is converted to API with the DOE formula.",
+      "CAMS reads low in peat haze. The forecast is multiplied by a factor from the last " + (cal.window_days || 14) + " days of real readings (haze days only, when there are enough). Now: " + kText + ".",
+      "The grey range uses the smallest and largest factor of those days. The direction of change (clearing or building) is more reliable than the exact number.",
+      "CAMS assumes the fires stay as they are. It cannot predict new fires. Confidence: high for days 1 and 2 after 7 or more haze days; medium for days 3 and 4; low for day 5."
+    ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });
+  }
+
   function load() {
     fetch("data/status.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (s) { lastStatus = s; render(s); })
+      .then(function (s) { lastStatus = s; render(s); loadForecast(); })
       .catch(function (e) {
         var w = $("warn"); w.hidden = false;
         w.textContent = "Could not load the data (" + e.message + "). Check the DOE website.";
       });
   }
-  var lastStatus = null, timer = null;
+  // The forecast file is written by its own run, twice a day. The page works without it.
+  function loadForecast() {
+    fetch("data/forecast.json?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (f) { lastForecast = f; drawForecast(lastStatus, f); })
+      .catch(function () { lastForecast = null; drawForecast(lastStatus, null); });
+  }
+  var lastStatus = null, lastForecast = null, timer = null;
   // Redraw the two graphs only when the width of the window changes. A phone also sends
   // "resize" each time its address bar hides or shows during scrolling. The width is then
   // the same, and a redraw would only make the phone work for nothing.
@@ -913,7 +1137,9 @@
     if (window.innerWidth === lastWidth) return;
     lastWidth = window.innerWidth;
     clearTimeout(timer);
-    timer = setTimeout(function () { if (lastStatus) { drawDots(lastStatus); drawChart(lastStatus); } }, 150);
+    timer = setTimeout(function () {
+      if (lastStatus) { drawDots(lastStatus); drawChart(lastStatus); drawForecast(lastStatus, lastForecast); }
+    }, 150);
   });
   load();
   setInterval(load, 5 * 60 * 1000);
