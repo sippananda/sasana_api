@@ -1,5 +1,5 @@
 {
- "issued": "2026-10-17T14:29+08:00",
+ "issued": "2026-10-17T14:30+08:00",
  "reading_hour": 14,
  "cells": {
   "KL": {
@@ -34,7 +34,8 @@
    "n_clean": 6,
    "k": 1.324,
    "min": 0.82,
-   "max": 2.763
+   "max": 2.763,
+   "spread": 0.4
   },
   "KS": {
    "basis": "haze days",
@@ -46,7 +47,8 @@
    "n_clean": 9,
    "k": 1.296,
    "min": 1.07,
-   "max": 3.16
+   "max": 3.16,
+   "spread": 0.4
   },
   "days": [
    {
@@ -389,8 +391,8 @@
    },
    "avg_2pm": {
     "mid": 138,
-    "low": 92,
-    "high": 264
+    "low": 89,
+    "high": 186
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.61,
@@ -398,7 +400,7 @@
    "weather_2pm": {
     "wind_kmh": 6.6,
     "wind_from_deg": 261,
-    "rain_mm_day": 11.3
+    "rain_mm_day": 11.2
    },
    "flags": {
     "at_or_above_streak": false,
@@ -421,8 +423,8 @@
    },
    "avg_2pm": {
     "mid": 100,
-    "low": 77,
-    "high": 193
+    "low": 74,
+    "high": 136
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.37,
@@ -453,8 +455,8 @@
    },
    "avg_2pm": {
     "mid": 116,
-    "low": 84,
-    "high": 225
+    "low": 81,
+    "high": 158
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.22,
@@ -485,8 +487,8 @@
    },
    "avg_2pm": {
     "mid": 114,
-    "low": 84,
-    "high": 228
+    "low": 81,
+    "high": 155
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.14,
