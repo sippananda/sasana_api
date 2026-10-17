@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-17T14:07+08:00",
+ "generated_at": "2026-10-17T14:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,15 +52,15 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-17T13:00",
+  "datetime": "2026-10-17T14:00",
   "values": {
-   "CA15W": 160,
+   "CA15W": 162,
    "CA19B": 170,
    "CA20B": 170,
-   "CA18B": 96
+   "CA18B": 98
   },
   "stations_used": 4,
-  "average": 149
+  "average": 150
  },
  "today": {
   "date": "2026-10-17",
@@ -71,19 +71,19 @@
   "next_school_day": false,
   "next_no_school_reason": "weekend",
   "values": {
-   "CA15W": null,
-   "CA19B": null,
-   "CA20B": null,
-   "CA18B": null
+   "CA15W": 162,
+   "CA19B": 170,
+   "CA20B": 170,
+   "CA18B": 98
   },
-  "stations_used": 0,
-  "average": null,
-  "reading_state": "waiting",
+  "stations_used": 4,
+  "average": 150,
+  "reading_state": "done",
   "school_status": "open",
-  "decision_next_day": null,
-  "streak": 2,
-  "reason": "pending",
-  "reason_text": "Waiting for the 2:00 pm reading from DOE.",
+  "decision_next_day": "closed",
+  "streak": 3,
+  "reason": "streak",
+  "reason_text": "Average is 150 or above for 3 days in a row. School closes the next day.",
   "next_date": "2026-10-18",
   "next_weekday": "Sun",
   "next_school_date": "2026-10-19"
@@ -403,6 +403,29 @@
    "streak": 2,
    "reason": "counting",
    "reason_text": "Average is 150 or above. Day 2 of 3. School stays open."
+  },
+  {
+   "date": "2026-10-17",
+   "weekday": "Sat",
+   "school_day": false,
+   "no_school_reason": "weekend",
+   "no_school_name": null,
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
+   "values": {
+    "CA15W": 162,
+    "CA19B": 170,
+    "CA20B": 170,
+    "CA18B": 98
+   },
+   "stations_used": 4,
+   "average": 150,
+   "reading_state": "done",
+   "school_status": "open",
+   "decision_next_day": "closed",
+   "streak": 3,
+   "reason": "streak",
+   "reason_text": "Average is 150 or above for 3 days in a row. School closes the next day."
   }
  ],
  "averages": [
@@ -461,6 +484,10 @@
   [
    "2026-10-16",
    166
+  ],
+  [
+   "2026-10-17",
+   150
   ]
  ],
  "hourly": [
@@ -1423,6 +1450,16 @@
     96
    ],
    "avg": 149
+  },
+  {
+   "t": "2026-10-17T14:00",
+   "v": [
+    162,
+    170,
+    170,
+    98
+   ],
+   "avg": 150
   }
  ]
 }
