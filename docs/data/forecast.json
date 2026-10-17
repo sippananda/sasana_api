@@ -1,0 +1,444 @@
+{
+ "issued": "2026-10-17T11:09+08:00",
+ "reading_hour": 14,
+ "cells": {
+  "KL": {
+   "latitude": 3.2000046,
+   "longitude": 101.600006,
+   "stations": [
+    "CA15W",
+    "CA19B",
+    "CA20B"
+   ]
+  },
+  "KS": {
+   "latitude": 3.2000046,
+   "longitude": 101.20001,
+   "stations": [
+    "CA18B"
+   ]
+  }
+ },
+ "calibration": {
+  "window_days": 14,
+  "haze_day_api": 100,
+  "KL": {
+   "k": 1.302,
+   "min": 0.82,
+   "max": 1.854,
+   "n": 8,
+   "n_haze": 8,
+   "basis": "haze days"
+  },
+  "KS": {
+   "k": 1.296,
+   "min": 1.07,
+   "max": 3.16,
+   "n": 6,
+   "n_haze": 6,
+   "basis": "haze days"
+  },
+  "days": [
+   {
+    "date": "2026-10-03",
+    "obs_api": 77.3,
+    "obs_pm": 46.1,
+    "cams_pm": 64.0,
+    "ratio": 0.721,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-04",
+    "obs_api": 91.3,
+    "obs_pm": 64.2,
+    "cams_pm": 81.1,
+    "ratio": 0.791,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-05",
+    "obs_api": 89.7,
+    "obs_pm": 62.1,
+    "cams_pm": 70.3,
+    "ratio": 0.883,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-06",
+    "obs_api": 152.7,
+    "obs_pm": 114.6,
+    "cams_pm": 77.0,
+    "ratio": 1.489,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-07",
+    "obs_api": 178.7,
+    "obs_pm": 134.3,
+    "cams_pm": 141.3,
+    "ratio": 0.95,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-08",
+    "obs_api": 167.7,
+    "obs_pm": 125.9,
+    "cams_pm": 153.6,
+    "ratio": 0.82,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-09",
+    "obs_api": 172.0,
+    "obs_pm": 129.2,
+    "cams_pm": 131.1,
+    "ratio": 0.986,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-10",
+    "obs_api": 161.3,
+    "obs_pm": 121.1,
+    "cams_pm": 79.2,
+    "ratio": 1.529,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-11",
+    "obs_api": 78.7,
+    "obs_pm": 47.8,
+    "cams_pm": 33.4,
+    "ratio": 1.431,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-12",
+    "obs_api": 72.3,
+    "obs_pm": 39.7,
+    "cams_pm": 26.4,
+    "ratio": 1.5,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-13",
+    "obs_api": 88.7,
+    "obs_pm": 60.8,
+    "cams_pm": 92.5,
+    "ratio": 0.657,
+    "haze": false,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-14",
+    "obs_api": 161.0,
+    "obs_pm": 120.9,
+    "cams_pm": 94.4,
+    "ratio": 1.281,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-15",
+    "obs_api": 171.0,
+    "obs_pm": 128.5,
+    "cams_pm": 97.1,
+    "ratio": 1.324,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-16",
+    "obs_api": 170.3,
+    "obs_pm": 128.0,
+    "cams_pm": 69.0,
+    "ratio": 1.854,
+    "haze": true,
+    "cell": "KL"
+   },
+   {
+    "date": "2026-10-03",
+    "obs_api": 55.0,
+    "obs_pm": 17.3,
+    "cams_pm": 19.2,
+    "ratio": 0.898,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-04",
+    "obs_api": 69.0,
+    "obs_pm": 35.4,
+    "cams_pm": 29.6,
+    "ratio": 1.193,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-05",
+    "obs_api": 69.0,
+    "obs_pm": 35.4,
+    "cams_pm": 20.4,
+    "ratio": 1.729,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-06",
+    "obs_api": 71.0,
+    "obs_pm": 37.9,
+    "cams_pm": 37.8,
+    "ratio": 1.003,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-07",
+    "obs_api": 152.0,
+    "obs_pm": 114.1,
+    "cams_pm": 96.0,
+    "ratio": 1.188,
+    "haze": true,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-08",
+    "obs_api": 141.0,
+    "obs_pm": 105.8,
+    "cams_pm": 91.7,
+    "ratio": 1.153,
+    "haze": true,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-09",
+    "obs_api": 155.0,
+    "obs_pm": 116.4,
+    "cams_pm": 36.8,
+    "ratio": 3.16,
+    "haze": true,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-10",
+    "obs_api": 102.0,
+    "obs_pm": 76.3,
+    "cams_pm": 27.4,
+    "ratio": 2.779,
+    "haze": true,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-11",
+    "obs_api": 68.0,
+    "obs_pm": 34.1,
+    "cams_pm": 13.5,
+    "ratio": 2.531,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-12",
+    "obs_api": 61.0,
+    "obs_pm": 25.0,
+    "cams_pm": 20.0,
+    "ratio": 1.248,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-13",
+    "obs_api": 77.0,
+    "obs_pm": 45.7,
+    "cams_pm": 47.2,
+    "ratio": 0.969,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-14",
+    "obs_api": 92.0,
+    "obs_pm": 65.1,
+    "cams_pm": 80.3,
+    "ratio": 0.811,
+    "haze": false,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-15",
+    "obs_api": 160.0,
+    "obs_pm": 120.1,
+    "cams_pm": 112.3,
+    "ratio": 1.07,
+    "haze": true,
+    "cell": "KS"
+   },
+   {
+    "date": "2026-10-16",
+    "obs_api": 153.0,
+    "obs_pm": 114.8,
+    "cams_pm": 81.7,
+    "ratio": 1.405,
+    "haze": true,
+    "cell": "KS"
+   }
+  ]
+ },
+ "days": [
+  {
+   "date": "2026-10-17",
+   "weekday": "Sat",
+   "cams_pm25_24h": {
+    "KL": 45.5,
+    "KS": 35.9
+   },
+   "api_2pm": {
+    "CA15W": 87,
+    "CA19B": 87,
+    "CA20B": 87,
+    "CA18B": 78
+   },
+   "avg_2pm": {
+    "mid": 85,
+    "low": 71,
+    "high": 123
+   },
+   "weather_2pm": {
+    "wind_kmh": 7.2,
+    "wind_from_deg": 276,
+    "rain_mm_day": 18.4
+   },
+   "flags": {
+    "at_or_above_streak": false,
+    "at_or_above_single_day": false
+   },
+   "confidence": "medium"
+  },
+  {
+   "date": "2026-10-18",
+   "weekday": "Sun",
+   "cams_pm25_24h": {
+    "KL": 52.9,
+    "KS": 32.1
+   },
+   "api_2pm": {
+    "CA15W": 95,
+    "CA19B": 95,
+    "CA20B": 95,
+    "CA18B": 74
+   },
+   "avg_2pm": {
+    "mid": 90,
+    "low": 73,
+    "high": 132
+   },
+   "weather_2pm": {
+    "wind_kmh": 6.6,
+    "wind_from_deg": 261,
+    "rain_mm_day": 11.2
+   },
+   "flags": {
+    "at_or_above_streak": false,
+    "at_or_above_single_day": false
+   },
+   "confidence": "medium"
+  },
+  {
+   "date": "2026-10-19",
+   "weekday": "Mon",
+   "cams_pm25_24h": {
+    "KL": 45.6,
+    "KS": 17.0
+   },
+   "api_2pm": {
+    "CA15W": 88,
+    "CA19B": 88,
+    "CA20B": 88,
+    "CA18B": 59
+   },
+   "avg_2pm": {
+    "mid": 81,
+    "low": 67,
+    "high": 106
+   },
+   "weather_2pm": {
+    "wind_kmh": 6.6,
+    "wind_from_deg": 221,
+    "rain_mm_day": 6.4
+   },
+   "flags": {
+    "at_or_above_streak": false,
+    "at_or_above_single_day": false
+   },
+   "confidence": "medium"
+  },
+  {
+   "date": "2026-10-20",
+   "weekday": "Tue",
+   "cams_pm25_24h": {
+    "KL": 59.1,
+    "KS": 30.0
+   },
+   "api_2pm": {
+    "CA15W": 103,
+    "CA19B": 103,
+    "CA20B": 103,
+    "CA18B": 72
+   },
+   "avg_2pm": {
+    "mid": 95,
+    "low": 76,
+    "high": 141
+   },
+   "weather_2pm": {
+    "wind_kmh": 7.6,
+    "wind_from_deg": 183,
+    "rain_mm_day": 2.8
+   },
+   "flags": {
+    "at_or_above_streak": false,
+    "at_or_above_single_day": false
+   },
+   "confidence": "medium"
+  },
+  {
+   "date": "2026-10-21",
+   "weekday": "Wed",
+   "cams_pm25_24h": {
+    "KL": 60.6,
+    "KS": 41.1
+   },
+   "api_2pm": {
+    "CA15W": 106,
+    "CA19B": 106,
+    "CA20B": 106,
+    "CA18B": 83
+   },
+   "avg_2pm": {
+    "mid": 100,
+    "low": 79,
+    "high": 156
+   },
+   "weather_2pm": {
+    "wind_kmh": 5.6,
+    "wind_from_deg": 220,
+    "rain_mm_day": 2.5
+   },
+   "flags": {
+    "at_or_above_streak": false,
+    "at_or_above_single_day": false
+   },
+   "confidence": "low"
+  }
+ ],
+ "credit": "Contains modified Copernicus Atmosphere Monitoring Service information (CAMS, ECMWF). Weather: ECMWF open data. Both via Open-Meteo."
+}
