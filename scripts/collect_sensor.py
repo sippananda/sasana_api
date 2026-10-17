@@ -22,7 +22,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -44,7 +44,8 @@ FIELDS = [
     ("temp_c", "t"),
     ("wind_ms", "w"),
 ]
-COLUMNS = ["datetime_myt"] + [c for c, _ in FIELDS]
+COLUMNS = ["datetime_myt"] + [c for c, _ in FIELDS] + ["source"]
+MYT = timezone(timedelta(hours=8))
 
 
 def log(msg):
@@ -71,11 +72,12 @@ def fetch(sensor_id, token):
                     urllib.parse.urlencode({"token": token}))
 
 
-def find_id(sensor, token):
-    """Find the current feed id of the sensor from its position and name.
+def find_station(sensor, token):
+    """Find the sensor on the aqicn map search, by position and name.
 
-    aqicn sometimes gives a citizen sensor a new id. The old id then answers
-    "no such station". The map search still lists the sensor at the same place.
+    Returns {"id", "aqi", "time"} or None. aqicn sometimes gives a citizen
+    sensor a new id, and its feed may refuse requests from GitHub's servers.
+    The map search still lists the sensor with its id, index and time.
     """
     lat, lon = sensor.get("lat"), sensor.get("lon")
     if lat is None or lon is None:
@@ -92,13 +94,30 @@ def find_id(sensor, token):
             continue
         dist = (float(s.get("lat", 0)) - lat) ** 2 + (float(s.get("lon", 0)) - lon) ** 2
         if best is None or dist < best[0]:
-            best = (dist, uid)
+            best = (dist, s)
     if best is None:
         return None
-    uid = best[1]
+    s = best[1]
+    uid = s["uid"]
     # Citizen sensors have a negative uid; their feed id is "A" + the number.
-    return f"A{-uid}" if uid < 0 else f"@{uid}"
+    return {"id": f"A{-uid}" if uid < 0 else f"@{uid}",
+            "aqi": s.get("aqi"),
+            "time": (s.get("station") or {}).get("time")}
 
+
+def map_row(station):
+    """Row from the map search: overall index only, which is the PM2.5 index
+    when PM2.5 is the main pollutant (normal for this sensor)."""
+    stamp = station.get("time")
+    if not stamp:
+        raise RuntimeError("aqicn map search has no time for the sensor")
+    utc = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    hour = utc.astimezone(MYT).strftime(KEY)
+    row = {col: "" for col, _ in FIELDS}
+    row["pm25_aqi"] = value(station.get("aqi"))
+    row["datetime_myt"] = hour
+    row["source"] = "map"
+    return hour, row
 
 def value(x):
     """Number as int when whole, float otherwise, empty string when missing."""
@@ -121,6 +140,7 @@ def parse(data):
     iaqi = data.get("iaqi") or {}
     row = {col: value((iaqi.get(name) or {}).get("v")) for col, name in FIELDS}
     row["datetime_myt"] = hour
+    row["source"] = "feed"
     return hour, row
 
 
@@ -155,21 +175,28 @@ def main():
         return 0
 
     log(f"Reading sensor {sensor['id']} ({sensor['name']}) from aqicn")
+    hour = row = None
     try:
-        data = fetch(sensor["id"], token)
+        hour, row = parse(fetch(sensor["id"], token))
     except RuntimeError as err:
         if "no such station" not in str(err):
             raise
-        new_id = find_id(sensor, token)
-        if not new_id or new_id == sensor["id"]:
+        log(f"  feed {sensor['id']}: {err}. Looking for the sensor on the map search.")
+        station = find_station(sensor, token)
+        if not station:
             raise
-        log(f"  {sensor['id']} is gone; aqicn now lists the sensor as {new_id}. "
-            f"Please update config.json.")
-        if os.environ.get("GITHUB_ACTIONS") == "true":
-            print(f"::warning title=Sensor id changed::aqicn now lists the sensor as "
-                  f"{new_id}. Please update config.json.", flush=True)
-        data = fetch(new_id, token)
-    hour, row = parse(data)
+        if station["id"] != sensor["id"]:
+            log(f"  aqicn now lists the sensor as {station['id']}. Please update config.json.")
+            if os.environ.get("GITHUB_ACTIONS") == "true":
+                print(f"::warning title=Sensor id changed::aqicn now lists the sensor as "
+                      f"{station['id']}. Please update config.json.", flush=True)
+            try:
+                hour, row = parse(fetch(station["id"], token))
+            except RuntimeError as err2:
+                log(f"  feed {station['id']}: {err2}")
+        if row is None:
+            log("  using the index from the map search (PM2.5 index only)")
+            hour, row = map_row(station)
     if row["pm25_aqi"] == "":
         raise RuntimeError("aqicn feed has no PM2.5 value")
     log(f"  {hour}: PM2.5 index {row['pm25_aqi']}, humidity {row['rh_percent']} %")

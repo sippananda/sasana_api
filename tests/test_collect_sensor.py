@@ -141,6 +141,27 @@ class SensorCollector(unittest.TestCase):
         self.assertIn("no such station", result.stdout)
         self.assertFalse((self.data / "sensor.csv").exists())
 
+    def test_uses_map_index_when_feed_refuses(self):
+        # The feed refuses every id (as it does for requests from GitHub),
+        # but the map search lists the sensor with the same id.
+        Handler.answer = feed("2026-10-18 00:33:13", 93)
+        Handler.live_id = "none"
+        Handler.bounds = [{"lat": 3.304542, "lon": 101.531164, "uid": -2871205, "aqi": "94",
+                           "station": {"name": "Jalan Anggun 3P",
+                                       "time": "2026-10-17T16:37:05Z"}}]
+        result = self.run_collector()
+        self.assertEqual(result.returncode, 0, result.stdout)
+        rows = self.rows()
+        self.assertEqual(rows[0]["datetime_myt"], "2026-10-18T00:00")
+        self.assertEqual(rows[0]["pm25_aqi"], "94")
+        self.assertEqual(rows[0]["pm10_aqi"], "")
+        self.assertEqual(rows[0]["source"], "map")
+
+    def test_feed_rows_are_marked(self):
+        Handler.answer = feed("2026-10-15 07:00:00", 129)
+        self.assertEqual(self.run_collector().returncode, 0)
+        self.assertEqual(self.rows()[0]["source"], "feed")
+
 
 if __name__ == "__main__":
     unittest.main()
