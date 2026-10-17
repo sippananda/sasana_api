@@ -184,6 +184,8 @@
   }
   .legend i.fc-key { border-top-style: dashed; border-top-width: 2px; }
   .legend i.band-key { width: 18px; height: 10px; border: 0; background: #d5d5cf; }
+  .legend i.wk-key { width: 14px; height: 12px; border: 1px solid #c9c9c2;
+    background: repeating-linear-gradient(-45deg, #b9b9b2 0 1.2px, transparent 1.2px 4px); }
   td.conf { color: var(--ink-2); text-transform: capitalize; }
   .method { margin: 12px 0 0; font-size: .9rem; }
   table.factors { min-width: 560px; }
@@ -991,6 +993,7 @@
     key("var(--ink)", "avg-key", "Observed " + readClock + " average");
     key("var(--ink)", "fc-key", "Forecast");
     key("", "band-key", "Forecast range");
+    key("", "wk-key", "No school (weekend or holiday)");
     key("var(--limit)", "limit-key", "Limits " + lowT + " and " + hiT);
 
     // ---- points: observed (last 7 days) then forecast
@@ -1026,6 +1029,27 @@
       g.appendChild(svg("text", { x: L - 6, y: Y(v) + 4, "text-anchor": "end" }, String(v)));
     }
     g.appendChild(svg("line", { x1: L, x2: W - R, y1: Y0, y2: Y0, stroke: "var(--rule)", "stroke-width": 1 }));
+    // ---- days without school: hatched columns, drawn behind the lines.
+    //      Hatching, not a colour, so it is not mixed up with the grey forecast band.
+    var defs = svg("defs");
+    var pat = svg("pattern", { id: "fcNoSchool", width: 6, height: 6, patternUnits: "userSpaceOnUse",
+      patternTransform: "rotate(45)" });
+    pat.appendChild(svg("rect", { width: 6, height: 6, fill: "var(--surface)" }));
+    pat.appendChild(svg("line", { x1: 0, y1: 0, x2: 0, y2: 6, stroke: "#c9c9c2", "stroke-width": 2 }));
+    defs.appendChild(pat); g.appendChild(defs);
+    var holi = {};
+    (s.holidays || []).forEach(function (h) { holi[h.date] = true; });
+    (s.daily || []).forEach(function (d) { if (d.no_school_reason === "holiday") holi[d.date] = true; });
+    var school = (s.school_days || ["Mon", "Tue", "Wed", "Thu", "Fri"]);
+    for (var dt = start; dt <= end; dt += DAY) {
+      var dd = new Date(dt), iso = dd.toISOString().slice(0, 10);
+      var off = school.indexOf(DAYS[dd.getUTCDay()]) < 0 || holi[iso];
+      if (!off) continue;
+      var xc = X(dt);
+      g.appendChild(svg("rect", { x: xc - step / 2, y: T, width: step, height: Y0 - T, fill: "url(#fcNoSchool)" }));
+      if (step >= 34) g.appendChild(svg("text", { x: xc, y: Y0 - 6, "text-anchor": "middle",
+        style: "fill:var(--ink-3);font-size:10px" }, holi[iso] ? "holiday" : "no school"));
+    }
     // the border between the observed days and the forecast
     if (obs.length && fc.length) {
       var xb = (X(obs[obs.length - 1].t) + X(fc[0].t)) / 2;
