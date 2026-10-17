@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-17T10:15+08:00",
+ "generated_at": "2026-10-17T11:09+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -23,40 +23,44 @@
    "name": "Batu Muda, Kuala Lumpur",
    "short": "Batu Muda",
    "state_id": 14,
-   "distance_km": 19
+   "distance_km": 19,
+   "cell": "KL"
   },
   {
    "id": "CA19B",
    "name": "Petaling Jaya",
    "short": "Petaling Jaya",
    "state_id": 10,
-   "distance_km": 22
+   "distance_km": 22,
+   "cell": "KL"
   },
   {
    "id": "CA20B",
    "name": "Shah Alam",
    "short": "Shah Alam",
    "state_id": 10,
-   "distance_km": 24
+   "distance_km": 24,
+   "cell": "KL"
   },
   {
    "id": "CA18B",
    "name": "Kuala Selangor",
    "short": "Kuala Selangor",
    "state_id": 10,
-   "distance_km": 33
+   "distance_km": 33,
+   "cell": "KS"
   }
  ],
  "latest": {
-  "datetime": "2026-10-17T10:00",
+  "datetime": "2026-10-17T11:00",
   "values": {
-   "CA15W": 160,
+   "CA15W": null,
    "CA19B": 169,
    "CA20B": 170,
    "CA18B": 95
   },
-  "stations_used": 4,
-  "average": 149
+  "stations_used": 3,
+  "average": 145
  },
  "today": {
   "date": "2026-10-17",
@@ -460,16 +464,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-13T10:00",
-   "v": [
-    84,
-    72,
-    83,
-    71
-   ],
-   "avg": 78
-  },
   {
    "t": "2026-10-13T11:00",
    "v": [
@@ -1429,6 +1423,16 @@
     95
    ],
    "avg": 149
+  },
+  {
+   "t": "2026-10-17T11:00",
+   "v": [
+    null,
+    169,
+    170,
+    95
+   ],
+   "avg": null
   }
  ]
 }
