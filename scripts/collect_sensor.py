@@ -31,6 +31,8 @@ CONFIG = Path(os.environ.get("MONITOR_CONFIG", ROOT / "config.json"))
 SENSOR_CSV = DATA / "sensor.csv"
 
 FEED_URL = os.environ.get("WAQI_FEED_URL", "https://api.waqi.info/feed/{id}/")
+BOUNDS_URL = os.environ.get("WAQI_BOUNDS_URL", "https://api.waqi.info/v2/map/bounds")
+BOX_DEG = 0.01   # search box half-width, about 1 km
 KEY = "%Y-%m-%dT%H:00"   # one key per hour, Malaysia time
 
 # Column name in sensor.csv -> field name in the aqicn "iaqi" block.
@@ -49,23 +51,53 @@ def log(msg):
     print(msg, flush=True)
 
 
-def fetch(sensor_id, token):
-    """Return the aqicn feed for one station.
-
-    The URL holds the token, so it is never printed.
-    """
-    url = FEED_URL.format(id=urllib.parse.quote(sensor_id)) + "?" + \
-        urllib.parse.urlencode({"token": token})
+def get_json(url):
+    """Read one aqicn URL. The URL holds the token, so it is never printed."""
     req = urllib.request.Request(url, headers={"Accept": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             payload = json.loads(resp.read().decode("utf-8"))
     except (urllib.error.URLError, TimeoutError, ValueError, OSError) as err:
-        raise RuntimeError(f"could not read the aqicn feed: {type(err).__name__}") from None
+        raise RuntimeError(f"could not read aqicn: {type(err).__name__}") from None
     if not isinstance(payload, dict) or payload.get("status") != "ok":
         msg = payload.get("data") if isinstance(payload, dict) else None
         raise RuntimeError(f"aqicn answered with an error: {msg}")
     return payload["data"]
+
+
+def fetch(sensor_id, token):
+    """Return the aqicn feed for one station."""
+    return get_json(FEED_URL.format(id=urllib.parse.quote(sensor_id)) + "?" +
+                    urllib.parse.urlencode({"token": token}))
+
+
+def find_id(sensor, token):
+    """Find the current feed id of the sensor from its position and name.
+
+    aqicn sometimes gives a citizen sensor a new id. The old id then answers
+    "no such station". The map search still lists the sensor at the same place.
+    """
+    lat, lon = sensor.get("lat"), sensor.get("lon")
+    if lat is None or lon is None:
+        return None
+    box = f"{lat - BOX_DEG},{lon - BOX_DEG},{lat + BOX_DEG},{lon + BOX_DEG}"
+    found = get_json(BOUNDS_URL + "?" + urllib.parse.urlencode(
+        {"latlng": box, "networks": "all", "token": token}))
+    want = sensor.get("station_name", "").strip().lower()
+    best = None
+    for s in found if isinstance(found, list) else []:
+        name = ((s.get("station") or {}).get("name") or "").strip().lower()
+        uid = s.get("uid")
+        if not isinstance(uid, int) or (want and name != want):
+            continue
+        dist = (float(s.get("lat", 0)) - lat) ** 2 + (float(s.get("lon", 0)) - lon) ** 2
+        if best is None or dist < best[0]:
+            best = (dist, uid)
+    if best is None:
+        return None
+    uid = best[1]
+    # Citizen sensors have a negative uid; their feed id is "A" + the number.
+    return f"A{-uid}" if uid < 0 else f"@{uid}"
 
 
 def value(x):
@@ -123,7 +155,20 @@ def main():
         return 0
 
     log(f"Reading sensor {sensor['id']} ({sensor['name']}) from aqicn")
-    data = fetch(sensor["id"], token)
+    try:
+        data = fetch(sensor["id"], token)
+    except RuntimeError as err:
+        if "no such station" not in str(err):
+            raise
+        new_id = find_id(sensor, token)
+        if not new_id or new_id == sensor["id"]:
+            raise
+        log(f"  {sensor['id']} is gone; aqicn now lists the sensor as {new_id}. "
+            f"Please update config.json.")
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(f"::warning title=Sensor id changed::aqicn now lists the sensor as "
+                  f"{new_id}. Please update config.json.", flush=True)
+        data = fetch(new_id, token)
     hour, row = parse(data)
     if row["pm25_aqi"] == "":
         raise RuntimeError("aqicn feed has no PM2.5 value")

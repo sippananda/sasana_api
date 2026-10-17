@@ -19,8 +19,11 @@
     {"id": "CA18B", "name": "Kuala Selangor", "short": "Kuala Selangor", "state_id": 10, "distance_km": 33, "cell": "KS"}
   ],
   "sensor": {
-    "id": "A2871205",
+    "id": "A2872234",
     "name": "Jalan Anggun 3P, Selayang (GAIA low-cost sensor, aqicn.org)",
+    "station_name": "Jalan Anggun 3P",
+    "lat": 3.304542,
+    "lon": 101.531164,
     "note": "For information only. Index values are on a US EPA style scale, not the DOE API."
   },
   "rule": {
