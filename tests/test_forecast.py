@@ -78,6 +78,7 @@ class Script(unittest.TestCase):
         self.assertEqual(kl["basis"], "haze days")
         self.assertEqual(kl["n"], 3)
         self.assertEqual(kl["n_haze"], 3)
+        self.assertTrue(0.15 <= kl["spread"] <= 0.4)
         # Median ratio of the KL haze days: observed PM / 90.
         ratios = sorted(r["ratio"] for r in out["calibration"]["days"]
                         if r["cell"] == "KL" and r["haze"])

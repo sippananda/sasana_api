@@ -259,11 +259,15 @@ def calibrate(cell, cams, hourly, cfg, now):
            "k_clean": round(statistics.median([r["ratio"] for r in clean]), 3) if clean else None,
            "n_clean": len(clean), "days": shown}
     if not used:
-        out.update(k=1.0, min=0.7, max=1.8)
+        out.update(k=1.0, min=0.7, max=1.8, spread=fc["spread_limits"][1])
     else:
         ratios = [r["ratio"] for r in used]
-        out.update(k=round(statistics.median(ratios), 3), min=round(min(ratios), 3),
-                   max=round(max(ratios), 3))
+        k = statistics.median(ratios)
+        # Day-to-day scatter, as a share of the factor. It sets the forecast range.
+        lim = fc["spread_limits"]
+        spread = statistics.stdev(ratios) / k if len(ratios) >= 3 else lim[1]
+        out.update(k=round(k, 3), min=round(min(ratios), 3), max=round(max(ratios), 3),
+                   spread=round(min(max(spread, lim[0]), lim[1]), 3))
     return out
 
 
@@ -326,6 +330,7 @@ def station_pm(s, target, model, cal, anchor, fc):
     """
     c = cal[s["cell"]]
     m = model[s["cell"]]
+    sp = c["spread"]
     if m is None:
         return None, None, None, None, None
     if anchor:
@@ -334,15 +339,13 @@ def station_pm(s, target, model, cal, anchor, fc):
         lead = (target - t0).total_seconds() / 3600
         if lead < 24:
             delta = m - a["cams_pm"]
-            vals = [a["obs_pm"] + f * delta for f in (c["k"], c["min"], c["max"])]
-            vals = [max(0.0, v) for v in vals]
+            vals = [max(0.0, a["obs_pm"] + c["k"] * f * delta) for f in (1, 1 - sp, 1 + sp)]
             return vals[0], min(vals), max(vals), "from latest reading", None
         w = math.exp(-lead / fc["latest_ratio_hours"])
         r = min(max(a["ratio"], fc["ratio_limits"][0]), fc["ratio_limits"][1])
         k_eff = w * r + (1 - w) * c["k"]
-        lo, hi = k_eff * c["min"] / c["k"], k_eff * c["max"] / c["k"]
-        return m * k_eff, m * min(lo, k_eff), m * max(hi, k_eff), "mixed factor", round(w, 2)
-    return m * c["k"], m * c["min"], m * c["max"], "haze factor", 0.0
+        return m * k_eff, m * k_eff * (1 - sp), m * k_eff * (1 + sp), "mixed factor", round(w, 2)
+    return m * c["k"], m * c["k"] * (1 - sp), m * c["k"] * (1 + sp), "haze factor", 0.0
 
 
 def build(cfg, now, cams, grids, cal, wind, wdir, rain, anchor=None):

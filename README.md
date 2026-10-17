@@ -85,6 +85,7 @@ All settings are in `config.json`.
 | `forecast.anchor_max_age_hours` | Newest reading used as a starting point only when it is this new or newer | 6 |
 | `forecast.latest_ratio_hours` | How fast the newest real ratio loses weight (weight = e^(-hours ahead / this)) | 48 |
 | `forecast.ratio_limits` | Limits for the newest real ratio | 0.5 to 3.5 |
+| `forecast.spread_limits` | The forecast range is the day-to-day scatter of the haze-day factors, kept between these shares | 15 % to 40 % |
 | `forecast.min_calibration_days` | Fewest haze days needed. With fewer, all days of the last 14 are used. | 3 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
 | `stale_after_hours` | The page shows a warning when the data is older than this | 3 |

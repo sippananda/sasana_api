@@ -45,7 +45,8 @@
     "min_calibration_days": 3,
     "anchor_max_age_hours": 6,
     "latest_ratio_hours": 48,
-    "ratio_limits": [0.5, 3.5]
+    "ratio_limits": [0.5, 3.5],
+    "spread_limits": [0.15, 0.4]
   },
   "collector": {
     "backfill_days": 7,

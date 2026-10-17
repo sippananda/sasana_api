@@ -312,7 +312,8 @@
   <section>
     <h2><span class="n">5</span>The range and the confidence</h2>
     <ul>
-      <li>The grey band in the chart uses the smallest and the largest factor of the haze days used. On the same day the band is at least ±5.</li>
+      <li>The grey band in the chart shows the typical day-to-day scatter of the factor on haze days (one standard deviation), kept between ±15% and ±40%. A single unusual day does not widen it much. On the same day the band is at least ±5.</li>
+      <li>About 2 days in 3 should fall inside the band. Days outside it will happen.</li>
       <li><b>High:</b> the same day, when the newest real reading is 9 hours old or less. Also days 1 and 2 after 7 or more haze days in both squares.</li>
       <li><b>Medium:</b> days 1 to 4 otherwise.</li>
       <li><b>Low:</b> day 5, or a day with missing CAMS data.</li>
@@ -433,7 +434,7 @@
       $("calIssued").textContent = "From the forecast run of " + when(f.issued) + ".";
       var tb = $("calTable"); tb.textContent = "";
       var head = el("tr");
-      ["Square", "Haze factor (used)", "Range", "Haze days used", "Clean-day factor"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
+      ["Square", "Haze factor (used)", "Lowest to highest", "Scatter (band)", "Haze days used", "Clean-day factor"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
       tb.appendChild(head);
       var names = { CA15W: "Batu Muda", CA19B: "Petaling Jaya", CA20B: "Shah Alam", CA18B: "Kuala Selangor" };
       Object.keys(f.cells || {}).forEach(function (c) {
@@ -441,6 +442,7 @@
         tr.appendChild(el("td", { "class": "strong" }, c));
         tr.appendChild(el("td", { "class": "strong" }, x(k.k)));
         tr.appendChild(el("td", {}, x(k.min) + " to " + x(k.max)));
+        tr.appendChild(el("td", {}, k.spread === undefined ? "–" : "±" + Math.round(k.spread * 100) + "%"));
         tr.appendChild(el("td", {}, (k.n || 0) + (k.basis === "haze days" ? "" : " (all days)") + (k.first ? " (" + day(k.first) + " to " + day(k.last) + ")" : "")));
         tr.appendChild(el("td", {}, x(k.k_clean) + " (" + (k.n_clean || 0) + " days)"));
         tb.appendChild(tr);
