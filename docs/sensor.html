@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nearby Sensor Test – Sasana Haze Monitor</title>
+<meta name="description" content="Experimental: how well a nearby low-cost sensor follows the DOE 4-station average.">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #111111;
+    --ink-2: #555555;
+    --ink-3: #74746f;
+    --rule: #d9d9d3;
+    --page: #e9e9e4;
+    --surface: #fafaf8;
+    --tile: #f0f0ec;
+    --edge: #d6d6d0;
+    --shadow: 0 1px 2px rgba(17,17,17,.05), 0 6px 18px rgba(17,17,17,.06);
+    --sensor: #7a3fa0;   /* sensor: purple, and always dashed or open, so colour is never alone */
+    --grid: #e3e3de;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
+  header { padding: 0 4px; }
+  .back { font-size: .9rem; color: var(--ink-2); }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 8px 0 0; letter-spacing: -.015em; }
+  .tag {
+    display: inline-block; vertical-align: middle; margin-left: 6px; padding: 1px 8px;
+    border: 1.5px dashed var(--ink-3); border-radius: 10px; font-size: .75rem; font-weight: 700;
+    letter-spacing: .06em; color: var(--ink-2);
+  }
+  .sub { color: var(--ink-2); margin: 4px 0 0; }
+  section {
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
+    box-shadow: var(--shadow); margin-top: 16px; padding: 18px 20px 20px;
+  }
+  section > :last-child { margin-bottom: 0; }
+  h2 { font-size: 1.1rem; margin: 0 0 14px; display: flex; align-items: center; gap: 10px; }
+  h2 .n {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--ink-3); color: #fff; font-size: .85rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  p { margin: 0 0 10px; }
+  ul { margin: 0 0 10px; padding-left: 1.2em; }
+  li { margin-bottom: 4px; }
+  .small { font-size: .9rem; color: var(--ink-2); }
+  .note {
+    margin-top: 16px; padding: 12px 16px; border: 1.5px dashed var(--ink-3);
+    background: var(--tile); border-radius: 14px;
+  }
+  .note p:last-child { margin: 0; }
+  .boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+  .box { border: 1.5px solid var(--rule); border-radius: 12px; padding: 12px 14px; background: var(--tile); }
+  .box .k { font-size: .85rem; color: var(--ink-2); }
+  .box .v { font-size: 1.6rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .box .d { font-size: .82rem; color: var(--ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--ink-2); margin-bottom: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .chart { width: 100%; }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart text { font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; fill: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+  th:first-child, td:first-child { text-align: left; }
+  th { font-weight: 600; color: var(--ink-2); background: #eeeeea; }
+  tr.best td { font-weight: 700; }
+  footer { margin-top: 22px; padding: 0 4px; }
+  footer p { margin: 0 0 4px; color: var(--ink); }
+  @media (max-width: 560px) {
+    .boxes { grid-template-columns: 1fr; }
+    section { padding: 16px 14px 18px; }
+    h1 { font-size: 1.35rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a class="back" href="./">← Back to the haze page</a>
+    <h1>Nearby Sensor Test <span class="tag">EXPERIMENTAL</span></h1>
+    <p class="sub">Does a low-cost sensor in Selayang follow the DOE 4-station average?</p>
+  </header>
+
+  <div class="note">
+    <p><b>This page is a test.</b> It does not decide school closure. Closure decisions use only the
+      DOE readings at 2:00 pm, as on the main page.</p>
+  </div>
+
+  <section>
+    <h2><span class="n">1</span>Result so far</h2>
+    <div id="result"><p class="small">Loading…</p></div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>Over time</h2>
+    <div class="legend">
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="#111" stroke-width="2.5"/></svg>DOE 4-station average (API)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="1.2" stroke-dasharray="2 2"/></svg>Sensor, hourly (US AQI)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor, 24-hour mean (US AQI)</span>
+    </div>
+    <div class="chart" id="timeChart"></div>
+    <p class="small" id="timeNote"></p>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span>Sensor against the DOE average</h2>
+    <p class="small">One dot per hour. Sensor 24-hour mean across, DOE average up. A tight band of dots
+      means the two move together.</p>
+    <div class="chart" id="scatter"></div>
+    <p class="small" id="scatterNote"></p>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Time shift</h2>
+    <p class="small">The sensor reading is moved later by 0 to 6 hours before the comparison. The
+      best shift shows how many hours the sensor runs ahead of the DOE numbers.</p>
+    <div id="lagTable"></div>
+  </section>
+
+  <section>
+    <h2><span class="n">5</span>How to read this page</h2>
+    <ul class="small">
+      <li><b>Sensor:</b> “Jalan Anggun 3P”, a GAIA low-cost sensor in Selayang, a few kilometres from the
+        school. Data from the World Air Quality Index project,
+        <a href="https://aqicn.org/station/@2872234">aqicn.org</a>.</li>
+      <li><b>Different scales.</b> The sensor gives a US AQI. DOE gives the Malaysian API. The same air
+        gives different numbers on the two scales. So the slope and the ratio only describe this pair.
+        The correlation <b>r</b> does not depend on the scale.</li>
+      <li><b>Different averaging.</b> The DOE API for PM2.5 uses a 24-hour mean. The sensor reading is
+        nearly instant. So this page also builds a 24-hour mean of the sensor. A mean needs at least
+        18 of the 24 hours.</li>
+      <li><b>r</b> runs from −1 to 1. Above 0.9 is a close match. Below 0.7 is a weak match.</li>
+      <li>DOE average: the mean of Batu Muda, Petaling Jaya, Shah Alam and Kuala Selangor, only in
+        hours with all four readings.</li>
+      <li>Some sensor hours come from the aqicn map search (“map” in the data file). Those hours have
+        the overall index only, which is the PM2.5 index for this sensor.</li>
+      <li>The sensor is not checked by DOE. Low-cost sensors can read high in very humid air.</li>
+    </ul>
+    <p class="small">Data files: <a href="data/sensor.csv">sensor.csv</a> ·
+      <a href="data/hourly.csv">hourly.csv</a></p>
+  </section>
+
+  <footer class="small">
+    <p>This page reads the same data files as the main page, so it updates every hour.
+      Times are Malaysia time.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var MIN_HOURS = 72;        // first result
+  var GOOD_HOURS = 14 * 24;  // reliable result
+  var MAX_LAG = 6;
+  var $ = function (id) { return document.getElementById(id); };
+  var NS = "http://www.w3.org/2000/svg";
+
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function txt(parent, x, y, s, anchor) {
+    var t = el("text", { x: x, y: y, "text-anchor": anchor || "start" }, parent);
+    t.textContent = s;
+    return t;
+  }
+  function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+
+  function parseCsv(text) {
+    var lines = text.trim().split(/\r?\n/);
+    if (!lines.length || !lines[0]) return [];
+    var head = lines[0].split(",");
+    return lines.slice(1).map(function (l) {
+      var c = l.split(","), r = {};
+      head.forEach(function (h, i) { r[h] = c[i] === undefined ? "" : c[i]; });
+      return r;
+    });
+  }
+  function num(s) { if (s === "" || s == null) return null; var n = Number(s); return isFinite(n) ? n : null; }
+  // "2026-10-18T00:00" -> hours since epoch (Malaysia time treated as a plain clock)
+  function hourIndex(s) { return Math.round(Date.parse(s + ":00Z") / 3600000); }
+  function hourLabel(h, withDay) {
+    var d = new Date(h * 3600000);
+    var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var hh = d.getUTCHours(), ampm = hh < 12 ? "am" : "pm", h12 = hh % 12 || 12;
+    var t = h12 + ":00 " + ampm;
+    return withDay ? days[d.getUTCDay()] + " " + d.getUTCDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()] + ", " + t : t;
+  }
+
+  function pearson(pairs) {
+    var n = pairs.length;
+    if (n < 3) return null;
+    var sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+    pairs.forEach(function (p) { sx += p[0]; sy += p[1]; sxx += p[0] * p[0]; syy += p[1] * p[1]; sxy += p[0] * p[1]; });
+    var vx = n * sxx - sx * sx, vy = n * syy - sy * sy;
+    if (vx <= 0 || vy <= 0) return null;
+    return (n * sxy - sx * sy) / Math.sqrt(vx * vy);
+  }
+  function fit(pairs) {   // least squares y = a + b x
+    var n = pairs.length, sx = 0, sy = 0, sxx = 0, sxy = 0;
+    pairs.forEach(function (p) { sx += p[0]; sy += p[1]; sxx += p[0] * p[0]; sxy += p[0] * p[1]; });
+    var d = n * sxx - sx * sx;
+    if (n < 3 || d <= 0) return null;
+    var b = (n * sxy - sx * sy) / d;
+    return { a: (sy - b * sx) / n, b: b };
+  }
+  function median(a) {
+    if (!a.length) return null;
+    var s = a.slice().sort(function (x, y) { return x - y; }), m = Math.floor(s.length / 2);
+    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+  }
+
+  function build(hourly, sensor) {
+    var doe = {}, sen = {}, mean24 = {};
+    var stations = ["CA15W", "CA19B", "CA20B", "CA18B"];
+    hourly.forEach(function (r) {
+      var v = stations.map(function (k) { return num(r[k]); });
+      if (v.every(function (x) { return x !== null; })) {
+        doe[hourIndex(r.datetime_myt)] = v.reduce(function (a, b) { return a + b; }, 0) / 4;
+      }
+    });
+    sensor.forEach(function (r) {
+      var v = num(r.pm25_aqi);
+      if (v !== null && r.datetime_myt) sen[hourIndex(r.datetime_myt)] = v;
+    });
+    var senHours = Object.keys(sen).map(Number).sort(function (a, b) { return a - b; });
+    senHours.forEach(function (h) {
+      var s = 0, n = 0;
+      for (var i = 0; i < 24; i++) if (sen[h - i] !== undefined) { s += sen[h - i]; n++; }
+      if (n >= 18) mean24[h] = s / n;
+    });
+    function pairs(src, lag) {
+      var out = [];
+      Object.keys(doe).forEach(function (k) {
+        var h = Number(k), x = src[h - lag];
+        if (x !== undefined) out.push([x, doe[h], h]);
+      });
+      return out;
+    }
+    return { doe: doe, sen: sen, mean24: mean24, senHours: senHours, pairs: pairs };
+  }
+
+  function fmtR(r) { return r === null ? "–" : r.toFixed(2); }
+  function strength(r) {
+    if (r === null) return "";
+    if (r >= 0.9) return "close match";
+    if (r >= 0.7) return "fair match";
+    if (r >= 0.4) return "weak match";
+    return "no clear match";
+  }
+
+  function showResult(d) {
+    var both = d.pairs(d.sen, 0), both24 = d.pairs(d.mean24, 0);
+    var n = both.length;
+    var first = d.senHours.length ? hourLabel(d.senHours[0], true) : null;
+    var html = "";
+    if (n < MIN_HOURS) {
+      html += '<p><b>Not enough data yet: ' + n + ' matching hour' + (n === 1 ? "" : "s") + '.</b> ' +
+        'A first result needs ' + MIN_HOURS + ' hours (3 days). A reliable result needs about 2 weeks, ' +
+        'with both haze days and clear days.</p>';
+    }
+    var r1 = pearson(both), r24 = pearson(both24);
+    var ratio = median(both24.length ? both24.map(function (p) { return p[1] / p[0]; })
+                                      : both.map(function (p) { return p[1] / p[0]; }));
+    html += '<div class="boxes">' +
+      '<div class="box"><div class="k">r, sensor hourly</div><div class="v">' + fmtR(r1) + '</div>' +
+        '<div class="d">' + (r1 === null ? "needs more hours" : strength(r1) + ", " + n + " h") + '</div></div>' +
+      '<div class="box"><div class="k">r, sensor 24-hour mean</div><div class="v">' + fmtR(r24) + '</div>' +
+        '<div class="d">' + (r24 === null ? "needs a full day of sensor data" : strength(r24) + ", " + both24.length + " h") + '</div></div>' +
+      '<div class="box"><div class="k">DOE ÷ sensor (median)</div><div class="v">' + (ratio === null ? "–" : "×" + ratio.toFixed(2)) + '</div>' +
+        '<div class="d">' + (both24.length ? "using the 24-hour mean" : "using hourly values") + '</div></div>' +
+      '</div>';
+    if (n && n < MIN_HOURS) html += '<p class="small">These early numbers can change a lot.</p>';
+    if (first) html += '<p class="small">Sensor data since ' + first + '. ' + d.senHours.length + ' sensor hour' + (d.senHours.length === 1 ? '' : 's') + ' in total.</p>';
+    else html += '<p class="small">No sensor data yet.</p>';
+    $("result").innerHTML = html;
+  }
+
+  // ---------- chart: over time ----------
+  function drawTime(d) {
+    var box = $("timeChart");
+    box.innerHTML = "";
+    var hours = Object.keys(d.doe).map(Number);
+    if (!d.senHours.length) { $("timeNote").textContent = "The chart starts when the sensor has data."; return; }
+    var end = Math.max(d.senHours[d.senHours.length - 1], Math.max.apply(null, hours));
+    var start = Math.max(d.senHours[0] - 24, end - 14 * 24);
+    var W = Math.max(300, box.clientWidth), phone = W < 520;
+    var H = phone ? 230 : 280, L = 34, R = 10, T = 10, B = 26;
+    var vals = [];
+    for (var h = start; h <= end; h++) {
+      [d.doe[h], d.sen[h], d.mean24[h]].forEach(function (v) { if (v !== undefined) vals.push(v); });
+    }
+    var top = Math.max(100, Math.ceil(Math.max.apply(null, vals) / 50) * 50);
+    var x = function (h) { return L + (W - L - R) * (h - start) / Math.max(1, end - start); };
+    var y = function (v) { return T + (H - T - B) * (1 - v / top); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "DOE average and sensor over time" }, box);
+    for (var g = 0; g <= top; g += 50) {
+      el("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "var(--grid)" }, svg);
+      txt(svg, L - 5, y(g) + 4, g, "end");
+    }
+    // day ticks at midnight
+    var span = (end - start) / 24, every = span > 10 ? 2 : 1;
+    for (var hh = Math.ceil(start / 24) * 24, i = 0; hh <= end; hh += 24, i++) {
+      el("line", { x1: x(hh), x2: x(hh), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
+      if (i % every === 0) {
+        var dd = new Date(hh * 3600000);
+        txt(svg, x(hh), H - 8, (phone ? "" : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getUTCDay()] + " ") + dd.getUTCDate(), "middle");
+      }
+    }
+    function path(src, attrs) {
+      var dstr = "", pen = false;
+      for (var h = start; h <= end; h++) {
+        var v = src[h];
+        if (v === undefined) { pen = false; continue; }
+        dstr += (pen ? "L" : "M") + x(h).toFixed(1) + " " + y(v).toFixed(1);
+        pen = true;
+      }
+      if (dstr) { attrs.d = dstr; attrs.fill = "none"; el("path", attrs, svg); }
+    }
+    path(d.sen, { stroke: "var(--sensor)", "stroke-width": 1.2, "stroke-dasharray": "2 2" });
+    path(d.mean24, { stroke: "var(--sensor)", "stroke-width": 2.5, "stroke-dasharray": "7 4" });
+    path(d.doe, { stroke: "#111", "stroke-width": 2.5 });
+    // single points (a line needs two hours)
+    d.senHours.forEach(function (h) {
+      if (h >= start && d.sen[h - 1] === undefined && d.sen[h + 1] === undefined) {
+        el("circle", { cx: x(h), cy: y(d.sen[h]), r: 3.5, fill: "#fff", stroke: "var(--sensor)", "stroke-width": 1.5 }, svg);
+      }
+    });
+    $("timeNote").textContent = "The chart shows up to the last 14 days. DOE API and US AQI are different scales on the same axis.";
+  }
+
+  // ---------- chart: scatter ----------
+  function drawScatter(d) {
+    var box = $("scatter");
+    box.innerHTML = "";
+    var use24 = Object.keys(d.mean24).length > 0;
+    var pts = d.pairs(use24 ? d.mean24 : d.sen, 0);
+    if (pts.length < 2) { $("scatterNote").textContent = "The dots appear when there are matching hours."; return; }
+    var W = Math.max(300, box.clientWidth), phone = W < 520;
+    var H = Math.min(phone ? 300 : 340, W), L = 38, R = 12, T = 10, B = 34;
+    var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
+    var xtop = Math.max(100, Math.ceil(Math.max.apply(null, xs) / 50) * 50);
+    var ytop = Math.max(100, Math.ceil(Math.max.apply(null, ys) / 50) * 50);
+    var x = function (v) { return L + (W - L - R) * v / xtop; };
+    var y = function (v) { return T + (H - T - B) * (1 - v / ytop); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Scatter of sensor against DOE average" }, box);
+    for (var g = 0; g <= ytop; g += 50) {
+      el("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "var(--grid)" }, svg);
+      txt(svg, L - 5, y(g) + 4, g, "end");
+    }
+    for (var gx = 0; gx <= xtop; gx += 50) {
+      el("line", { x1: x(gx), x2: x(gx), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
+      txt(svg, x(gx), H - B + 14, gx, "middle");
+    }
+    txt(svg, (L + W - R) / 2, H - 4, "Sensor " + (use24 ? "24-hour mean" : "hourly") + " (US AQI)", "middle");
+    var yl = txt(svg, 11, (T + H - B) / 2, "DOE average (API)", "middle");
+    yl.setAttribute("transform", "rotate(-90 11 " + ((T + H - B) / 2) + ")");
+    var f = fit(pts);
+    if (f) {
+      var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+      el("line", { x1: x(x0), y1: y(f.a + f.b * x0), x2: x(x1), y2: y(f.a + f.b * x1),
+                   stroke: "#111", "stroke-width": 1.5, "stroke-dasharray": "6 4" }, svg);
+    }
+    pts.forEach(function (p) {
+      el("circle", { cx: x(p[0]).toFixed(1), cy: y(p[1]).toFixed(1), r: phone ? 2.6 : 3,
+                     fill: "none", stroke: "var(--sensor)", "stroke-width": 1.2, opacity: .8 }, svg);
+    });
+    $("scatterNote").textContent = f
+      ? "Dashed line: best straight line, DOE ≈ " + f.a.toFixed(0) + " + " + f.b.toFixed(2) + " × sensor. " + pts.length + " hours."
+      : pts.length + " hours.";
+  }
+
+  // ---------- lag table ----------
+  function showLag(d) {
+    var rows = [], best = null;
+    for (var lag = 0; lag <= MAX_LAG; lag++) {
+      var p1 = d.pairs(d.sen, lag), p24 = d.pairs(d.mean24, lag);
+      var r1 = pearson(p1), r24 = pearson(p24);
+      rows.push({ lag: lag, r1: r1, r24: r24, n: p1.length });
+      if (r1 !== null && (best === null || r1 > rows[best].r1)) best = lag;
+    }
+    if (rows.every(function (r) { return r.r1 === null; })) {
+      $("lagTable").innerHTML = '<p class="small">The table fills in when there are matching hours.</p>';
+      return;
+    }
+    var html = '<table><thead><tr><th>Sensor moved later by</th><th>r, hourly</th><th>r, 24-hour mean</th><th>Hours</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      html += '<tr' + (r.lag === best ? ' class="best"' : '') + '><td>' + r.lag + ' h' + (r.lag === best ? ' ← best' : '') +
+        '</td><td>' + fmtR(r.r1) + '</td><td>' + fmtR(r.r24) + '</td><td>' + r.n + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    if (best === MAX_LAG) html += '<p class="small">The best shift is the largest one tested. The true shift may be longer than ' + MAX_LAG + ' hours.</p>';
+    $("lagTable").innerHTML = html;
+  }
+
+  var state = null, lastWidth = 0;
+  function render() {
+    if (!state) return;
+    showResult(state); drawTime(state); drawScatter(state); showLag(state);
+  }
+  function load() {
+    var bust = "?t=" + Date.now();
+    Promise.all([
+      fetch("data/hourly.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; }),
+      fetch("data/sensor.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; })
+    ]).then(function (t) {
+      state = build(parseCsv(t[0]), parseCsv(t[1]));
+      render();
+    }).catch(function (e) {
+      $("result").innerHTML = '<p>Could not read the data files: ' + esc(e.message || e) + '</p>';
+    });
+  }
+  window.addEventListener("resize", function () {
+    var w = document.documentElement.clientWidth;
+    if (w !== lastWidth) { lastWidth = w; render(); }
+  });
+  lastWidth = document.documentElement.clientWidth;
+  load();
+  setInterval(load, 5 * 60 * 1000);
+})();
+</script>
+</body>
+</html>
