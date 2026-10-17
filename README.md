@@ -29,7 +29,8 @@ A reading that is still missing after that is collected by the run of the next h
 - Three stations lie in one CAMS cell (KL), Kuala Selangor in another (KS). Two calls are enough.
 - For each day it averages the 24 hours ending at 2:00 pm, like the DOE API.
 - It multiplies by a calibration factor: observed PM2.5 (from the DOE API) divided by CAMS PM2.5,
-  the median over the last 14 days. Haze days only (API 100 or above), when there are 3 or more.
+  the median of the newest 10 haze days (API 100 or above), looking back up to 60 days.
+  Older haze days are kept, so the factor is still right when haze comes back after a clean spell.
 - It converts PM2.5 to API with the DOE formula and averages the four stations.
 - It writes `docs/data/forecast.json`. The page shows the chart, a table, wind and rain.
 - Every run is also added to `docs/data/forecast_history.jsonl`, to check the forecast later.
@@ -73,9 +74,11 @@ All settings are in `config.json`.
 | `table_first_date` | First day in the table "Daily API records". Older days stay in the data files and in the chart. | 2026-10-09 |
 | `forecast.cells` | Latitude and longitude of the two CAMS cells. Each station has a `cell`. | KL 3.2, 101.6; KS 3.2, 101.2 |
 | `forecast.forecast_days` | Days to forecast | 5 |
-| `forecast.calibration_days` | Past days used for the calibration factor | 14 |
+| `forecast.calibration_haze_days` | Newest haze days used for the calibration factor | 10 |
+| `forecast.calibration_lookback_days` | How far back to look for those haze days | 60 |
+| `forecast.calibration_clean_days` | Days used for the clean-day factor (information only) | 14 |
 | `forecast.haze_day_api` | A day with observed API at or above this is a haze day | 100 |
-| `forecast.min_calibration_days` | Fewest haze days needed. With fewer, all days are used. | 3 |
+| `forecast.min_calibration_days` | Fewest haze days needed. With fewer, all days of the last 14 are used. | 3 |
 | `backfill_days` | How many past days the script tries to fill | 7 |
 | `stale_after_hours` | The page shows a warning when the data is older than this | 3 |
 | `late_after_hour` | From this hour, a missing 2:00 pm reading is shown as "did not arrive" | 15 |

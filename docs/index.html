@@ -1210,13 +1210,19 @@
     var cells = Object.keys(f.cells || {});
     var kText = cells.map(function (c) {
       var k = cal[c] || {};
-      return c + " cell: ×" + num(k.k) + " (range ×" + num(k.min) + " to ×" + num(k.max) + ", " + (k.n || 0) + " days)";
+      return c + " cell: ×" + num(k.k) + " (range ×" + num(k.min) + " to ×" + num(k.max) + ", " + (k.n || 0) + " " + (k.basis === "haze days" ? "haze days" : "days") +
+        (k.first ? ", " + dayLabel(parse(k.first)).replace(/^\w+ /, "") + " to " + dayLabel(parse(k.last)).replace(/^\w+ /, "") : "") + ")";
     }).join("; ");
     [
       "CAMS is the European haze model (Copernicus Atmosphere Monitoring Service, run by ECMWF). It forecasts fine dust (PM2.5) five days ahead, in cells of about 40 km.",
       "Batu Muda, Petaling Jaya and Shah Alam lie in one cell. Kuala Selangor lies in another. So three stations get the same forecast number.",
       "For each day, the 24 hours of CAMS PM2.5 ending at " + readClock + " are averaged, like the DOE API. The result is converted to API with the DOE formula.",
-      "CAMS reads low in peat haze. The forecast is multiplied by a factor from the last " + (cal.window_days || 14) + " days of real readings (haze days only, when there are enough). Now: " + kText + ".",
+      "CAMS reads low in peat haze. The forecast is multiplied by a factor from the newest " + (cal.haze_days || 10) +
+        " haze days in the real readings (2:00 pm API " + (cal.haze_day_api || 100) + " or above), looking back up to " + (cal.lookback_days || 60) +
+        " days. So the factor stays ready after a clean spell. Now: " + kText + ".",
+      "On clean days CAMS often reads high. Clean-day factor of the last " + (cal.clean_days || 14) + " days: " + cells.map(function (c) {
+        var k = cal[c] || {}; return c + " ×" + (k.k_clean === null || k.k_clean === undefined ? "–" : num(k.k_clean)) + " (" + (k.n_clean || 0) + " days)";
+      }).join("; ") + ". This is for information. The forecast uses the haze factor, because school closure only happens in haze.",
       "The grey range uses the smallest and largest factor of those days. The direction of change (clearing or building) is more reliable than the exact number.",
       "CAMS assumes the fires stay as they are. It cannot predict new fires. Confidence: high for days 1 and 2 after 7 or more haze days; medium for days 3 and 4; low for day 5."
     ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });

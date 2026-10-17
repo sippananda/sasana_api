@@ -37,8 +37,10 @@
       "KS": {"latitude": 3.2, "longitude": 101.2}
     },
     "forecast_days": 5,
-    "past_days": 16,
-    "calibration_days": 14,
+    "past_days": 61,
+    "calibration_haze_days": 10,
+    "calibration_lookback_days": 60,
+    "calibration_clean_days": 14,
     "haze_day_api": 100,
     "min_calibration_days": 3
   },

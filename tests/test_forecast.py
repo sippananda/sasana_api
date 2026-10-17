@@ -110,6 +110,37 @@ class Script(unittest.TestCase):
         self.assertEqual([d["date"] for d in out["days"]],
                          ["2026-10-18", "2026-10-19", "2026-10-20", "2026-10-21"])
 
+    def test_haze_factor_kept_after_clean_spell(self):
+        # Haze 35 to 31 days ago, then 20 clean days. The haze days must still set the factor.
+        rows = ["datetime_myt,CA15W,CA19B,CA20B,CA18B"]
+        for d in range(12, 17):          # 12 to 16 Sep: haze
+            rows.append(f"2026-09-{d:02d}T14:00,170,165,168,150")
+        for d in range(27, 31):          # 27 to 30 Sep: clean
+            rows.append(f"2026-09-{d:02d}T14:00,60,55,58,50")
+        for d in range(1, 17):           # 1 to 16 Oct: clean
+            rows.append(f"2026-10-{d:02d}T14:00,60,55,58,50")
+        (self.data / "hourly.csv").write_text("\n".join(rows) + "\n")
+        out, _ = self.run_script("2026-10-17T07:30")
+        kl = out["calibration"]["KL"]
+        self.assertEqual(kl["basis"], "haze days")
+        self.assertEqual(kl["n"], 5)
+        self.assertEqual((kl["first"], kl["last"]), ("2026-09-12", "2026-09-16"))
+        self.assertGreater(kl["k"], 1.0)             # haze: observed above CAMS (flat 90)
+        self.assertLess(kl["k_clean"], 1.0)          # clean: observed below CAMS
+        self.assertEqual(kl["n_clean"], 14)
+        self.assertEqual(out["calibration"]["lookback_days"], 60)
+
+    def test_only_newest_ten_haze_days(self):
+        rows = ["datetime_myt,CA15W,CA19B,CA20B,CA18B"]
+        for d in range(1, 17):           # 16 haze days, 1 to 16 Oct
+            rows.append(f"2026-10-{d:02d}T14:00,{120 + d},{120 + d},{120 + d},{120 + d}")
+        (self.data / "hourly.csv").write_text("\n".join(rows) + "\n")
+        out, _ = self.run_script("2026-10-17T07:30")
+        kl = out["calibration"]["KL"]
+        self.assertEqual(kl["n"], 10)
+        self.assertEqual(kl["n_haze"], 16)
+        self.assertEqual((kl["first"], kl["last"]), ("2026-10-07", "2026-10-16"))
+
     def test_too_few_haze_days_uses_all(self):
         (self.data / "hourly.csv").write_text(
             "datetime_myt,CA15W,CA19B,CA20B,CA18B\n2026-10-15T14:00,80,70,75,60\n2026-10-16T14:00,160,150,155,120\n")

@@ -9,8 +9,8 @@ How it works, for each forecast day and each CAMS grid cell:
      Average the 24 hours that end at 2:00 pm. The DOE API is a
      24-hour running average, so one hour alone is not comparable.
   2. Multiply by a calibration factor k. CAMS reads low in peat haze.
-     k = median of (observed PM2.5 / CAMS PM2.5) over the last days.
-     Only haze days are used when there are enough of them.
+     k = median of (observed PM2.5 / CAMS PM2.5) over the newest haze days
+     on record (up to 10 days, looking back up to 60 days).
   3. Convert PM2.5 to API with the DOE breakpoints.
   4. Average the four stations. Three stations share the KL cell, so
      the average is (3 x API_KL + API_KS) / 4.
@@ -192,16 +192,26 @@ def trailing24(series, day, hh):
 # ---------------------------------------------------------------- calibration
 
 def calibrate(cell, cams, hourly, cfg, now):
-    """k, kmin, kmax and the days used, for one cell.
+    """Calibration factors for one cell.
 
     ratio = observed PM2.5 (from the DOE API, inverse formula) / CAMS 24-hour PM2.5.
-    Haze days (observed API at or above `haze_day_api`) are used when there are at
-    least `min_calibration_days` of them. Otherwise all days with data are used.
+
+    Haze factor (used for the forecast): the median ratio of the newest
+    `calibration_haze_days` haze days (observed API at or above `haze_day_api`),
+    looking back up to `calibration_lookback_days`. Older haze days are kept on
+    purpose: after a clean spell, the factor is still ready for the next haze.
+    The range is the smallest and largest ratio of those days.
+
+    Clean factor (for information): the median ratio of the clean days in the
+    last `calibration_clean_days` days. CAMS often reads high on clean days.
+
+    With fewer than `min_calibration_days` haze days on record (only at the very
+    start), the factor comes from all days of the last `calibration_clean_days`.
     """
     fc = cfg["forecast"]
     hh = cfg["reading_hour"]
     rows = []
-    for back in range(fc["calibration_days"], -1, -1):
+    for back in range(fc["calibration_lookback_days"], -1, -1):
         day = (now - timedelta(days=back)).date()
         stamp = datetime.combine(day, datetime.min.time()).replace(hour=hh)
         if stamp > now:
@@ -218,16 +228,35 @@ def calibrate(cell, cams, hourly, cfg, now):
         rows.append({"date": day.isoformat(), "obs_api": round(obs_api, 1),
                      "obs_pm": round(obs_pm, 1), "cams_pm": round(model, 1),
                      "ratio": round(obs_pm / model, 3), "haze": obs_api >= fc["haze_day_api"]})
-    haze = [r for r in rows if r["haze"]]
-    used = haze if len(haze) >= fc["min_calibration_days"] else rows
-    basis = "haze days" if used is haze and haze else "all days" if used else "none"
+
+    recent_from = (now - timedelta(days=fc["calibration_clean_days"])).date().isoformat()
+    recent = [r for r in rows if r["date"] >= recent_from]
+    haze_all = [r for r in rows if r["haze"]]
+    haze = haze_all[-fc["calibration_haze_days"]:]
+    clean = [r for r in recent if not r["haze"]]
+
+    if len(haze) >= fc["min_calibration_days"]:
+        used, basis = haze, "haze days"
+    elif recent:
+        used, basis = recent, "all days"
+    else:
+        used, basis = [], "none"
+    used_dates = {r["date"] for r in used}
+    shown = [dict(r, used=r["date"] in used_dates) for r in rows
+             if r["date"] in used_dates or r["date"] >= recent_from]
+
+    out = {"basis": basis, "n": len(used), "n_haze": len(haze_all),
+           "first": used[0]["date"] if used else None,
+           "last": used[-1]["date"] if used else None,
+           "k_clean": round(statistics.median([r["ratio"] for r in clean]), 3) if clean else None,
+           "n_clean": len(clean), "days": shown}
     if not used:
-        return {"k": 1.0, "min": 0.7, "max": 1.8, "n": 0, "n_haze": 0, "basis": basis,
-                "days": rows}
-    ratios = [r["ratio"] for r in used]
-    return {"k": round(statistics.median(ratios), 3), "min": round(min(ratios), 3),
-            "max": round(max(ratios), 3), "n": len(used), "n_haze": len(haze),
-            "basis": basis, "days": rows}
+        out.update(k=1.0, min=0.7, max=1.8)
+    else:
+        ratios = [r["ratio"] for r in used]
+        out.update(k=round(statistics.median(ratios), 3), min=round(min(ratios), 3),
+                   max=round(max(ratios), 3))
+    return out
 
 
 # ---------------------------------------------------------------- forecast
@@ -300,7 +329,9 @@ def build(cfg, now, cams, grids, cal, wind, wdir, rain):
                       "stations": [s["id"] for s in stations if s["cell"] == n]}
                   for n, g in grids.items()},
         "calibration": {
-            "window_days": fc["calibration_days"],
+            "haze_days": fc["calibration_haze_days"],
+            "lookback_days": fc["calibration_lookback_days"],
+            "clean_days": fc["calibration_clean_days"],
             "haze_day_api": fc["haze_day_api"],
             **{n: {k: v for k, v in c.items() if k != "days"} for n, c in cal.items()},
             # One row per day and cell: what CAMS said and what DOE measured.
