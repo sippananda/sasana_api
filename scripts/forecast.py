@@ -61,38 +61,48 @@ def log(msg):
 # ---------------------------------------------------------------- DOE formula
 
 # DOE breakpoints: PM2.5 (24-hour, ug/m3) to API.
-# Each row: upper PM2.5 of the band, slope, PM2.5 at the start of the band, API at the start.
-BANDS = [
-    (12.0, 4.1667, 0.0, 0),
-    (75.5, 0.7741, 12.1, 51),
-    (150.4, 1.3218, 75.5, 101),
-    (250.4, 0.9909, 150.5, 201),
-    (350.4, 0.9909, 250.5, 301),
-    (9999.0, 0.6604, 350.5, 401),
+# Source: DOE "API Calculation", the version on the APIMS portal
+# (eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf). Used since 18 Oct 2026.
+# An older DOE version (doe.gov.my, 2021) has 12.1-75.5 for API 51-100 and one
+# band 75.5-150.4 for API 101-200. The hourly DOE readings of 8-18 Oct fit the
+# APIMS version at all four stations; the 2021 version needs hourly peaks
+# above 300 ug/m3 and does not fit Kuala Selangor at all.
+# Each knot: (PM2.5, API). Inside a band the line is the DOE formula. The small
+# gaps between bands (12.0-12.1, 50.4-50.5, ...) are joined by a straight line,
+# so the conversion is monotonic in both directions.
+KNOTS = [
+    (0.0, 0.0),
+    (12.0, 50.0), (12.1, 51.0),
+    (50.4, 100.0), (50.5, 101.0),
+    (55.4, 150.0), (55.5, 151.0),
+    (150.4, 200.0), (150.5, 201.0),
+    (250.4, 300.0), (250.5, 301.0),
+    (350.4, 400.0), (350.5, 401.0),
+    (500.4, 500.0),
 ]
+
+
+def _interp(v, pairs):
+    """Straight-line interpolation through (x, y) pairs; the last segment continues past the end."""
+    for (x0, y0), (x1, y1) in zip(pairs, pairs[1:]):
+        if v <= x1:
+            return y0 + (y1 - y0) * (v - x0) / (x1 - x0)
+    (x0, y0), (x1, y1) = pairs[-2], pairs[-1]
+    return y1 + (y1 - y0) * (v - x1) / (x1 - x0)
 
 
 def api_from_pm(x):
     """API from a 24-hour PM2.5 value (ug/m3)."""
     if x is None:
         return None
-    x = max(0.0, float(x))
-    for top, slope, x0, a0 in BANDS:
-        if x <= top:
-            return slope * (x - x0) + a0
-    return None
+    return _interp(max(0.0, float(x)), KNOTS)
 
 
 def pm_from_api(a):
     """Inverse: PM2.5 (ug/m3) from an API value. Assumes PM2.5 sets the API."""
     if a is None:
         return None
-    a = max(0.0, float(a))
-    for top, slope, x0, a0 in BANDS:
-        # The API at the top of this band, by the forward formula (the bands have small gaps).
-        if a <= slope * (top - x0) + a0:
-            return (a - a0) / slope + x0
-    return None
+    return _interp(max(0.0, float(a)), [(api, pm) for pm, api in KNOTS])
 
 
 # ---------------------------------------------------------------- time

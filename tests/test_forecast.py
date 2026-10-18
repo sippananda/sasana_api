@@ -27,15 +27,23 @@ HOURLY = """datetime_myt,CA15W,CA19B,CA20B,CA18B
 
 class Formula(unittest.TestCase):
     def test_breakpoints(self):
+        # DOE table, APIMS portal version.
         self.assertAlmostEqual(forecast.api_from_pm(12.0), 50.0, places=1)
-        self.assertAlmostEqual(forecast.api_from_pm(75.5), 100.1, places=1)
-        self.assertAlmostEqual(forecast.api_from_pm(113), 150.6, places=0)
-        self.assertAlmostEqual(forecast.api_from_pm(135), 179.6, places=0)
+        self.assertAlmostEqual(forecast.api_from_pm(50.4), 100.0, places=1)
+        self.assertAlmostEqual(forecast.api_from_pm(53.0), 126.0, places=1)
+        self.assertAlmostEqual(forecast.api_from_pm(55.4), 150.0, places=1)
+        self.assertAlmostEqual(forecast.api_from_pm(100.0), 174.0, places=0)
+        self.assertAlmostEqual(forecast.api_from_pm(111.7), 180.0, places=0)
+        self.assertAlmostEqual(forecast.api_from_pm(200.0), 250.0, places=0)
 
     def test_inverse(self):
-        for pm in (5, 30, 75.5, 100, 140, 200, 300, 400):
+        for pm in (5, 30, 52, 55.45, 100, 140, 200, 300, 400, 600):
             api = forecast.api_from_pm(pm)
-            self.assertAlmostEqual(forecast.pm_from_api(api), pm, places=1)
+            self.assertAlmostEqual(forecast.pm_from_api(api), pm, places=2)
+
+    def test_monotonic(self):
+        apis = [forecast.api_from_pm(x / 10) for x in range(0, 6000)]
+        self.assertTrue(all(b > a for a, b in zip(apis, apis[1:])))
 
 
 class Script(unittest.TestCase):
@@ -151,7 +159,7 @@ class Script(unittest.TestCase):
         # Haze 35 to 31 days ago, then 20 clean days. The haze days must still set the factor.
         rows = ["datetime_myt,CA15W,CA19B,CA20B,CA18B"]
         for d in range(12, 17):          # 12 to 16 Sep: haze
-            rows.append(f"2026-09-{d:02d}T14:00,170,165,168,150")
+            rows.append(f"2026-09-{d:02d}T14:00,195,190,192,185")
         for d in range(27, 31):          # 27 to 30 Sep: clean
             rows.append(f"2026-09-{d:02d}T14:00,60,55,58,50")
         for d in range(1, 17):           # 1 to 16 Oct: clean

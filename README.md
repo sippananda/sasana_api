@@ -34,7 +34,7 @@ A reading that is still missing after that is collected by the run of the next h
 - Same day (morning run): the forecast starts from the newest real hourly reading of each station
   and adds only the change CAMS expects until 2:00 pm. Later days mix the newest real ratio of each
   station with the haze factor; the newest ratio counts less for each day ahead.
-- It converts PM2.5 to API with the DOE formula and averages the four stations.
+- It converts PM2.5 to API with the DOE formula (the table on the APIMS website, since 18 Oct 2026) and averages the four stations.
 - It writes `docs/data/forecast.json`. Section 6 of the page shows the chart, wind and rain, and a table.
   The page `forecast.html` explains the method, with the current correction factors.
 - Every run is also added to `docs/data/forecast_history.jsonl`, to check the forecast later.
