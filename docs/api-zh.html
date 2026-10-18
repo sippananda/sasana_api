@@ -167,7 +167,7 @@
 <li><strong>没有公布：</strong> 每小时的 PM2.5 浓度（单位：微克/立方米）。马来亚大学的 Helena Varkkey 副教授指出，政府手上有每小时数据，只是没有对外公布。</li>
 </ul>
 <p>所以，一般公众只能看到 24 小时平均后的 API。看不到“这一个小时”的空气有多差。</p>
-<p><strong>一个需要注意的地方：</strong> 网上有两份官方《API 计算》文件，PM2.5 的换算数字不一样（见附录）。哪一份是现在系统使用的，环境局没有说明。这不影响本文的主要结论：24 小时平均会带来滞后。</p>
+<p><strong>一个需要注意的地方：</strong> 环境局有两份官方《API 计算》文件：2021 年 9 月版本（环境局网站）和 2026 年 10 月 14 日发布的版本（APIMS 网站）。两者的 PM2.5 换算数字不一样（见附录一）。本文以较新的 2026 年 10 月版本为准。这不影响本文的主要结论：24 小时平均会带来滞后。</p>
 
 <h2>四、为什么 24 小时平均会“慢半拍”</h2>
 <p>24 小时滚动平均每小时只换掉二十四分之一的数据。所以烟霾来了，要约一天才完全反映；烟霾走了，也要约一天才消失。</p>
@@ -183,7 +183,7 @@
 <ul>
 <li>10 月 17 日下午 2 时，四站平均 API 是 150。这个数字代表 16 日下午 3 时至 17 日下午 2 时的空气，不只是 17 日下午的空气。</li>
 <li>到 18 日早上 10 时，平均还有 139，只比前一天下午低 11 点。空气即使已经好转，数字也是慢慢下降。</li>
-<li><strong>例外：</strong> 按 APIMS 网站版本的公式，API 101 至 150 只对应约 5 微克/立方米的浓度差。所以 API 在这一段可以变得很快。例如 10 月 16 日下午 4 时至晚上 8 时，瓜拉雪兰莪站从 152 降到 99。在 150 附近，很小的浓度变化就足以使 API 跨过这个数值。</li>
+<li><strong>例外：</strong> 按 2026 年 10 月版本的换算表，API 101 至 150 只对应约 5 微克/立方米的浓度差。所以 API 在这一段可以变得很快。例如 10 月 16 日下午 4 时至晚上 8 时，瓜拉雪兰莪站从 152 降到 99。在 150 附近，很小的浓度变化就足以使 API 跨过这个数值。</li>
 </ul>
 <h3>四个站的每小时数据</h3>
 <p>下图是 10 月 8 日晚上至 18 日上午 11 时，四个站全部的每小时 API。浅蓝色带标出 API 100 至 150 这一段。</p>
@@ -267,7 +267,7 @@
 <ul>
 <li>数据只涵盖 2026 年 10 月 8 日至 18 日，约 10 天，四个监测站。</li>
 <li>环境局只公布 API，没有公布每小时 PM2.5 浓度。本文提到的浓度，都是按换算表从 API 反推的。</li>
-<li>网上有两份换算表，哪一份是现行版本，未经环境局确认。本文的数据检验较支持 APIMS 网站版本。</li>
+<li>新换算表从哪一天开始用于计算 API，环境局没有说明。本文的数据检验显示，10 月 10 日至 18 日的读数都符合 2026 年 10 月版本，而不符合 2021 年 9 月版本；新换算表可能在文件发布之前已经使用。</li>
 <li>瓜拉雪兰莪站与海风的关系只是推测，未用风向数据验证。</li>
 <li>作者不是空气质量专业人士。文中如有错误，请以环境局的资料为准。</li>
 </ul>
@@ -282,8 +282,8 @@
 
 <h2>参考资料</h2>
 <ol class="refs">
-<li>马来西亚环境局：<a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">API 计算（APIMS 网站版本）</a></li>
-<li>马来西亚环境局：<a href="https://www.doe.gov.my/wp-content/uploads/2021/09/API_Calculation.pdf">API 计算（2021 年版本）</a></li>
+<li>马来西亚环境局：<a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">API 计算（2026 年 10 月 14 日版本，APIMS 网站）</a></li>
+<li>马来西亚环境局：<a href="https://www.doe.gov.my/wp-content/uploads/2021/09/API_Calculation.pdf">API 计算（2021 年 9 月版本，环境局网站）</a></li>
 <li>马来西亚环境局：<a href="https://www.doe.gov.my/en/2021/10/26/english-air-pollutant-index-api-2/">Air Pollutant Index (API) 说明页</a></li>
 <li>SAYS（2026 年 8 月 28 日）：<a href="https://says.com/my/news/aqi-api-explaining-malaysias-air-quality-confusion">Malaysia Once Made CNN Apologise For Its Haze Coverage</a>（Varkkey、Fatimah 的看法）</li>
 <li>Malay Mail（2026 年 10 月 8 日）：<a href="https://www.malaymail.com/news/malaysia/2026/10/08/hazy-math-doe-explains-why-your-aqi-says-250-when-the-official-api-is-175/238237">DoE explains why your AQI says 250 when the official API is 175</a></li>
@@ -304,13 +304,13 @@
 <li>C_low、C_high：该段的浓度下限和上限</li>
 <li>I_low、I_high：该段对应的指数下限和上限</li>
 </ul>
-<p>网上有两份环境局的官方文件，PM2.5 的分段不一样。分歧在 API 100 至 200 之间，正好是烟霾时最常见的范围：</p>
+<p>环境局先后发布了两份官方文件：2021 年 9 月版本放在环境局网站，2026 年 10 月 14 日的版本放在 APIMS 网站。两者的 PM2.5 分段不一样，分歧在 API 100 至 200 之间，正好是烟霾时最常见的范围：</p>
 <div class="tw"><table>
 <thead>
 <tr>
 <th>API 分段</th>
-<th>APIMS 网站版本（微克/立方米）</th>
-<th>环境局网站 2021 年版本（微克/立方米）</th>
+<th>2026 年 10 月版本（微克/立方米）</th>
+<th>2021 年 9 月版本（微克/立方米）</th>
 </tr>
 </thead>
 <tbody>
@@ -353,13 +353,13 @@
 </table></div>
 <figure><a href="img/api_slopes_zh.png"><img src="img/api_slopes_zh.png" alt="两份 PM2.5 换算表的斜率对比" loading="lazy"></a><figcaption><b>图 3</b> 环境局两份官方 PM2.5 换算表的斜率对比，按同一比例画出。</figcaption></figure>
 
-<p>斜率表示 PM2.5 每增加 1 微克/立方米，API 增加多少点。APIMS 版本在 API 101–150 最陡（斜率 10），在 151–200 最平（斜率 0.52）；2021 年版本在 100 以上只有一段，斜率 1.32。</p>
+<p>斜率表示 PM2.5 每增加 1 微克/立方米，API 增加多少点。2026 年 10 月版本在 API 101–150 最陡（斜率 10），在 151–200 最平（斜率 0.52）；2021 年 9 月版本在 100 以上只有一段，斜率 1.32。</p>
 <p>例子：PM2.5 的 24 小时平均是 100 微克/立方米。</p>
 <ul>
-<li>按 APIMS 网站版本：SI = 49 ÷ 94.9 × (100 − 55.5) + 151 ≈ 174</li>
-<li>按 2021 年版本：SI = 99 ÷ 74.9 × (100 − 75.5) + 101 ≈ 133</li>
+<li>按 2026 年 10 月版本：SI = 49 ÷ 94.9 × (100 − 55.5) + 151 ≈ 174</li>
+<li>按 2021 年 9 月版本：SI = 99 ÷ 74.9 × (100 − 75.5) + 101 ≈ 133</li>
 </ul>
-<p>同一个浓度，相差约 40 点。哪一份是现在使用的，有待环境局确认。</p>
+<p>同一个浓度，相差约 40 点。</p>
 
 <h2>附录二：名词解释</h2>
 <ul>

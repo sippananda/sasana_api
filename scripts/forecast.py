@@ -64,9 +64,9 @@ def log(msg):
 # ---------------------------------------------------------------- DOE formula
 
 # DOE breakpoints: PM2.5 (24-hour, ug/m3) to API.
-# Source: DOE "API Calculation", the version on the APIMS portal
-# (eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf). Used since 18 Oct 2026.
-# An older DOE version (doe.gov.my, 2021) has 12.1-75.5 for API 51-100 and one
+# Source: DOE "API Calculation", version of 14 Oct 2026 on the APIMS portal
+# (eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf). Used here since 18 Oct 2026.
+# The older DOE version (doe.gov.my, Sept 2021) has 12.1-75.5 for API 51-100 and one
 # band 75.5-150.4 for API 101-200. The hourly DOE readings of 8-18 Oct fit the
 # APIMS version at all four stations; the 2021 version needs hourly peaks
 # above 300 ug/m3 and does not fit Kuala Selangor at all.
