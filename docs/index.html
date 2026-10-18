@@ -294,8 +294,9 @@
   <section class="info" id="outdoorSection">
     <h2><span class="n">4</span><span id="outTitle">Nearby sensor today</span></h2>
     <div class="tiles out" id="outTiles"></div>
-    <p class="small" id="outNote">Low-cost sensor in Rawang Anggun, about 2.7 km from the school. Its 1-hour PM2.5
-      reading is turned into a number on the DOE API scale. Not calibrated: such sensors often read high in humid air.
+    <p class="small" id="outNote">Low-cost sensor in Rawang Anggun, about 2.7 km from the school. Each box is the
+      average PM2.5 of the sensor's hourly readings in the 3 hours up to that time (for 6:15 am: 4:00, 5:00 and
+      6:00 am), turned into a number on the DOE API scale. Not calibrated: such sensors often read high in humid air.
       The DOE API is a 24-hour average, so it reacts later than this reading.
       <a href="sensor.html">More on the sensor →</a></p>
   </section>
@@ -1207,7 +1208,9 @@
   }
 
   // ------------------------------------------------------------ section 4: nearby sensor at 6:15, 11:15, 2:15
-  // The sensor row for 6:00 is the reading the 6:15 collection gets (likewise 11:00 and 2:00 pm).
+  // The sensor sends an instant reading, not an hourly average (its value for one hour changes when it is read
+  // again within that hour). So each box shows the 3-hour average before the cut-off: for 6:15 am the rows of
+  // 4:00, 5:00 and 6:00 (the 6:00 row is what the 6:15 collection gets). At least 2 of the 3 hours are needed.
   var OUT_HOURS = [6, 11, 14];
   var US_PTS = [[0,0],[12.0,50],[12.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
                 [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
@@ -1236,16 +1239,21 @@
     $("outTitle").textContent = "Nearby sensor today · " + days[nowMyt.getUTCDay()] + " " + nowMyt.getUTCDate() + " " + mon[nowMyt.getUTCMonth()];
     OUT_HOURS.forEach(function (h) {
       var label = (h % 12 === 0 ? 12 : h % 12) + ":15 " + (h < 12 ? "am" : "pm");
-      var key = today + "T" + (h < 10 ? "0" : "") + h + ":00";
+      var pms = [];
+      for (var k = h - 2; k <= h; k++) {
+        var key = today + "T" + (k < 10 ? "0" : "") + k + ":00";
+        if (rows[key] !== undefined) pms.push(lin(Math.max(0, rows[key]), US_PTS, 1, 0));
+      }
       var tile = el("div", { "class": "tile" });
       tile.appendChild(el("div", { "class": "name" }, label));
-      if (rows[key] !== undefined) {
-        var pm = lin(Math.max(0, rows[key]), US_PTS, 1, 0);
+      var due = mins >= h * 60 + 15;
+      if (due && pms.length >= 2) {
+        var pm = pms.reduce(function (a, b) { return a + b; }, 0) / pms.length;
         var api = Math.floor(lin(pm, DOE_PTS, 0, 1) + 0.5);
         tile.appendChild(el("div", { "class": "val" }, String(api)));
         tile.appendChild(el("div", { "class": "sub" }, "PM2.5 " + Math.round(pm) + " µg/m³"));
-        tile.appendChild(el("div", { "class": "sub" }, doeCategory(api)));
-      } else if (mins < h * 60 + 15) {
+        tile.appendChild(el("div", { "class": "sub" }, doeCategory(api) + (pms.length < 3 ? " · 2 of 3 h" : "")));
+      } else if (!due) {
         tile.className = "tile pending";
         tile.appendChild(el("div", { "class": "val" }, "later"));
         tile.appendChild(el("div", { "class": "sub" }, "after " + label));
