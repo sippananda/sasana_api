@@ -61,6 +61,10 @@
   .box .k { font-size: .85rem; color: var(--ink-2); }
   .box .v { font-size: 1.6rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; }
   .box .d { font-size: .82rem; color: var(--ink-2); }
+  .nowboxes { grid-template-columns: repeat(4, 1fr); }
+  .box.hi { border-color: #b26a00; background: #fff4e0; }
+  .box.vhi { border-color: #c62828; background: #fdecea; }
+  details summary { cursor: pointer; margin: 8px 0 4px; }
   .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .88rem; color: var(--ink-2); margin-bottom: 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .chart { width: 100%; }
@@ -75,6 +79,7 @@
   footer p { margin: 0 0 4px; color: var(--ink); }
   @media (max-width: 560px) {
     .boxes { grid-template-columns: 1fr; }
+    .nowboxes { grid-template-columns: 1fr 1fr; }
     section { padding: 16px 14px 18px; }
     h1 { font-size: 1.35rem; }
   }
@@ -94,12 +99,40 @@
   </div>
 
   <section>
-    <h2><span class="n">1</span>Result so far</h2>
+    <h2><span class="n">1</span>Sensor now, on the DOE API scale</h2>
+    <p class="small">The sensor's hourly reading, converted to the DOE API scale and averaged over 3, 6 and
+      24 hours. DOE uses the 24-hour average. The 3- and 6-hour averages react faster to haze.
+      <b>Information only, not calibrated.</b></p>
+    <div class="boxes nowboxes" id="nowBoxes"><p class="small">Loading…</p></div>
+    <div class="legend">
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="#111" stroke-width="2.5"/></svg>DOE 4-station average (official, 24 h)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5"/></svg>Sensor, 3-hour average</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor, 6-hour average</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="#d03b3b" stroke-width="1.2" stroke-dasharray="3 3"/></svg>School limits 150 and 180</span>
+    </div>
+    <div class="chart" id="nowChart"></div>
+    <p class="small" id="nowNote"></p>
+    <details class="small">
+      <summary>How these numbers are worked out</summary>
+      <ul>
+        <li>aqicn reports the sensor as a US AQI number (US EPA 2016 scale). It is turned back into PM2.5 in µg/m³.</li>
+        <li>The PM2.5 values of the last 3, 6 or 24 hours are averaged. A 3-hour average needs all 3 hours,
+          a 6-hour average at least 5 hours, a 24-hour average at least 18 hours.</li>
+        <li>The average is turned into an API number with the DOE table of 14 October 2026 (the one on the APIMS website).</li>
+        <li>Above API 150 the two scales use the same PM2.5 bands, so there the hourly value is the same number on both scales.</li>
+        <li>The sensor is not calibrated. Low-cost sensors can read high in very humid air. Until the comparison
+          below has about two weeks of data, treat these numbers as a rough guide only.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>Result so far</h2>
     <div id="result"><p class="small">Loading…</p></div>
   </section>
 
   <section>
-    <h2><span class="n">2</span>Over time</h2>
+    <h2><span class="n">3</span>Over time</h2>
     <p><b>Sensor, hourly</b></p>
     <div class="legend">
       <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2"/><circle cx="13" cy="5" r="2.6" fill="#fff" stroke="var(--sensor)" stroke-width="1.5"/></svg>Sensor PM2.5, hourly (US AQI)</span>
@@ -117,7 +150,7 @@
   </section>
 
   <section>
-    <h2><span class="n">3</span>Sensor against the DOE average</h2>
+    <h2><span class="n">4</span>Sensor against the DOE average</h2>
     <p class="small">One dot per hour. Sensor 24-hour mean across, DOE average up. A tight band of dots
       means the two move together.</p>
     <div class="chart" id="scatter"></div>
@@ -125,7 +158,7 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Which stations follow the sensor best?</h2>
+    <h2><span class="n">5</span>Which stations follow the sensor best?</h2>
     <p class="small">Each DOE station, and some averages, compared with the sensor. Higher r means a closer
       match. The main page and the rule still use the 4-station average.</p>
     <div id="stationTable"></div>
@@ -133,14 +166,14 @@
   </section>
 
   <section>
-    <h2><span class="n">5</span>Time shift</h2>
+    <h2><span class="n">6</span>Time shift</h2>
     <p class="small">The sensor reading is moved later by 0 to 6 hours before the comparison. The
       best shift shows how many hours the sensor runs ahead of the DOE numbers.</p>
     <div id="lagTable"></div>
   </section>
 
   <section>
-    <h2><span class="n">6</span>How to read this page</h2>
+    <h2><span class="n">7</span>How to read this page</h2>
     <ul class="small">
       <li><b>Sensor:</b> “Jalan Anggun 3P”, a GAIA low-cost sensor in Rawang Anggun, a few kilometres from the
         school. Data from the World Air Quality Index project,
@@ -321,6 +354,80 @@
     if (first) html += '<p class="small">Sensor data since ' + first + '. ' + d.senHours.length + ' sensor hour' + (d.senHours.length === 1 ? '' : 's') + ' in total.</p>';
     else html += '<p class="small">No sensor data yet.</p>';
     $("result").innerHTML = html;
+  }
+
+
+  // ---------- section 1: sensor on the DOE API scale ----------
+  // US EPA 2016 PM2.5 breakpoints (the scale aqicn uses) and the DOE table of 14 Oct 2026.
+  var US = [[0,0],[12.0,50],[12.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+            [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  var DOE = [[0,0],[12.0,50],[12.1,51],[50.4,100],[50.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+             [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  function interp(v, pts, xi, yi) {
+    for (var i = 1; i < pts.length; i++) {
+      if (v <= pts[i][xi]) {
+        var a = pts[i - 1], b = pts[i];
+        return a[yi] + (b[yi] - a[yi]) * (v - a[xi]) / (b[xi] - a[xi]);
+      }
+    }
+    var p = pts[pts.length - 2], q = pts[pts.length - 1];
+    return q[yi] + (q[yi] - p[yi]) * (v - q[xi]) / (q[xi] - p[xi]);
+  }
+  function pmFromUs(aqi) { return interp(Math.max(0, aqi), US, 1, 0); }
+  function apiFromPm(pm) { return interp(Math.max(0, pm), DOE, 0, 1); }
+  var WINDOWS = [{ n: 1, min: 1, label: "Last hour" }, { n: 3, min: 3, label: "3-hour average" },
+                 { n: 6, min: 5, label: "6-hour average" }, { n: 24, min: 18, label: "24-hour average" }];
+  function sensorApi(d) {
+    var pm = {};
+    Object.keys(d.sen).forEach(function (k) { pm[k] = pmFromUs(d.sen[k]); });
+    var out = {};
+    WINDOWS.forEach(function (w) {
+      var pmAvg = {}, api = {};
+      d.senHours.forEach(function (h) {
+        var s = 0, c = 0;
+        for (var i = 0; i < w.n; i++) if (pm[h - i] !== undefined) { s += pm[h - i]; c++; }
+        if (c >= w.min) { pmAvg[h] = s / c; api[h] = Math.round(apiFromPm(s / c)); }
+      });
+      out[w.n] = { pm: pmAvg, api: api };
+    });
+    return out;
+  }
+  function clock(h) {
+    var dt = new Date(h * 3600000), hr = dt.getUTCHours();
+    return (hr % 12 || 12) + (hr < 12 ? " am" : " pm");
+  }
+  function showNow(d) {
+    var box = $("nowBoxes");
+    if (!d.senHours.length) { box.innerHTML = '<p class="small">No sensor data yet.</p>'; $("nowChart").innerHTML = ""; return; }
+    var sa = sensorApi(d), last = d.senHours[d.senHours.length - 1], html = "";
+    WINDOWS.forEach(function (w) {
+      var v = sa[w.n].api[last], pm = sa[w.n].pm[last];
+      var cls = v === undefined ? "" : v >= 180 ? " vhi" : v >= 150 ? " hi" : "";
+      var span = w.n === 1 ? clock(last) : clock(last - w.n + 1) + " – " + clock(last);
+      var need = 0;
+      if (v === undefined) { for (var i = 0; i < w.n; i++) if (d.sen[last - i] !== undefined) need++; need = w.min - need; }
+      html += '<div class="box' + cls + '"><div class="k">' + w.label + '</div>' +
+        '<div class="v">' + (v === undefined ? "–" : v) + '</div>' +
+        '<div class="d">' + (v === undefined ? "needs " + need + " more hour" + (need === 1 ? "" : "s") + " of data"
+                                              : "PM2.5 " + pm.toFixed(0) + " µg/m³ · " + span) + '</div></div>';
+    });
+    box.innerHTML = html;
+    var doeHours = Object.keys(d.doe).map(Number);
+    var end = Math.max(last, doeHours.length ? Math.max.apply(null, doeHours) : last);
+    var start = Math.max(d.senHours[0], end - 3 * 24);
+    var lim = {}; for (var h = start; h <= end; h++) lim[h] = 150;
+    var lim2 = {}; for (var h2 = start; h2 <= end; h2++) lim2[h2] = 180;
+    drawLines($("nowChart"), [
+      { src: lim, attrs: { stroke: "#d03b3b", "stroke-width": 1.2, "stroke-dasharray": "3 3" } },
+      { src: lim2, attrs: { stroke: "#d03b3b", "stroke-width": 1.2, "stroke-dasharray": "3 3" } },
+      { src: d.doe, attrs: { stroke: "#111", "stroke-width": 2.5 } },
+      { src: sa[6].api, attrs: { stroke: "var(--sensor)", "stroke-width": 2.5, "stroke-dasharray": "7 4" } },
+      { src: sa[3].api, attrs: { stroke: "var(--sensor)", "stroke-width": 2.5 }, dots: true }
+    ], start, end, "Sensor 3- and 6-hour averages on the DOE API scale, with the DOE 4-station average");
+    var doeNow = d.doe[last];
+    $("nowNote").textContent = "Newest sensor hour: " + hourLabel(last, true) + "." +
+      (doeNow !== undefined ? " DOE 4-station average at the same hour: " + Math.round(doeNow) + "." : "") +
+      " Shows up to the last 3 days.";
   }
 
   // ---------- charts: over time ----------
@@ -523,7 +630,7 @@
   var state = null, lastWidth = 0;
   function render() {
     if (!state) return;
-    showResult(state); drawTime(state); drawScatter(state); showStations(state); showLag(state);
+    showNow(state); showResult(state); drawTime(state); drawScatter(state); showStations(state); showLag(state);
   }
   function load() {
     var bust = "?t=" + Date.now();
