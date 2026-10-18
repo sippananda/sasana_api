@@ -1,5 +1,5 @@
 {
- "issued": "2026-10-18T11:29+08:00",
+ "issued": "2026-10-18T12:33+08:00",
  "reading_hour": 14,
  "cells": {
   "KL": {
@@ -334,24 +334,24 @@
   ]
  },
  "anchor": {
-  "time": "2026-10-18T11:00",
+  "time": "2026-10-18T12:00",
   "avg_api": 138,
   "stations": {
    "CA15W": {
-    "api": 155.0,
-    "ratio": 1.022
+    "api": 156.0,
+    "ratio": 1.046
    },
    "CA19B": {
     "api": 156.0,
-    "ratio": 1.053
+    "ratio": 1.046
    },
    "CA20B": {
     "api": 159.0,
-    "ratio": 1.147
+    "ratio": 1.14
    },
    "CA18B": {
     "api": 81.0,
-    "ratio": 0.651
+    "ratio": 0.66
    }
   }
  },
@@ -364,19 +364,19 @@
     "KS": 51.5
    },
    "api_2pm": {
-    "CA15W": 155,
+    "CA15W": 156,
     "CA19B": 156,
     "CA20B": 159,
-    "CA18B": 78
+    "CA18B": 79
    },
    "avg_2pm": {
-    "mid": 137,
-    "low": 132,
-    "high": 142
+    "mid": 138,
+    "low": 133,
+    "high": 143
    },
    "method": "from latest reading",
    "latest_ratio_weight": null,
-   "hours_after_latest_reading": 3,
+   "hours_after_latest_reading": 2,
    "weather_2pm": {
     "wind_kmh": 4.6,
     "wind_from_deg": 315,
@@ -403,12 +403,12 @@
    },
    "avg_2pm": {
     "mid": 133,
-    "low": 77,
-    "high": 145
+    "low": 78,
+    "high": 146
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.57,
-   "hours_after_latest_reading": 27,
+   "latest_ratio_weight": 0.58,
+   "hours_after_latest_reading": 26,
    "weather_2pm": {
     "wind_kmh": 8.3,
     "wind_from_deg": 214,
@@ -428,19 +428,19 @@
     "KS": 25.0
    },
    "api_2pm": {
-    "CA15W": 96,
+    "CA15W": 97,
     "CA19B": 97,
     "CA20B": 99,
     "CA18B": 57
    },
    "avg_2pm": {
-    "mid": 87,
-    "low": 65,
+    "mid": 88,
+    "low": 66,
     "high": 135
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.35,
-   "hours_after_latest_reading": 51,
+   "hours_after_latest_reading": 50,
    "weather_2pm": {
     "wind_kmh": 5.9,
     "wind_from_deg": 169,
@@ -460,10 +460,10 @@
     "KS": 28.7
    },
    "api_2pm": {
-    "CA15W": 88,
+    "CA15W": 89,
     "CA19B": 89,
     "CA20B": 90,
-    "CA18B": 60
+    "CA18B": 61
    },
    "avg_2pm": {
     "mid": 82,
@@ -472,7 +472,7 @@
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.21,
-   "hours_after_latest_reading": 75,
+   "hours_after_latest_reading": 74,
    "weather_2pm": {
     "wind_kmh": 7.6,
     "wind_from_deg": 172,
@@ -504,7 +504,7 @@
    },
    "method": "mixed factor",
    "latest_ratio_weight": 0.13,
-   "hours_after_latest_reading": 99,
+   "hours_after_latest_reading": 98,
    "weather_2pm": {
     "wind_kmh": 4.7,
     "wind_from_deg": 238,
