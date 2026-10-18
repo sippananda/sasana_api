@@ -245,6 +245,7 @@
     h1 { font-size: 1.35rem; }
     section { padding: 16px 14px 16px; border-radius: 14px; margin-top: 12px; }
   }
+  sub { font-size: .72em; line-height: 0; vertical-align: -.22em; }   /* PM2.5: keeps the line height */
 </style>
 </head>
 <body>
@@ -295,7 +296,7 @@
     <h2><span class="n">4</span><span id="outTitle">Nearby sensor today</span></h2>
     <div class="tiles out" id="outTiles"></div>
     <p class="small" id="outNote">Low-cost sensor in Rawang Anggun, about 2.7 km from the school. Each box is the
-      average PM2.5 of the sensor's hourly readings in the 3 hours up to that time (for 6:15 am: 4:00, 5:00 and
+      average PM<sub>2.5</sub> of the sensor's hourly readings in the 3 hours up to that time (for 6:15 am: 4:00, 5:00 and
       6:00 am), turned into a number on the DOE API scale. Not calibrated: such sensors often read high in humid air.
       The DOE API is a 24-hour average, so it reacts later than this reading.
       <a href="sensor.html">More on the sensor →</a></p>
@@ -354,7 +355,7 @@
       <li><b>Experimental:</b> <a href="sensor.html">how a nearby low-cost sensor (Rawang Anggun) compares
         with the DOE average →</a> A test only. It does not decide school closure.</li>
       <li><b>Reference:</b> <a href="averaging.html">other ways to average the four stations →</a>
-        An average of PM2.5 instead of API, and an average without Kuala Selangor. It does not decide school closure.</li>
+        An average of PM<sub>2.5</sub> instead of API, and an average without Kuala Selangor. It does not decide school closure.</li>
       <li><b>Malaysia's API: calculation, delay and haze monitoring for a school.</b> Why the 24-hour average runs late, how other countries do it, and what this website does:
         <a href="api-en.html">English</a> · <a href="api-zh.html" lang="zh-Hans">中文</a></li>
     </ul>
@@ -1251,7 +1252,10 @@
         var pm = pms.reduce(function (a, b) { return a + b; }, 0) / pms.length;
         var api = Math.floor(lin(pm, DOE_PTS, 0, 1) + 0.5);
         tile.appendChild(el("div", { "class": "val" }, String(api)));
-        tile.appendChild(el("div", { "class": "sub" }, "PM2.5 " + Math.round(pm) + " µg/m³"));
+        var pmLine = el("div", { "class": "sub" }, "PM");
+        pmLine.appendChild(el("sub", {}, "2.5"));
+        pmLine.appendChild(document.createTextNode(" " + Math.round(pm) + " µg/m³"));
+        tile.appendChild(pmLine);
         tile.appendChild(el("div", { "class": "sub" }, doeCategory(api) + (pms.length < 3 ? " · 2 of 3 h" : "")));
       } else if (!due) {
         tile.className = "tile pending";

@@ -69,6 +69,7 @@
   tr.now td { background: var(--tile); }
   .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .86rem; color: var(--ink-2); margin: 4px 0 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .lt { font-style: normal; }   /* one flex item, so the subscript stays next to PM */
   .chart svg { display: block; width: 100%; height: auto; }
   .chart text { font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; fill: var(--ink-2); }
   td.dim .v { font-weight: 400; color: var(--ink-3); }
@@ -79,6 +80,7 @@
     h1 { font-size: 1.35rem; }
     th, td { padding: 6px 5px; }
   }
+  sub { font-size: .72em; line-height: 0; vertical-align: -.22em; }   /* PM2.5: keeps the line height */
 </style>
 </head>
 <body>
@@ -98,14 +100,14 @@
     <h2><span class="n">1</span>The three methods</h2>
     <ul>
       <li><b>Official average:</b> the plain average of the four stations' API numbers. This is the school rule.</li>
-      <li><b>PM2.5 method:</b> each station's API is turned back into PM2.5 with the DOE table (January 2025
-        version). The four PM2.5 values are averaged, and the average is turned into an API number again.</li>
+      <li><b>PM<sub>2.5</sub> method:</b> each station's API is turned back into PM<sub>2.5</sub> with the DOE table (January 2025
+        version). The four PM<sub>2.5</sub> values are averaged, and the average is turned into an API number again.</li>
       <li><b>Three stations:</b> the plain average of Batu Muda, Petaling Jaya and Shah Alam, without
         Kuala Selangor.</li>
     </ul>
     <p class="small">Why the first two can differ: the DOE table has a steep part between API 100 and 150.
-      A station in or below that part counts more in an average of API numbers than its PM2.5 would suggest.
-      Averaging PM2.5 first removes this effect.</p>
+      A station in or below that part counts more in an average of API numbers than its PM<sub>2.5</sub> would suggest.
+      Averaging PM<sub>2.5</sub> first removes this effect.</p>
     <figure><a href="img/avg_methods_en.png"><img src="img/avg_methods_en.png" alt="On 17 October the average of API was 150 and the average of PM2.5, as API, was 162." loading="lazy"></a></figure>
   </section>
 
@@ -126,7 +128,7 @@
       same footing. Its 1-hour reading is in the table only, because it is not averaged over 24 hours.</p>
     <div class="legend">
       <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#111" stroke-width="2.5"/></svg>Official average</span>
-      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#1b6ac9" stroke-width="2.5" stroke-dasharray="7 4"/></svg>PM2.5 method</span>
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#1b6ac9" stroke-width="2.5" stroke-dasharray="7 4"/></svg><i class="lt">PM<sub>2.5</sub> method</i></span>
       <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#8a8a85" stroke-width="2" stroke-dasharray="2 3"/></svg>Three stations</span>
       <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#7a3fa0" stroke-width="2.5" stroke-dasharray="10 3 2 3"/></svg>Sensor, 24-hour average</span>
       <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#d03b3b" stroke-width="1.2" stroke-dasharray="3 3"/></svg>Limits 150 and 180</span>
@@ -154,17 +156,17 @@
   <section>
     <h2><span class="n">5</span>Limits</h2>
     <ul class="small">
-      <li>The PM2.5 method assumes that PM2.5 sets each station's API. This is true in haze. On clean days
-        another pollutant can set the API, and the PM2.5 worked back from it is then too high.</li>
-      <li>DOE publishes whole API numbers. Above API 150 one API point is about 1.9 µg/m³ of PM2.5, so a result
+      <li>The PM<sub>2.5</sub> method assumes that PM<sub>2.5</sub> sets each station's API. This is true in haze. On clean days
+        another pollutant can set the API, and the PM<sub>2.5</sub> worked back from it is then too high.</li>
+      <li>DOE publishes whole API numbers. Above API 150 one API point is about 1.9 µg/m³ of PM<sub>2.5</sub>, so a result
         close to a limit can change with one point.</li>
-      <li>The PM2.5 method still meets the steep part of the table, but only once, for the average. When the
-        four-station PM2.5 average is between 50.5 and 55.4 µg/m³, a small change moves the result a lot.
-        Example: on 18 October the PM2.5 method gave 151 at 2:00 pm, 134 at 4:00 pm and 151 again at 6:00 pm,
-        while the four-station PM2.5 average moved only between about 54 and 56 µg/m³.</li>
-      <li>The results depend on the DOE table. If DOE changes the table, the PM2.5 method changes too.</li>
-      <li>The PM2.5 method makes a low station count less. It does not remove the real difference:
-        Kuala Selangor often has less PM2.5 than the other three.</li>
+      <li>The PM<sub>2.5</sub> method still meets the steep part of the table, but only once, for the average. When the
+        four-station PM<sub>2.5</sub> average is between 50.5 and 55.4 µg/m³, a small change moves the result a lot.
+        Example: on 18 October the PM<sub>2.5</sub> method gave 151 at 2:00 pm, 134 at 4:00 pm and 151 again at 6:00 pm,
+        while the four-station PM<sub>2.5</sub> average moved only between about 54 and 56 µg/m³.</li>
+      <li>The results depend on the DOE table. If DOE changes the table, the PM<sub>2.5</sub> method changes too.</li>
+      <li>The PM<sub>2.5</sub> method makes a low station count less. It does not remove the real difference:
+        Kuala Selangor often has less PM<sub>2.5</sub> than the other three.</li>
       <li>One sensor, not calibrated, only a few days of data. It cannot settle the question yet.</li>
     </ul>
   </section>
@@ -176,6 +178,9 @@
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
+  // Fixed header words only (no data): PM2.5 is written with a subscript.
+  function pmSub(s) { return s.replace(/PM2\.5/g, "PM<sub>2.5</sub>"); }
+  function th(s) { var e = document.createElement("th"); e.innerHTML = pmSub(s); return e; }
   function el(tag, attrs, text) {
     var e = document.createElement(tag);
     for (var k in attrs || {}) e.setAttribute(k, attrs[k]);
@@ -273,7 +278,7 @@
     });
     var tb = $("days"); tb.textContent = "";
     var head = el("tr");
-    ["Date", "Official average", "PM2.5 method", "Three stations"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
+    ["Date", "Official average", "PM2.5 method", "Three stations"].forEach(function (h) { head.appendChild(th(h)); });
     tb.appendChild(head);
     rows.reverse().forEach(function (r) {
       var tr = el("tr");
@@ -322,7 +327,7 @@
       .reverse().forEach(function (r) { rows.push({ label: hourLabel(r.datetime_myt), r: r }); });
     var tb = $("sensor"); tb.textContent = "";
     var head = el("tr");
-    ["Time", "Official average", "PM2.5 method", "Three stations", "Sensor, 24 h"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
+    ["Time", "Official average", "PM2.5 method", "Three stations", "Sensor, 24 h"].forEach(function (h) { head.appendChild(th(h)); });
     tb.appendChild(head);
     var shown = 0, closest = null;
     rows.forEach(function (row) {
@@ -353,9 +358,9 @@
       said = "Right now the sensor is " + (tied.length > 1 ? "about equally close to " + tied.join(" and ")
         : "closest to " + tied[0]) + ". ";
     }
-    $("sensorNote").textContent = said +
+    $("sensorNote").innerHTML = pmSub(said +
       "The sensor has about " + (Math.round(days * 10) / 10) + " days of data. " +
-      "One or two weeks, with some haze days and some clear days, are needed before a conclusion.";
+      "One or two weeks, with some haze days and some clear days, are needed before a conclusion.");
   }
 
   // ---------- section 3: hour by hour ----------
@@ -434,14 +439,14 @@
     $("hourChart").textContent = ""; $("hourChart").appendChild(svg);
 
     var last = rows[rows.length - 1];
-    $("hourNote").textContent = "Newest complete hour, " + hourLabel(last.iso) + ": official " + last.m.official +
+    $("hourNote").innerHTML = pmSub("Newest complete hour, " + hourLabel(last.iso) + ": official " + last.m.official +
       ", PM2.5 method " + last.m.pm + ", three stations " + last.m.three +
-      (last.s24 !== null ? ", sensor 24-hour " + last.s24 + " (" + last.n24 + " of 24 hours)" : "") + ".";
+      (last.s24 !== null ? ", sensor 24-hour " + last.s24 + " (" + last.n24 + " of 24 hours)" : "") + ".");
 
     // table, newest first
     var tb = $("hours"); tb.textContent = "";
     var head = el("tr");
-    ["Time", "Official", "PM2.5 method", "Three stations", "Sensor, 24 h", "Sensor, 1 h"].forEach(function (x) { head.appendChild(el("th", {}, x)); });
+    ["Time", "Official", "PM2.5 method", "Three stations", "Sensor, 24 h", "Sensor, 1 h"].forEach(function (x) { head.appendChild(th(x)); });
     tb.appendChild(head);
     rows.slice(-24).reverse().forEach(function (r) {
       var tr = el("tr");

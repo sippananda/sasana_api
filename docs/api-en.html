@@ -57,6 +57,7 @@
   ol.refs li { margin: 6px 0; }
   footer { margin: 40px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--ink-2); }
   @media (max-width: 480px) { body { font-size: 16px; } h1 { font-size: 1.45rem; } p { text-align: left; } .abstract { padding: 12px 6px; } }
+  sub { font-size: .72em; line-height: 0; vertical-align: -.22em; }   /* PM2.5: keeps the line height */
 </style>
 </head>
 <body>
@@ -68,7 +69,7 @@
     <p class="byline">A parent with AI assistant · 18 October 2026</p>
   </header>
 
-<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong, discusses two ways of obtaining more immediate PM2.5 data, and describes the monitoring work of this website.</p><p class="kw"><b>Keywords:</b> Air Pollutant Index; PM2.5; rolling average; lag; haze; school monitoring</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
+<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong, discusses two ways of obtaining more immediate PM<sub>2.5</sub> data, and describes the monitoring work of this website.</p><p class="kw"><b>Keywords:</b> Air Pollutant Index; PM<sub>2.5</sub>; rolling average; lag; haze; school monitoring</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
 
 <h2>1 Introduction</h2>
 <p>Many parents will recognise the following situation. The sky is grey and the air smells of smoke, yet the official API still reads "Moderate". At the same moment, a foreign air-quality app may well report "Unhealthy". The question is which of the two numbers is correct.</p>
@@ -125,7 +126,7 @@
 <h2>3 How the API is calculated</h2>
 <p>The API of a station is the highest of six <strong>sub-indexes</strong>, one for each pollutant. The DOE's calculation document describes the procedure in three steps <span class="cite">[<a href="#ref-1">1</a>]</span>:</p>
 <ol>
-<li><strong>Six pollutants are measured:</strong> PM2.5, PM10, ozone, carbon monoxide, nitrogen dioxide and sulphur dioxide.</li>
+<li><strong>Six pollutants are measured:</strong> PM<sub>2.5</sub>, PM10, ozone, carbon monoxide, nitrogen dioxide and sulphur dioxide.</li>
 <li><strong>Each pollutant is averaged over its own period.</strong> The periods differ because acceptable exposure times differ between pollutants.</li>
 <li><strong>Each average is converted into a sub-index between 0 and 500, and the highest sub-index is taken.</strong> This value is reported as the API of the station.</li>
 </ol>
@@ -140,7 +141,7 @@
 </thead>
 <tbody>
 <tr>
-<td>PM2.5 (fine particles)</td>
+<td>PM<sub>2.5</sub> (fine particles)</td>
 <td>24 hours</td>
 </tr>
 <tr>
@@ -165,18 +166,18 @@
 </tr>
 </tbody>
 </table></div>
-<p>For example, if a station has a PM2.5 sub-index of 152, an ozone sub-index of 40 and lower values for the remaining pollutants, its API is 152 and PM2.5 is the dominant pollutant.</p>
-<p>According to the DOE, particulate matter determines the API most of the time in Malaysia, and almost always during haze episodes. The DOE document gives 2017 as the year in which PM2.5 was added to the calculation, whereas news reports give August 2018 as the start of public reporting. The conversion formula is given in Appendix A.</p>
+<p>For example, if a station has a PM<sub>2.5</sub> sub-index of 152, an ozone sub-index of 40 and lower values for the remaining pollutants, its API is 152 and PM<sub>2.5</sub> is the dominant pollutant.</p>
+<p>According to the DOE, particulate matter determines the API most of the time in Malaysia, and almost always during haze episodes. The DOE document gives 2017 as the year in which PM<sub>2.5</sub> was added to the calculation, whereas news reports give August 2018 as the start of public reporting. The conversion formula is given in Appendix A.</p>
 
 <h2>4 What is published and what is not</h2>
-<p>The DOE publishes the hourly API of each station and the formula used to calculate it, but not the hourly PM2.5 concentrations.</p>
+<p>The DOE publishes the hourly API of each station and the formula used to calculate it, but not the hourly PM<sub>2.5</sub> concentrations.</p>
 <ul>
 <li><strong>Published:</strong> the API of every station for every hour, together with its status.</li>
-<li><strong>Published:</strong> the formula for converting PM2.5 and the other pollutants into the API, in an official "API Calculation" document in Malay and English.</li>
-<li><strong>Not published:</strong> the hourly PM2.5 concentration in micrograms per cubic metre. Assoc. Prof. Helena Varkkey of Universiti Malaya has noted that the government holds these data but does not release them <span class="cite">[<a href="#ref-4">4</a>]</span>.</li>
+<li><strong>Published:</strong> the formula for converting PM<sub>2.5</sub> and the other pollutants into the API, in an official "API Calculation" document in Malay and English.</li>
+<li><strong>Not published:</strong> the hourly PM<sub>2.5</sub> concentration in micrograms per cubic metre. Assoc. Prof. Helena Varkkey of Universiti Malaya has noted that the government holds these data but does not release them <span class="cite">[<a href="#ref-4">4</a>]</span>.</li>
 </ul>
 <p>The public therefore sees only the smoothed 24-hour figure, and not the hourly readings that would show the current state of the air.</p>
-<p><strong>A caveat:</strong> the DOE has issued two official versions of its calculation document: a September 2021 version on the DOE website, and a January 2025 version on the APIMS website. Their PM2.5 values differ <span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span> (see Appendix A). This article follows the newer January 2025 version. The difference does not affect the main conclusion, namely that the 24-hour average delays the API.</p>
+<p><strong>A caveat:</strong> the DOE has issued two official versions of its calculation document: a September 2021 version on the DOE website, and a January 2025 version on the APIMS website. Their PM<sub>2.5</sub> values differ <span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span> (see Appendix A). This article follows the newer January 2025 version. The difference does not affect the main conclusion, namely that the 24-hour average delays the API.</p>
 
 <h2>5 Why a 24-hour average lags behind</h2>
 <p>A 24-hour rolling average replaces only one twenty-fourth of its data each hour. It therefore takes about a day to reflect the full effect of new haze, and about a day to recover once the haze has cleared.</p>
@@ -192,7 +193,7 @@
 <ul>
 <li>At 2:00 pm on 17 October, the average API of the four stations was 150. This figure represents the air from 3:00 pm on 16 October to 2:00 pm on 17 October, not only the air at 2:00 pm.</li>
 <li>At 10:00 am on 18 October, the average was still 139, only 11 points below the previous afternoon. Even when the air improves, the index declines slowly.</li>
-<li><strong>An exception:</strong> under the January 2025 conversion table, the entire range from API 101 to 150 corresponds to only about 5 µg/m³ of PM2.5, so the API can change very quickly within this range. Between 4:00 pm and 8:00 pm on 16 October, the Kuala Selangor station fell from 152 to 99. Near 150, a very small change in concentration is enough to move the API across that value.</li>
+<li><strong>An exception:</strong> under the January 2025 conversion table, the entire range from API 101 to 150 corresponds to only about 5 µg/m³ of PM<sub>2.5</sub>, so the API can change very quickly within this range. Between 4:00 pm and 8:00 pm on 16 October, the Kuala Selangor station fell from 152 to 99. Near 150, a very small change in concentration is enough to move the API across that value.</li>
 </ul>
 <h3>5.2 Hourly readings at the four stations</h3>
 <p>The figure below shows all hourly API readings at the four stations from the evening of 8 October to 11:00 am on 18 October <span class="cite">[<a href="#ref-12">12</a>]</span>. The light blue band marks the range from API 100 to 150.</p>
@@ -223,7 +224,7 @@
 <tr>
 <td>Malaysia</td>
 <td>API</td>
-<td>PM2.5: 24-hour rolling average</td>
+<td>PM<sub>2.5</sub>: 24-hour rolling average</td>
 <td>None</td>
 <td>Use the API</td>
 </tr>
@@ -231,8 +232,8 @@
 <td>Singapore <span class="cite">[<a href="#ref-6">6</a>]</span></td>
 <td>PSI</td>
 <td>24 hours</td>
-<td>1-hour PM2.5 reading in four bands (Normal, Elevated, High, Very High); banded since 2016</td>
-<td>1-hour PM2.5 for immediate activities; 24-hour PSI forecast for planning the next day</td>
+<td>1-hour PM<sub>2.5</sub> reading in four bands (Normal, Elevated, High, Very High); banded since 2016</td>
+<td>1-hour PM<sub>2.5</sub> for immediate activities; 24-hour PSI forecast for planning the next day</td>
 </tr>
 <tr>
 <td>United States <span class="cite">[<a href="#ref-7">7</a>]</span></td>
@@ -245,44 +246,44 @@
 <td>China <span class="cite">[<a href="#ref-8">8</a>]</span></td>
 <td>AQI</td>
 <td>Daily report: 24-hour average</td>
-<td>Hourly report with both the 1-hour PM2.5 concentration and the 24-hour average</td>
+<td>Hourly report with both the 1-hour PM<sub>2.5</sub> concentration and the 24-hour average</td>
 <td>Daily report for the day as a whole; hourly report for current conditions</td>
 </tr>
 <tr>
 <td>Hong Kong <span class="cite">[<a href="#ref-9">9</a>]</span></td>
 <td>AQHI (1 to 10+)</td>
 <td>3-hour moving average; the health risks of four pollutants are added together</td>
-<td>The index itself is based on 3 hours; hourly PM2.5 concentrations also published since 2012</td>
+<td>The index itself is based on 3 hours; hourly PM<sub>2.5</sub> concentrations also published since 2012</td>
 <td>Adjust activities according to the health-risk category</td>
 </tr>
 </tbody>
 </table></div>
 <p>Several points emerge from this comparison:</p>
 <ul>
-<li><strong>Singapore</strong> follows the approach closest to Malaysia's, but also publishes a 1-hour PM2.5 reading. As the two countries are often compared, it is important first to establish whether a given figure is a 1-hour or a 24-hour value.</li>
+<li><strong>Singapore</strong> follows the approach closest to Malaysia's, but also publishes a 1-hour PM<sub>2.5</sub> reading. As the two countries are often compared, it is important first to establish whether a given figure is a 1-hour or a 24-hour value.</li>
 <li><strong>The United States</strong> NowCast is a compromise: in stable conditions it behaves like a 12-hour average, and when air quality changes rapidly it behaves like a 3-hour average. In an example given by the US Environmental Protection Agency, the NowCast halves with each hour after a one-hour peak, whereas the 24-hour average for that day retains only one twenty-fourth of the peak.</li>
 <li><strong>Hong Kong</strong> adopted the AQHI at the end of 2013. Because it uses a 3-hour average, it responds most quickly of the five.</li>
 </ul>
-<p>In 2023, the Malaysian researchers Varkkey and Ashfold argued that the DOE could publish hourly PM2.5 data without new equipment, as this would only require the release of data that already exist <span class="cite">[<a href="#ref-4">4</a>]</span>.</p>
+<p>In 2023, the Malaysian researchers Varkkey and Ashfold argued that the DOE could publish hourly PM<sub>2.5</sub> data without new equipment, as this would only require the release of data that already exist <span class="cite">[<a href="#ref-4">4</a>]</span>.</p>
 
 <h2>7 Discussion</h2>
 <ul>
 <li><strong>The two kinds of figure answer different questions.</strong> The 24-hour average reflects cumulative exposure over the past day and can be compared with health standards defined over 24 hours; the hourly figure reflects the air at the present moment.</li>
 <li><strong>The difference between them is greatest when air quality changes rapidly.</strong> When haze first arrives, the 24-hour average understates current conditions; just after the haze clears, it overstates them (see Figure 1). In stable conditions the two are similar.</li>
-<li><strong>Official practice elsewhere.</strong> Singapore's National Environment Agency advises using the 1-hour PM2.5 reading for immediate activities and the 24-hour PSI forecast for planning the next day. Official maps in the United States show the NowCast as the current value.</li>
+<li><strong>Official practice elsewhere.</strong> Singapore's National Environment Agency advises using the 1-hour PM<sub>2.5</sub> reading for immediate activities and the 24-hour PSI forecast for planning the next day. Official maps in the United States show the NowCast as the current value.</li>
 <li><strong>Academic views.</strong> Dr Fatimah Ahamad of Sunway University told SAYS that a longer averaging period reflects cumulative health risk, but may mask a haze episode that is still developing <span class="cite">[<a href="#ref-4">4</a>]</span>.</li>
 <li><strong>Figures from foreign apps cannot be compared directly with the API.</strong> In October 2026 the DOE explained that the scales, averaging periods and update intervals differ <span class="cite">[<a href="#ref-5">5</a>]</span>.</li>
-<li><strong>The sensitivity differs between parts of the conversion table.</strong> Under the January 2025 version, the band from API 101 to 150 is very steep: a change of only about 5 µg/m³ of PM2.5 moves the API between 100 and 150. This applies to rises and falls alike, so within this band small changes appear large. The band from API 151 to 200 is flat: when PM2.5 rises from 60 to 110 µg/m³, almost doubling, the API rises only from about 153 to 179, so changes during severe haze appear small. On the evening of 16 October, for example, the Kuala Selangor station fell from 152 to 99 within four hours, while the PM2.5 derived from the table fell only from about 57 to about 50 µg/m³.</li>
-<li><strong>Compared with the older version, the new one reaches the thresholds earlier.</strong> For PM2.5 between about 50 and 150 µg/m³, the January 2025 version gives a higher API than the September 2021 version. Under the new version, the school threshold of 150 corresponds to a 24-hour average PM2.5 of about 55 µg/m³ and the threshold of 180 to about 112 µg/m³; under the older version the figures are about 113 and 135.</li>
-<li><strong>Comparison with health standards.</strong> The World Health Organization does not publish an index like the API; it sets guideline values for PM2.5 concentration: 15 µg/m³ for the 24-hour average and 5 µg/m³ for the annual average, together with four interim targets <span class="cite">[<a href="#ref-13">13</a>]</span>. Malaysia's 2020 ambient air quality standard for the 24-hour average is 35 µg/m³ <span class="cite">[<a href="#ref-14">14</a>]</span>. Under the January 2025 version, API 100, the upper limit of "Moderate", corresponds to 50.4 µg/m³, which is above both Malaysia's own 2020 standard and the WHO guideline value (Table 4).</li>
+<li><strong>The sensitivity differs between parts of the conversion table.</strong> Under the January 2025 version, the band from API 101 to 150 is very steep: a change of only about 5 µg/m³ of PM<sub>2.5</sub> moves the API between 100 and 150. This applies to rises and falls alike, so within this band small changes appear large. The band from API 151 to 200 is flat: when PM<sub>2.5</sub> rises from 60 to 110 µg/m³, almost doubling, the API rises only from about 153 to 179, so changes during severe haze appear small. On the evening of 16 October, for example, the Kuala Selangor station fell from 152 to 99 within four hours, while the PM<sub>2.5</sub> derived from the table fell only from about 57 to about 50 µg/m³.</li>
+<li><strong>Compared with the older version, the new one reaches the thresholds earlier.</strong> For PM<sub>2.5</sub> between about 50 and 150 µg/m³, the January 2025 version gives a higher API than the September 2021 version. Under the new version, the school threshold of 150 corresponds to a 24-hour average PM<sub>2.5</sub> of about 55 µg/m³ and the threshold of 180 to about 112 µg/m³; under the older version the figures are about 113 and 135.</li>
+<li><strong>Comparison with health standards.</strong> The World Health Organization does not publish an index like the API; it sets guideline values for PM<sub>2.5</sub> concentration: 15 µg/m³ for the 24-hour average and 5 µg/m³ for the annual average, together with four interim targets <span class="cite">[<a href="#ref-13">13</a>]</span>. Malaysia's 2020 ambient air quality standard for the 24-hour average is 35 µg/m³ <span class="cite">[<a href="#ref-14">14</a>]</span>. Under the January 2025 version, API 100, the upper limit of "Moderate", corresponds to 50.4 µg/m³, which is above both Malaysia's own 2020 standard and the WHO guideline value (Table 4).</li>
 </ul>
-<p class="tcap"><b>Table 4.</b>　Reference values for 24-hour average PM2.5 (µg/m³)</p>
+<p class="tcap"><b>Table 4.</b>　Reference values for 24-hour average PM<sub>2.5</sub> (µg/m³)</p>
 
 <div class="tw"><table>
 <thead>
 <tr>
 <th>Reference value</th>
-<th>24-hour average PM2.5</th>
+<th>24-hour average PM<sub>2.5</sub></th>
 </tr>
 </thead>
 <tbody>
@@ -325,13 +326,13 @@
 </tbody>
 </table></div>
 
-<h2>8 Sources of real-time PM2.5</h2>
+<h2>8 Sources of real-time PM<sub>2.5</sub></h2>
 <h3>8.1 The limits of the API alone</h3>
 <p>As the preceding sections have shown, a member of the public who relies on the API alone faces three difficulties in judging the air at a given moment.</p>
 <ul>
 <li><strong>Delay.</strong> The API is a 24-hour average and lags the hourly data by about 10 to 13 hours. It rises slowly when haze arrives and falls slowly after the haze has cleared (Section 5).</li>
-<li><strong>No hourly PM2.5.</strong> The DOE publishes the API but not hourly PM2.5 concentrations (Section 4). The public therefore cannot compute a more immediate index, such as the US NowCast, for itself.</li>
-<li><strong>Uneven sensitivity of the conversion table.</strong> Between API 101 and 150, a small change in PM2.5 moves the API a long way; between 151 and 200, a large change in PM2.5 moves it only a little (Section 7). A rise or fall in the API alone therefore says little about how much the concentration has actually changed.</li>
+<li><strong>No hourly PM<sub>2.5</sub>.</strong> The DOE publishes the API but not hourly PM<sub>2.5</sub> concentrations (Section 4). The public therefore cannot compute a more immediate index, such as the US NowCast, for itself.</li>
+<li><strong>Uneven sensitivity of the conversion table.</strong> Between API 101 and 150, a small change in PM<sub>2.5</sub> moves the API a long way; between 151 and 200, a large change in PM<sub>2.5</sub> moves it only a little (Section 7). A rise or fall in the API alone therefore says little about how much the concentration has actually changed.</li>
 </ul>
 <p>A more immediate picture of the air requires data from outside the API. Two routes are discussed below.</p>
 <h3>8.2 A nearby low-cost sensor</h3>
@@ -401,15 +402,15 @@
 </ul>
 <h3>9.2 Forecast</h3>
 <ul>
-<li>Twice a day, at 7:30 am and 7:30 pm, the website uses the PM2.5 forecast of the Copernicus Atmosphere Monitoring Service (CAMS) to estimate the four-station average API at 2:00 pm for the next five days.</li>
-<li>CAMS is a global model with a grid of about 40 km, and it often underestimates concentrations during haze. The website corrects it with actual station readings: it compares the PM2.5 derived from the API with the CAMS values to obtain a correction factor, and it also takes the latest actual reading into account.</li>
+<li>Twice a day, at 7:30 am and 7:30 pm, the website uses the PM<sub>2.5</sub> forecast of the Copernicus Atmosphere Monitoring Service (CAMS) to estimate the four-station average API at 2:00 pm for the next five days.</li>
+<li>CAMS is a global model with a grid of about 40 km, and it often underestimates concentrations during haze. The website corrects it with actual station readings: it compares the PM<sub>2.5</sub> derived from the API with the CAMS values to obtain a correction factor, and it also takes the latest actual reading into account.</li>
 <li>Purpose: to give a basis for planning over the coming days. The forecast is never used to decide whether the school opens or closes.</li>
 <li>The forecast can be far off. On the morning of 17 October it gave 85, while the actual value was 150; the method was revised afterwards. Every forecast is archived so that its accuracy can be assessed later.</li>
 </ul>
 <h3>9.3 Sensor monitoring</h3>
 <ul>
 <li>Since 18 October the website has recorded the low-cost sensor in Rawang Anggun (see 8.2). It is about 2.7 km from the school, much closer than the nearest DOE station.</li>
-<li>The website converts its PM2.5 readings into an "API equivalent" with the January 2025 conversion table, and computes 1-, 3-, 6- and 24-hour averages.</li>
+<li>The website converts its PM<sub>2.5</sub> readings into an "API equivalent" with the January 2025 conversion table, and computes 1-, 3-, 6- and 24-hour averages.</li>
 <li>First purpose: to give a more immediate reference that offsets the delay of the API (see 8.1).</li>
 <li>Second purpose: to provide evidence on the Kuala Selangor question (see 9.4).</li>
 <li>The sensor data are for information only and are not used in the school rule.</li>
@@ -514,7 +515,7 @@
 <h2>10 Limitations</h2>
 <ul>
 <li>The data cover only 8 to 18 October 2026, about ten days, at four monitoring stations.</li>
-<li>The DOE publishes only the API and not hourly PM2.5 concentrations. All concentrations mentioned in this article are derived from the API using the conversion table.</li>
+<li>The DOE publishes only the API and not hourly PM<sub>2.5</sub> concentrations. All concentrations mentioned in this article are derived from the API using the conversion table.</li>
 <li>The DOE has not stated from which date the new conversion table has been used to calculate the API. The data checks in this article show that the readings from 10 to 18 October fit the January 2025 version but not the September 2021 version. The document has been online, unchanged, since at least June 2026.</li>
 <li>The link between the Kuala Selangor readings and sea breezes is a conjecture that has not been verified against wind data.</li>
 <li>The author is not an air-quality specialist. In case of any discrepancy, the DOE's information takes precedence.</li>
@@ -522,10 +523,10 @@
 
 <h2>11 Conclusion</h2>
 <ul>
-<li>The API is the highest of six sub-indexes; during haze it is usually determined by PM2.5.</li>
-<li>PM2.5 is averaged over a rolling 24-hour period, so the API lags the actual air quality by roughly half a day and its peaks are reduced.</li>
-<li>The DOE publishes the conversion formula but not the hourly PM2.5 concentrations.</li>
-<li>Singapore, the United States, China and Hong Kong all provide the public with a more immediate figure. If Malaysia also published hourly PM2.5 data, parents would be able to make better-timed decisions.</li>
+<li>The API is the highest of six sub-indexes; during haze it is usually determined by PM<sub>2.5</sub>.</li>
+<li>PM<sub>2.5</sub> is averaged over a rolling 24-hour period, so the API lags the actual air quality by roughly half a day and its peaks are reduced.</li>
+<li>The DOE publishes the conversion formula but not the hourly PM<sub>2.5</sub> concentrations.</li>
+<li>Singapore, the United States, China and Hong Kong all provide the public with a more immediate figure. If Malaysia also published hourly PM<sub>2.5</sub> data, parents would be able to make better-timed decisions.</li>
 <li>Whether the school rule includes Kuala Selangor changes the outcome on some days. Once enough data have accumulated, the nearby sensor can provide evidence on this question.</li>
 </ul>
 
@@ -536,10 +537,10 @@
 <li id="ref-3">Department of Environment Malaysia: <a href="https://www.doe.gov.my/en/2021/10/26/english-air-pollutant-index-api-2/">Air Pollutant Index (API)</a></li>
 <li id="ref-4">SAYS (28 August 2026): <a href="https://says.com/my/news/aqi-api-explaining-malaysias-air-quality-confusion">Malaysia Once Made CNN Apologise For Its Haze Coverage</a> (views of Varkkey and Fatimah)</li>
 <li id="ref-5">Malay Mail (8 October 2026): <a href="https://www.malaymail.com/news/malaysia/2026/10/08/hazy-math-doe-explains-why-your-aqi-says-250-when-the-official-api-is-175/238237">DoE explains why your AQI says 250 when the official API is 175</a></li>
-<li id="ref-6">National Environment Agency, Singapore: <a href="https://www.nea.gov.sg/media/news/advisories/index/haze-situation-update-18-september-2019">Haze Situation Update (18 September 2019)</a>; <a href="https://www.nea.gov.sg/media/news/advisories/haze-situation-update-(30-october-2016)">introduction of 1-hour PM2.5 bands (30 October 2016)</a></li>
-<li id="ref-7">US Environmental Protection Agency: <a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast fact sheet</a>; AirNow: <a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>; <a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast example (Wikipedia)</a></li>
+<li id="ref-6">National Environment Agency, Singapore: <a href="https://www.nea.gov.sg/media/news/advisories/index/haze-situation-update-18-september-2019">Haze Situation Update (18 September 2019)</a>; <a href="https://www.nea.gov.sg/media/news/advisories/haze-situation-update-(30-october-2016)">introduction of 1-hour PM<sub>2.5</sub> bands (30 October 2016)</a></li>
+<li id="ref-7">US Environmental Protection Agency: <a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast fact sheet</a>; AirNow: <a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM<sub>2.5</sub></a>; <a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast example (Wikipedia)</a></li>
 <li id="ref-8">Ministry of Ecology and Environment, China: <a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 Technical Regulation on Ambient Air Quality Index</a></li>
-<li id="ref-9">Government of Hong Kong: <a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">Air Quality Health Index</a>; <a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">hourly PM2.5 published since 2012</a></li>
+<li id="ref-9">Government of Hong Kong: <a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">Air Quality Health Index</a>; <a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">hourly PM<sub>2.5</sub> published since 2012</a></li>
 <li id="ref-10">Sensors: <a href="https://aqicn.org/gaia/a08">GAIA A08 (aqicn.org)</a>; <a href="https://telescopescanada.ca/products/airgradient-open-air-award-winning-outdoor-monitor-outdoor-air-quality-monitor">AirGradient Open Air (Canadian retailer)</a>; <a href="https://www.aqmd.gov/aq-spec/sensordetail/purpleair-pa-ii-flex">PurpleAir PA-II Flex (South Coast AQMD AQ-SPEC)</a></li>
 <li id="ref-11">Lag of a 24-hour rolling average: <a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee et al., 2023 (Bangkok study)</a></li>
 <li id="ref-12">School monitor data: <a href="index.html">Sasana haze monitor</a> (hourly DOE API)</li>
@@ -547,17 +548,17 @@
 <li id="ref-14">Department of Environment Malaysia: <a href="https://www.greenpeace.org/static/planet4-thailand-stateless/2019/03/93bbcf82-93bbcf82-air-quality-standard-bi.pdf">New Malaysia Ambient Air Quality Standard (copy archived by Greenpeace)</a></li>
 </ol>
 
-<h2>Appendix A. Conversion of PM2.5 to a sub-index</h2>
+<h2>Appendix A. Conversion of PM<sub>2.5</sub> to a sub-index</h2>
 <p>Each sub-index is calculated with the same piecewise linear formula: the band in which the concentration lies is identified first, and the concentration is then scaled within that band.</p>
 <p class="formula">SI = (I<sub>high</sub> − I<sub>low</sub>) ÷ (C<sub>high</sub> − C<sub>low</sub>) × (C − C<sub>low</sub>) + I<sub>low</sub></p>
 
 <ul>
-<li>C: the 24-hour average PM2.5 concentration (µg/m³)</li>
+<li>C: the 24-hour average PM<sub>2.5</sub> concentration (µg/m³)</li>
 <li>C_low, C_high: the lower and upper concentration limits of the band</li>
 <li>I_low, I_high: the lower and upper index values of the band</li>
 </ul>
-<p>The DOE has issued two official documents: a September 2021 version on the DOE website and a January 2025 version on the APIMS website. They differ in the PM2.5 bands between API 100 and 200 <span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span>, which is precisely the range most often observed during haze:</p>
-<p class="tcap"><b>Table 7.</b>　PM2.5 bands in the two DOE conversion tables (µg/m³)</p>
+<p>The DOE has issued two official documents: a September 2021 version on the DOE website and a January 2025 version on the APIMS website. They differ in the PM<sub>2.5</sub> bands between API 100 and 200 <span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span>, which is precisely the range most often observed during haze:</p>
+<p class="tcap"><b>Table 7.</b>　PM<sub>2.5</sub> bands in the two DOE conversion tables (µg/m³)</p>
 
 <div class="tw"><table>
 <thead>
@@ -605,10 +606,10 @@
 </tr>
 </tbody>
 </table></div>
-<figure><a href="img/api_slopes_en.png"><img src="img/api_slopes_en.png" alt="Slopes of the two PM2.5 tables" loading="lazy"></a><figcaption><b>Figure 3.</b> Slopes of the two official DOE PM2.5 tables, drawn to the same scale.</figcaption></figure>
+<figure><a href="img/api_slopes_en.png"><img src="img/api_slopes_en.png" alt="Slopes of the two PM2.5 tables" loading="lazy"></a><figcaption><b>Figure 3.</b> Slopes of the two official DOE PM<sub>2.5</sub> tables, drawn to the same scale.</figcaption></figure>
 
-<p>The slope is the number of API points added for each additional µg/m³ of PM2.5. The January 2025 version is steepest between API 101 and 150 (slope 10) and flattest between 151 and 200 (slope 0.52), whereas the September 2021 version has a single band above API 100 with a slope of 1.32.</p>
-<p>As an example, consider a 24-hour average PM2.5 concentration of 100 µg/m³:</p>
+<p>The slope is the number of API points added for each additional µg/m³ of PM<sub>2.5</sub>. The January 2025 version is steepest between API 101 and 150 (slope 10) and flattest between 151 and 200 (slope 0.52), whereas the September 2021 version has a single band above API 100 with a slope of 1.32.</p>
+<p>As an example, consider a 24-hour average PM<sub>2.5</sub> concentration of 100 µg/m³:</p>
 <ul>
 <li>January 2025 version: SI = 49 ÷ 94.9 × (100 − 55.5) + 151 ≈ 174</li>
 <li>September 2021 version: SI = 99 ÷ 74.9 × (100 − 75.5) + 101 ≈ 133</li>
@@ -617,7 +618,7 @@
 
 <h2>Appendix B. Glossary</h2>
 <ul>
-<li><strong>PM2.5:</strong> particles with a diameter of 2.5 micrometres or less. They penetrate deep into the lungs and form the main component of haze.</li>
+<li><strong>PM<sub>2.5</sub>:</strong> particles with a diameter of 2.5 micrometres or less. They penetrate deep into the lungs and form the main component of haze.</li>
 <li><strong>Sub-index:</strong> the index derived from the average concentration of a single pollutant.</li>
 <li><strong>Rolling average:</strong> an average recalculated every hour, always over the most recent 24 hours.</li>
 <li><strong>NowCast:</strong> the US estimate of current air quality, which gives greater weight to the most recent hours.</li>

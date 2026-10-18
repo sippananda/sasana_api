@@ -240,6 +240,7 @@
   ol li { margin-bottom: 6px; }
   table.cal td, table.cal th { text-align: left; white-space: normal; }
   table.runs td, table.runs th { text-align: left; }
+  sub { font-size: .72em; line-height: 0; vertical-align: -.22em; }   /* PM2.5: keeps the line height */
 </style>
 </head>
 <body>
@@ -256,8 +257,8 @@
     <h2><span class="n">1</span>In short</h2>
     <ul>
       <li>The forecast comes from CAMS, the European haze model (Copernicus Atmosphere Monitoring Service, run by ECMWF).</li>
-      <li>CAMS forecasts fine dust (PM2.5) for 5 days, in squares of about 44 km.</li>
-      <li>We turn PM2.5 into the DOE API, for the 2:00 pm reading of our four stations.</li>
+      <li>CAMS forecasts fine dust (PM<sub>2.5</sub>) for 5 days, in squares of about 44 km.</li>
+      <li>We turn PM<sub>2.5</sub> into the DOE API, for the 2:00 pm reading of our four stations.</li>
       <li>CAMS reads too low in peat haze. So we correct it with our own station readings.</li>
       <li>The direction of change (clearing or building) is more reliable than the exact number.</li>
     </ul>
@@ -277,7 +278,7 @@
   <section>
     <h2><span class="n">3</span>From CAMS to our forecast number</h2>
     <ol>
-      <li><b>24-hour average.</b> For each day, take the 24 hours of CAMS PM2.5 that end at 2:00 pm. The DOE API is also a 24-hour average, so one hour alone would not compare.</li>
+      <li><b>24-hour average.</b> For each day, take the 24 hours of CAMS PM<sub>2.5</sub> that end at 2:00 pm. The DOE API is also a 24-hour average, so one hour alone would not compare.</li>
       <li><b>Correction.</b> CAMS reads too low in peat haze, so its value is corrected (section 4):
         <ul>
           <li><b>Same day</b> (the morning run): start from the newest real hourly reading of each station.
@@ -286,7 +287,7 @@
           <li><b>Later days:</b> multiply by a mix of two factors: the newest real ratio of the station, and the haze factor.
             The newest ratio counts for about half on the next day, and less on each day after.</li>
         </ul></li>
-      <li><b>DOE formula.</b> Turn PM2.5 into API with the DOE table (the <a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">January 2025 version</a> on the APIMS website).</li>
+      <li><b>DOE formula.</b> Turn PM<sub>2.5</sub> into API with the DOE table (the <a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">January 2025 version</a> on the APIMS website).</li>
       <li><b>Average of the four stations.</b> Batu Muda, Petaling Jaya and Shah Alam lie in one CAMS square. They still get slightly different numbers, because each starts from its own real reading.</li>
     </ol>
   </section>
@@ -295,7 +296,7 @@
     <h2><span class="n">4</span>Correction with our own readings</h2>
     <ul>
       <li>For each past day, we compare the real 2:00 pm reading with what CAMS said for that day.</li>
-      <li>Correction factor = real PM2.5 ÷ CAMS PM2.5. Real PM2.5 comes from the DOE API, by the DOE table in reverse.</li>
+      <li>Correction factor = real PM<sub>2.5</sub> ÷ CAMS PM<sub>2.5</sub>. Real PM<sub>2.5</sub> comes from the DOE API, by the DOE table in reverse.</li>
       <li id="calRule">The forecast uses the middle value (median) of the newest 10 haze days (2:00 pm API 100 or above), looking back up to 60 days.</li>
       <li>Older haze days are kept on purpose. After a clean spell, the factor is still ready when the haze comes back.</li>
       <li>On clean days CAMS often reads high. The clean-day factor is shown for information only. School closure only happens in haze.</li>
@@ -343,7 +344,7 @@
       <tr><td>Dust and sea salt</td><td>Worked out from the wind.</td>
         <td>Sea salt matters more at Kuala Selangor, near the coast.</td></tr>
       <tr><td>Chemistry</td><td>Some gases turn into fine particles in the air.</td>
-        <td>A small part of PM2.5 in haze.</td></tr>
+        <td>A small part of PM<sub>2.5</sub> in haze.</td></tr>
     </table></div>
     <p class="small" style="margin-top:8px"><b>Not in the model:</b> fires that start after the run;
       small local burning that satellites do not see; anything smaller than one 44 km cell, such as hills, towns or a single road.</p>

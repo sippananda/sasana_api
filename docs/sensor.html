@@ -83,6 +83,7 @@
     section { padding: 16px 14px 18px; }
     h1 { font-size: 1.35rem; }
   }
+  sub { font-size: .72em; line-height: 0; vertical-align: -.22em; }   /* PM2.5: keeps the line height */
 </style>
 </head>
 <body>
@@ -115,11 +116,11 @@
     <details class="small">
       <summary>How these numbers are worked out</summary>
       <ul>
-        <li>aqicn reports the sensor as a US AQI number (US EPA 2016 scale). It is turned back into PM2.5 in µg/m³.</li>
-        <li>The PM2.5 values of the last 3, 6 or 24 hours are averaged. A 3-hour average needs all 3 hours,
+        <li>aqicn reports the sensor as a US AQI number (US EPA 2016 scale). It is turned back into PM<sub>2.5</sub> in µg/m³.</li>
+        <li>The PM<sub>2.5</sub> values of the last 3, 6 or 24 hours are averaged. A 3-hour average needs all 3 hours,
           a 6-hour average at least 5 hours, a 24-hour average at least 18 hours.</li>
         <li>The average is turned into an API number with the DOE table of January 2025 (the one on the APIMS website).</li>
-        <li>Above API 150 the two scales use the same PM2.5 bands, so there the hourly value is the same number on both scales.</li>
+        <li>Above API 150 the two scales use the same PM<sub>2.5</sub> bands, so there the hourly value is the same number on both scales.</li>
         <li>The sensor is not calibrated. Low-cost sensors can read high in very humid air. Until the comparison
           below has about two weeks of data, treat these numbers as a rough guide only.</li>
       </ul>
@@ -135,7 +136,7 @@
     <h2><span class="n">3</span>Over time</h2>
     <p><b>Sensor, hourly</b></p>
     <div class="legend">
-      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2"/><circle cx="13" cy="5" r="2.6" fill="#fff" stroke="var(--sensor)" stroke-width="1.5"/></svg>Sensor PM2.5, hourly (US AQI)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2"/><circle cx="13" cy="5" r="2.6" fill="#fff" stroke="var(--sensor)" stroke-width="1.5"/></svg>Sensor PM<sub>2.5</sub>, hourly (US AQI)</span>
     </div>
     <div class="chart" id="hourChart"></div>
     <p class="small" id="hourNote"></p>
@@ -143,7 +144,7 @@
     <p style="margin-top:18px"><b>Sensor 24-hour mean and the DOE 4-station average</b></p>
     <div class="legend">
       <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="#111" stroke-width="2.5"/></svg>DOE 4-station average (API)</span>
-      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor PM2.5, 24-hour mean (US AQI)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor PM<sub>2.5</sub>, 24-hour mean (US AQI)</span>
     </div>
     <div class="chart" id="meanChart"></div>
     <p class="small" id="meanNote"></p>
@@ -181,7 +182,7 @@
       <li><b>Different scales.</b> The sensor gives a US AQI. DOE gives the Malaysian API. The same air
         gives different numbers on the two scales. So the slope and the ratio only describe this pair.
         The correlation <b>r</b> does not depend on the scale.</li>
-      <li><b>Different averaging.</b> The DOE API for PM2.5 uses a 24-hour mean. The sensor reading is
+      <li><b>Different averaging.</b> The DOE API for PM<sub>2.5</sub> uses a 24-hour mean. The sensor reading is
         nearly instant. So this page also builds a 24-hour mean of the sensor. A mean needs at least
         18 of the 24 hours.</li>
       <li><b>r</b> runs from −1 to 1. Above 0.9 is a close match. Below 0.7 is a weak match.</li>
@@ -189,7 +190,7 @@
         hours with all four readings. This is the average of the rule.</li>
       <li><b>Cheras</b> is collected for this page only, from 17 Oct 2026. It is not part of the rule.</li>
       <li>Some sensor hours come from the aqicn map search (“map” in the data file). Those hours have
-        the overall index only, which is the PM2.5 index for this sensor.</li>
+        the overall index only, which is the PM<sub>2.5</sub> index for this sensor.</li>
       <li>The sensor is not checked by DOE. Low-cost sensors can read high in very humid air.</li>
     </ul>
     <p class="small">Data files: <a href="data/sensor.csv">sensor.csv</a> ·
@@ -409,7 +410,7 @@
       html += '<div class="box' + cls + '"><div class="k">' + w.label + '</div>' +
         '<div class="v">' + (v === undefined ? "–" : v) + '</div>' +
         '<div class="d">' + (v === undefined ? "needs " + need + " more hour" + (need === 1 ? "" : "s") + " of data"
-                                              : "PM2.5 " + pm.toFixed(0) + " µg/m³ · " + span) + '</div></div>';
+                                              : "PM<sub>2.5</sub> " + pm.toFixed(0) + " µg/m³ · " + span) + '</div></div>';
     });
     box.innerHTML = html;
     var doeHours = Object.keys(d.doe).map(Number);
