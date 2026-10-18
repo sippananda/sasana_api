@@ -53,7 +53,12 @@
     "anchor_max_age_hours": 6,
     "latest_ratio_hours": 48,
     "ratio_limits": [0.5, 3.5],
-    "spread_limits": [0.15, 0.4]
+    "spread_limits": [0.15, 0.4],
+    "weather_history": {
+      "points": {"KS": [3.3214, 101.2562], "KL": [3.1309, 101.6087]},
+      "models": ["ecmwf_ifs", "ecmwf_ifs025"],
+      "past_days": 31
+    }
   },
   "collector": {
     "backfill_days": 7,

@@ -149,6 +149,20 @@ class Script(unittest.TestCase):
         hist = json.loads((self.data / "forecast_history.jsonl").read_text().splitlines()[-1])
         self.assertEqual(hist["anchor"], "2026-10-17T07:00")
 
+    def test_weather_history_saved(self):
+        self.run_script("2026-10-17T07:30")
+        import csv as _csv
+        rows = list(_csv.DictReader(open(self.data / "weather_hourly.csv")))
+        self.assertEqual(list(rows[0])[:5], ["datetime_myt", "model", "ks_wind_kmh", "ks_wind_from", "ks_rain_mm"])
+        self.assertIn("kl_wind_from", rows[0])
+        self.assertEqual(rows[-1]["datetime_myt"], "2026-10-17T07:00")      # no future hours
+        self.assertEqual(rows[0]["model"], "ecmwf_ifs")
+        self.assertEqual(len(rows), 31 * 24 + 8)
+        # A second run keeps the rows and adds the new hours.
+        self.run_script("2026-10-17T09:30")
+        rows2 = list(_csv.DictReader(open(self.data / "weather_hourly.csv")))
+        self.assertEqual(len(rows2), len(rows) + 2)
+
     def test_old_reading_is_not_used(self):
         # The newest complete hour is 9:00 am on 16 Oct, far older than 6 hours.
         out, _ = self.run_script("2026-10-17T07:30")

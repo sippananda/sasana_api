@@ -53,7 +53,8 @@ class Handler(BaseHTTPRequestHandler):
             body = {"latitude": 3.3, "longitude": 101.5,
                     "hourly": {"time": times,
                                "wind_speed_10m": [5.0 + t.hour / 10 for t in ts],
-                               "wind_direction_10m": [200 for _ in ts]},
+                               "wind_direction_10m": [200 for _ in ts],
+                               "precipitation": [0.5 if t.hour == 15 else 0.0 for t in ts]},
                     "daily": {"time": sorted({t.strftime("%Y-%m-%d") for t in ts}),
                               "precipitation_sum": [4.0] * len({t.date() for t in ts})}}
         else:

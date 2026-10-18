@@ -25,6 +25,8 @@ Writes docs/data/forecast.json (for the page) and appends one line to
 docs/data/forecast_history.jsonl (to check the forecast later).
 All times are Malaysia time (UTC+8). Uses only the Python standard library.
 """
+import csv
+import io
 import json
 import math
 import os
@@ -45,6 +47,7 @@ CONFIG = Path(os.environ.get("MONITOR_CONFIG", ROOT / "config.json"))
 HOURLY_CSV = DATA / "hourly.csv"
 FORECAST_JSON = DATA / "forecast.json"
 HISTORY_JSONL = DATA / "forecast_history.jsonl"
+WEATHER_CSV = DATA / "weather_hourly.csv"
 
 # Open-Meteo endpoints. The env variables exist only for testing.
 AQ_URL = os.environ.get("OPEN_METEO_AQ_URL", "https://air-quality-api.open-meteo.com/v1/air-quality")
@@ -164,6 +167,67 @@ def fetch_weather(school, forecast_days):
     for t, v in zip(d.get("time", []), d.get("precipitation_sum", [])):
         rain[t[:10]] = None if v is None else float(v)
     return wind, wdir, rain
+
+
+def fetch_weather_history(cfg, now):
+    """Hourly wind and rain at fixed points, past days included. For the sea breeze check.
+
+    Saved in weather_hourly.csv, one row per hour, Malaysia time. Past hours are
+    rewritten by every run (the newest model data is the best). Future hours are
+    not saved. The first model in `weather_models` that answers is used.
+    """
+    wh = cfg["forecast"]["weather_history"]
+    cols = ["datetime_myt", "model"]
+    series = {}
+    used = None
+    for name, (lat, lon) in wh["points"].items():
+        last = None
+        for model in ([used] if used else wh["models"]):
+            q = urllib.parse.urlencode({
+                "latitude": lat, "longitude": lon,
+                "hourly": "wind_speed_10m,wind_direction_10m,precipitation",
+                "models": model, "timezone": "Asia/Kuala_Lumpur",
+                "past_days": wh["past_days"], "forecast_days": 1,
+            })
+            try:
+                payload = get_json(f"{WX_URL}?{q}")
+                series[name] = (hourly_series(payload, "wind_speed_10m"),
+                                hourly_series(payload, "wind_direction_10m"),
+                                hourly_series(payload, "precipitation"))
+                used = model
+                break
+            except RuntimeError as err:
+                last = err
+        if name not in series:
+            raise RuntimeError(f"no weather for {name}: {last}")
+        cols += [f"{name.lower()}_wind_kmh", f"{name.lower()}_wind_from", f"{name.lower()}_rain_mm"]
+
+    rows = {}
+    if WEATHER_CSV.exists():
+        with open(WEATHER_CSV, newline="", encoding="utf-8") as fh:
+            for r in csv.DictReader(fh):
+                rows[r["datetime_myt"]] = {c: r.get(c, "") for c in cols}
+    limit = now.strftime(KEY)
+    hours = sorted(set().union(*[set(v[0]) for v in series.values()]))
+    for h in hours:
+        if h > limit:
+            continue
+        row = {"datetime_myt": h, "model": used}
+        for name, (spd, wdir, rain) in series.items():
+            n = name.lower()
+            for col, src, nd in ((f"{n}_wind_kmh", spd, 1), (f"{n}_wind_from", wdir, 0), (f"{n}_rain_mm", rain, 1)):
+                v = src.get(h)
+                row[col] = "" if v is None else (round(v) if nd == 0 else round(v, nd))
+        if any(row[c] != "" for c in cols[2:]):
+            rows[h] = row
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=cols, lineterminator="\n")
+    w.writeheader()
+    for h in sorted(rows):
+        w.writerow(rows[h])
+    WEATHER_CSV.parent.mkdir(parents=True, exist_ok=True)
+    WEATHER_CSV.write_text(buf.getvalue(), encoding="utf-8")
+    return used, len(rows)
 
 
 # ---------------------------------------------------------------- data
@@ -467,6 +531,11 @@ def main():
     except RuntimeError as err:
         log(f"weather: FAILED - {err}. The forecast goes on without weather.")
         wind, wdir, rain = {}, {}, {}
+    try:
+        model, n = fetch_weather_history(cfg, now)
+        log(f"weather history: {n} hours saved ({model})")
+    except (RuntimeError, OSError, KeyError) as err:
+        log(f"weather history: FAILED - {err}. The forecast goes on.")
 
     hourly = read_hourly(ids)
     cal = {name: calibrate(cell, cams[name], hourly, cfg, now) for name, cell in cells.items()}
