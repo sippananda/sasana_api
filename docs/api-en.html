@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How is Malaysia's API calculated? – Sasana Haze Monitor</title>
+<title>Malaysia's Air Pollutant Index: Calculation, Delay and Haze Monitoring for a School – Sasana Haze Monitor</title>
 <meta name="description" content="How Malaysia's Air Pollutant Index is worked out, why its 24-hour average lags, and how Singapore, the US, China and Hong Kong compare.">
 <style>
   :root { color-scheme: light; --ink: #1a1a1a; --ink-2: #555; --rule: #cfcfcf; }
@@ -63,20 +63,21 @@
 <main>
   <div class="top"><a href="index.html">← Back to the haze page</a><a href="api-zh.html" lang="zh-Hans">中文</a></div>
   <header class="paper">
-    <h1>How is Malaysia's API calculated?</h1>
-    <p class="subtitle">The lag of the 24-hour average, and a comparison with Singapore, the United States, China and Hong Kong</p>
+    <h1>Malaysia's Air Pollutant Index: Calculation, Delay and Haze Monitoring for a School</h1>
+    <p class="subtitle">A comparison with Singapore, the United States, China and Hong Kong, and the practice of the Sasana haze monitor</p>
     <p class="byline">A parent with AI assistant · 18 October 2026</p>
   </header>
 
-<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong, and discusses two ways of obtaining more immediate PM2.5 data.</p><p class="kw"><b>Keywords:</b> Air Pollutant Index; PM2.5; rolling average; lag; haze</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
+<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong, discusses two ways of obtaining more immediate PM2.5 data, and describes the monitoring work of this website.</p><p class="kw"><b>Keywords:</b> Air Pollutant Index; PM2.5; rolling average; lag; haze; school monitoring</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
 
 <h2>1 Introduction</h2>
 <p>Many parents will recognise the following situation. The sky is grey and the air smells of smoke, yet the official API still reads "Moderate". At the same moment, a foreign air-quality app may well report "Unhealthy". The question is which of the two numbers is correct.</p>
-<p>In many cases both are. The two numbers answer different questions. This article addresses three points:</p>
+<p>In many cases both are. The two numbers answer different questions. This article addresses four points:</p>
 <ul>
 <li>how the API is calculated;</li>
 <li>why a 24-hour average lags behind the actual air quality;</li>
-<li>how Singapore, the United States, China and Hong Kong address the same problem.</li>
+<li>how Singapore, the United States, China and Hong Kong address the same problem;</li>
+<li>what this website does, and for what purpose.</li>
 </ul>
 
 <h2>2 What the API is</h2>
@@ -387,7 +388,130 @@
 <li>On this website, sensor data are shown for information only; the school rule uses the official DOE API alone.</li>
 </ul>
 
-<h2>9 Limitations</h2>
+<h2>9 The work of this website</h2>
+<p>This website (the Sasana haze monitor) was set up by a parent and has been running since October 2026. It is not an official school announcement. It does three things: monitoring under the school's current rule, forecasting, and comparison with a sensor.</p>
+<h3>9.1 Monitoring under the school's current rule</h3>
+<ul>
+<li>The school's haze rule is based on the average API at 2:00 pm of four DOE stations: Batu Muda (19 km), Petaling Jaya (22 km), Shah Alam (24 km) and Kuala Selangor (33 km).</li>
+<li>An average above 180 closes the school the next day; an average above 150 on three consecutive days closes it the next day; during a closure, an average below 150 reopens it the next day.</li>
+<li>The website collects the API of the four stations automatically every hour and, after 2:00 pm each day, applies the rule to determine the status for the next day. When a reading is late, the website collects again 15 minutes later.</li>
+<li>All hourly readings and daily results since 3 October 2026 are archived publicly and can be checked.</li>
+<li>Purpose: to show the likely result under the same rule before the school announces it, and to make the calculation open.</li>
+<li>The website interprets the rule in two respects: the average is first rounded to a whole number, and exactly 150 and exactly 180 count as exceeding the limit. The wording of the school notice is "above". On 17 October the average was exactly 150, so the two readings give different results.</li>
+</ul>
+<h3>9.2 Forecast</h3>
+<ul>
+<li>Twice a day, at 7:30 am and 7:30 pm, the website uses the PM2.5 forecast of the Copernicus Atmosphere Monitoring Service (CAMS) to estimate the four-station average API at 2:00 pm for the next five days.</li>
+<li>CAMS is a global model with a grid of about 40 km, and it often underestimates concentrations during haze. The website corrects it with actual station readings: it compares the PM2.5 derived from the API with the CAMS values to obtain a correction factor, and it also takes the latest actual reading into account.</li>
+<li>Purpose: to give a basis for planning over the coming days. The forecast is never used to decide whether the school opens or closes.</li>
+<li>The forecast can be far off. On the morning of 17 October it gave 85, while the actual value was 150; the method was revised afterwards. Every forecast is archived so that its accuracy can be assessed later.</li>
+</ul>
+<h3>9.3 Sensor monitoring</h3>
+<ul>
+<li>Since 18 October the website has recorded the low-cost sensor in Rawang Anggun (see 8.2). It is about 2.7 km from the school, much closer than the nearest DOE station.</li>
+<li>The website converts its PM2.5 readings into an "API equivalent" with the January 2025 conversion table, and computes 1-, 3-, 6- and 24-hour averages.</li>
+<li>First purpose: to give a more immediate reference that offsets the delay of the API (see 8.1).</li>
+<li>Second purpose: to provide evidence on the Kuala Selangor question (see 9.4).</li>
+<li>The sensor data are for information only and are not used in the school rule.</li>
+</ul>
+<h3>9.4 Whether to include Kuala Selangor</h3>
+<ul>
+<li>Views within the school have differed on whether the school rule should include the Kuala Selangor station.</li>
+<li>The station differs from the other three: it is the farthest away and lies on the coast to the west, whereas the other three lie close together in the Kuala Lumpur and Petaling Jaya area. During haze its readings are often markedly lower (Figure 2).</li>
+<li>The choice changes the outcome (Table 6). On 3 of the 10 days from 9 to 18 October (the 10th, 14th and 18th), one average reached 150 and the other did not.</li>
+<li>With the three-station average, the three-day condition was already met on 16 October, and the school would remain closed on Monday 19 October. With the four-station average, the condition was met only on 17 October, and the school reopens on 19 October.</li>
+</ul>
+<p class="tcap"><b>Table 6.</b>　Four-station average and three-station average (without Kuala Selangor) at 2:00 pm</p>
+
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Four stations</th>
+<th>Three stations</th>
+<th>Days in a row (four)</th>
+<th>Days in a row (three)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fri 9 Oct</td>
+<td>168</td>
+<td>172</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Sat 10 Oct</td>
+<td>147</td>
+<td>161</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Sun 11 Oct</td>
+<td>76</td>
+<td>79</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Mon 12 Oct</td>
+<td>70</td>
+<td>72</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Tue 13 Oct</td>
+<td>86</td>
+<td>89</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Wed 14 Oct</td>
+<td>144</td>
+<td>161</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Thu 15 Oct</td>
+<td>168</td>
+<td>171</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Fri 16 Oct</td>
+<td>166</td>
+<td>170</td>
+<td>2</td>
+<td>3 (closed)</td>
+</tr>
+<tr>
+<td>Sat 17 Oct</td>
+<td>150</td>
+<td>167</td>
+<td>3 (closed)</td>
+<td>Closed</td>
+</tr>
+<tr>
+<td>Sun 18 Oct</td>
+<td>136</td>
+<td>155</td>
+<td>Reopens</td>
+<td>Closed</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>To answer the question, the website lets the sensor accumulate one to two weeks of data, preferably including haze days. After a humidity correction, its 24-hour average is compared with each station and with the two averages to see which it follows most closely.</li>
+<li>So far there is only one day of data, which is not enough to draw a conclusion. The sensor has errors of its own, and at 2.7 km from the school it does not fully represent the air at the school either.</li>
+</ul>
+
+<h2>10 Limitations</h2>
 <ul>
 <li>The data cover only 8 to 18 October 2026, about ten days, at four monitoring stations.</li>
 <li>The DOE publishes only the API and not hourly PM2.5 concentrations. All concentrations mentioned in this article are derived from the API using the conversion table.</li>
@@ -396,12 +520,13 @@
 <li>The author is not an air-quality specialist. In case of any discrepancy, the DOE's information takes precedence.</li>
 </ul>
 
-<h2>10 Conclusion</h2>
+<h2>11 Conclusion</h2>
 <ul>
 <li>The API is the highest of six sub-indexes; during haze it is usually determined by PM2.5.</li>
 <li>PM2.5 is averaged over a rolling 24-hour period, so the API lags the actual air quality by roughly half a day and its peaks are reduced.</li>
 <li>The DOE publishes the conversion formula but not the hourly PM2.5 concentrations.</li>
 <li>Singapore, the United States, China and Hong Kong all provide the public with a more immediate figure. If Malaysia also published hourly PM2.5 data, parents would be able to make better-timed decisions.</li>
+<li>Whether the school rule includes Kuala Selangor changes the outcome on some days. Once enough data have accumulated, the nearby sensor can provide evidence on this question.</li>
 </ul>
 
 <h2>References</h2>
@@ -432,7 +557,7 @@
 <li>I_low, I_high: the lower and upper index values of the band</li>
 </ul>
 <p>The DOE has issued two official documents: a September 2021 version on the DOE website and a January 2025 version on the APIMS website. They differ in the PM2.5 bands between API 100 and 200 <span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span>, which is precisely the range most often observed during haze:</p>
-<p class="tcap"><b>Table 6.</b>　PM2.5 bands in the two DOE conversion tables (µg/m³)</p>
+<p class="tcap"><b>Table 7.</b>　PM2.5 bands in the two DOE conversion tables (µg/m³)</p>
 
 <div class="tw"><table>
 <thead>
