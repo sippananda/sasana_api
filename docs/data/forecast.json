@@ -1,5 +1,5 @@
 {
- "issued": "2026-10-18T09:25+08:00",
+ "issued": "2026-10-18T11:29+08:00",
  "reading_hour": 14,
  "cells": {
   "KL": {
@@ -30,11 +30,11 @@
    "n_haze": 9,
    "first": "2026-10-06",
    "last": "2026-10-17",
-   "k_clean": 0.883,
+   "k_clean": 0.602,
    "n_clean": 5,
-   "k": 1.324,
-   "min": 0.82,
-   "max": 2.712,
+   "k": 0.793,
+   "min": 0.572,
+   "max": 1.88,
    "spread": 0.4
   },
   "KS": {
@@ -43,20 +43,20 @@
    "n_haze": 6,
    "first": "2026-10-07",
    "last": "2026-10-16",
-   "k_clean": 1.22,
+   "k_clean": 0.939,
    "n_clean": 8,
-   "k": 1.296,
-   "min": 1.07,
-   "max": 3.16,
+   "k": 0.688,
+   "min": 0.594,
+   "max": 1.844,
    "spread": 0.4
   },
   "days": [
    {
     "date": "2026-10-04",
     "obs_api": 91.3,
-    "obs_pm": 64.2,
+    "obs_pm": 43.6,
     "cams_pm": 81.1,
-    "ratio": 0.791,
+    "ratio": 0.538,
     "haze": false,
     "used": false,
     "cell": "KL"
@@ -64,9 +64,9 @@
    {
     "date": "2026-10-05",
     "obs_api": 89.7,
-    "obs_pm": 62.1,
+    "obs_pm": 42.3,
     "cams_pm": 70.3,
-    "ratio": 0.883,
+    "ratio": 0.602,
     "haze": false,
     "used": false,
     "cell": "KL"
@@ -74,9 +74,9 @@
    {
     "date": "2026-10-06",
     "obs_api": 152.7,
-    "obs_pm": 114.6,
+    "obs_pm": 58.7,
     "cams_pm": 77.0,
-    "ratio": 1.489,
+    "ratio": 0.763,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -84,9 +84,9 @@
    {
     "date": "2026-10-07",
     "obs_api": 178.7,
-    "obs_pm": 134.3,
+    "obs_pm": 109.1,
     "cams_pm": 141.3,
-    "ratio": 0.95,
+    "ratio": 0.772,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -94,9 +94,9 @@
    {
     "date": "2026-10-08",
     "obs_api": 167.7,
-    "obs_pm": 125.9,
+    "obs_pm": 87.8,
     "cams_pm": 153.6,
-    "ratio": 0.82,
+    "ratio": 0.572,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -104,9 +104,9 @@
    {
     "date": "2026-10-09",
     "obs_api": 172.0,
-    "obs_pm": 129.2,
+    "obs_pm": 96.2,
     "cams_pm": 131.1,
-    "ratio": 0.986,
+    "ratio": 0.734,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -114,9 +114,9 @@
    {
     "date": "2026-10-10",
     "obs_api": 161.3,
-    "obs_pm": 121.1,
+    "obs_pm": 75.5,
     "cams_pm": 79.2,
-    "ratio": 1.529,
+    "ratio": 0.953,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -124,9 +124,9 @@
    {
     "date": "2026-10-11",
     "obs_api": 78.7,
-    "obs_pm": 47.8,
+    "obs_pm": 33.7,
     "cams_pm": 33.4,
-    "ratio": 1.431,
+    "ratio": 1.008,
     "haze": false,
     "used": false,
     "cell": "KL"
@@ -134,9 +134,9 @@
    {
     "date": "2026-10-12",
     "obs_api": 72.3,
-    "obs_pm": 39.7,
+    "obs_pm": 28.8,
     "cams_pm": 26.4,
-    "ratio": 1.5,
+    "ratio": 1.088,
     "haze": false,
     "used": false,
     "cell": "KL"
@@ -144,9 +144,9 @@
    {
     "date": "2026-10-13",
     "obs_api": 88.7,
-    "obs_pm": 60.8,
+    "obs_pm": 41.5,
     "cams_pm": 92.5,
-    "ratio": 0.657,
+    "ratio": 0.449,
     "haze": false,
     "used": false,
     "cell": "KL"
@@ -154,9 +154,9 @@
    {
     "date": "2026-10-14",
     "obs_api": 161.0,
-    "obs_pm": 120.9,
+    "obs_pm": 74.9,
     "cams_pm": 94.4,
-    "ratio": 1.281,
+    "ratio": 0.793,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -164,9 +164,9 @@
    {
     "date": "2026-10-15",
     "obs_api": 171.0,
-    "obs_pm": 128.5,
+    "obs_pm": 94.2,
     "cams_pm": 97.1,
-    "ratio": 1.324,
+    "ratio": 0.971,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -174,9 +174,9 @@
    {
     "date": "2026-10-16",
     "obs_api": 170.3,
-    "obs_pm": 128.0,
+    "obs_pm": 92.9,
     "cams_pm": 69.0,
-    "ratio": 1.854,
+    "ratio": 1.347,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -184,9 +184,9 @@
    {
     "date": "2026-10-17",
     "obs_api": 167.3,
-    "obs_pm": 125.7,
+    "obs_pm": 87.1,
     "cams_pm": 46.3,
-    "ratio": 2.712,
+    "ratio": 1.88,
     "haze": true,
     "used": true,
     "cell": "KL"
@@ -194,9 +194,9 @@
    {
     "date": "2026-10-04",
     "obs_api": 69.0,
-    "obs_pm": 35.4,
+    "obs_pm": 26.2,
     "cams_pm": 29.6,
-    "ratio": 1.193,
+    "ratio": 0.883,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -204,9 +204,9 @@
    {
     "date": "2026-10-05",
     "obs_api": 69.0,
-    "obs_pm": 35.4,
+    "obs_pm": 26.2,
     "cams_pm": 20.4,
-    "ratio": 1.729,
+    "ratio": 1.28,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -214,9 +214,9 @@
    {
     "date": "2026-10-06",
     "obs_api": 71.0,
-    "obs_pm": 37.9,
+    "obs_pm": 27.7,
     "cams_pm": 37.8,
-    "ratio": 1.003,
+    "ratio": 0.733,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -224,9 +224,9 @@
    {
     "date": "2026-10-07",
     "obs_api": 152.0,
-    "obs_pm": 114.1,
+    "obs_pm": 57.4,
     "cams_pm": 96.0,
-    "ratio": 1.188,
+    "ratio": 0.598,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -234,9 +234,9 @@
    {
     "date": "2026-10-08",
     "obs_api": 141.0,
-    "obs_pm": 105.8,
+    "obs_pm": 54.5,
     "cams_pm": 91.7,
-    "ratio": 1.153,
+    "ratio": 0.594,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -244,9 +244,9 @@
    {
     "date": "2026-10-09",
     "obs_api": 155.0,
-    "obs_pm": 116.4,
+    "obs_pm": 63.2,
     "cams_pm": 36.8,
-    "ratio": 3.16,
+    "ratio": 1.718,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -254,9 +254,9 @@
    {
     "date": "2026-10-10",
     "obs_api": 102.0,
-    "obs_pm": 76.3,
+    "obs_pm": 50.6,
     "cams_pm": 27.4,
-    "ratio": 2.779,
+    "ratio": 1.844,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -264,9 +264,9 @@
    {
     "date": "2026-10-11",
     "obs_api": 68.0,
-    "obs_pm": 34.1,
+    "obs_pm": 25.4,
     "cams_pm": 13.5,
-    "ratio": 2.531,
+    "ratio": 1.886,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -274,9 +274,9 @@
    {
     "date": "2026-10-12",
     "obs_api": 61.0,
-    "obs_pm": 25.0,
+    "obs_pm": 19.9,
     "cams_pm": 20.0,
-    "ratio": 1.248,
+    "ratio": 0.994,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -284,9 +284,9 @@
    {
     "date": "2026-10-13",
     "obs_api": 77.0,
-    "obs_pm": 45.7,
+    "obs_pm": 32.4,
     "cams_pm": 47.2,
-    "ratio": 0.969,
+    "ratio": 0.687,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -294,9 +294,9 @@
    {
     "date": "2026-10-14",
     "obs_api": 92.0,
-    "obs_pm": 65.1,
+    "obs_pm": 44.1,
     "cams_pm": 80.3,
-    "ratio": 0.811,
+    "ratio": 0.55,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -304,9 +304,9 @@
    {
     "date": "2026-10-15",
     "obs_api": 160.0,
-    "obs_pm": 120.1,
+    "obs_pm": 72.9,
     "cams_pm": 112.3,
-    "ratio": 1.07,
+    "ratio": 0.649,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -314,9 +314,9 @@
    {
     "date": "2026-10-16",
     "obs_api": 153.0,
-    "obs_pm": 114.8,
+    "obs_pm": 59.4,
     "cams_pm": 81.7,
-    "ratio": 1.405,
+    "ratio": 0.727,
     "haze": true,
     "used": true,
     "cell": "KS"
@@ -324,9 +324,9 @@
    {
     "date": "2026-10-17",
     "obs_api": 98.0,
-    "obs_pm": 72.8,
+    "obs_pm": 48.8,
     "cams_pm": 43.0,
-    "ratio": 1.695,
+    "ratio": 1.137,
     "haze": false,
     "used": false,
     "cell": "KS"
@@ -334,24 +334,24 @@
   ]
  },
  "anchor": {
-  "time": "2026-10-18T09:00",
-  "avg_api": 140,
+  "time": "2026-10-18T11:00",
+  "avg_api": 138,
   "stations": {
    "CA15W": {
     "api": 155.0,
-    "ratio": 1.942
+    "ratio": 1.022
    },
    "CA19B": {
-    "api": 157.0,
-    "ratio": 1.967
+    "api": 156.0,
+    "ratio": 1.053
    },
    "CA20B": {
-    "api": 160.0,
-    "ratio": 2.005
+    "api": 159.0,
+    "ratio": 1.147
    },
    "CA18B": {
-    "api": 86.0,
-    "ratio": 1.045
+    "api": 81.0,
+    "ratio": 0.651
    }
   }
  },
@@ -364,23 +364,23 @@
     "KS": 51.5
    },
    "api_2pm": {
-    "CA15W": 159,
-    "CA19B": 161,
-    "CA20B": 164,
-    "CA18B": 83
+    "CA15W": 155,
+    "CA19B": 156,
+    "CA20B": 159,
+    "CA18B": 78
    },
    "avg_2pm": {
-    "mid": 142,
-    "low": 137,
-    "high": 147
+    "mid": 137,
+    "low": 132,
+    "high": 142
    },
    "method": "from latest reading",
    "latest_ratio_weight": null,
-   "hours_after_latest_reading": 5,
+   "hours_after_latest_reading": 3,
    "weather_2pm": {
-    "wind_kmh": 4.7,
-    "wind_from_deg": 279,
-    "rain_mm_day": 17.9
+    "wind_kmh": 4.6,
+    "wind_from_deg": 315,
+    "rain_mm_day": 29.2
    },
    "flags": {
     "at_or_above_streak": false,
@@ -396,23 +396,23 @@
     "KS": 29.0
    },
    "api_2pm": {
-    "CA15W": 154,
-    "CA19B": 155,
-    "CA20B": 157,
-    "CA18B": 68
+    "CA15W": 156,
+    "CA19B": 156,
+    "CA20B": 158,
+    "CA18B": 60
    },
    "avg_2pm": {
-    "mid": 134,
-    "low": 86,
-    "high": 180
+    "mid": 133,
+    "low": 77,
+    "high": 145
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.55,
-   "hours_after_latest_reading": 29,
+   "latest_ratio_weight": 0.57,
+   "hours_after_latest_reading": 27,
    "weather_2pm": {
-    "wind_kmh": 7.4,
-    "wind_from_deg": 231,
-    "rain_mm_day": 11.5
+    "wind_kmh": 8.3,
+    "wind_from_deg": 214,
+    "rain_mm_day": 5.3
    },
    "flags": {
     "at_or_above_streak": false,
@@ -428,23 +428,23 @@
     "KS": 25.0
    },
    "api_2pm": {
-    "CA15W": 112,
-    "CA19B": 112,
-    "CA20B": 113,
-    "CA18B": 65
+    "CA15W": 96,
+    "CA19B": 97,
+    "CA20B": 99,
+    "CA18B": 57
    },
    "avg_2pm": {
-    "mid": 101,
-    "low": 75,
-    "high": 136
+    "mid": 87,
+    "low": 65,
+    "high": 135
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.33,
-   "hours_after_latest_reading": 53,
+   "latest_ratio_weight": 0.35,
+   "hours_after_latest_reading": 51,
    "weather_2pm": {
-    "wind_kmh": 7.2,
-    "wind_from_deg": 207,
-    "rain_mm_day": 4.7
+    "wind_kmh": 5.9,
+    "wind_from_deg": 169,
+    "rain_mm_day": 4.1
    },
    "flags": {
     "at_or_above_streak": false,
@@ -460,23 +460,23 @@
     "KS": 28.7
    },
    "api_2pm": {
-    "CA15W": 96,
-    "CA19B": 97,
-    "CA20B": 97,
-    "CA18B": 69
+    "CA15W": 88,
+    "CA19B": 89,
+    "CA20B": 90,
+    "CA18B": 60
    },
    "avg_2pm": {
-    "mid": 90,
-    "low": 71,
-    "high": 120
+    "mid": 82,
+    "low": 63,
+    "high": 132
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.2,
-   "hours_after_latest_reading": 77,
+   "latest_ratio_weight": 0.21,
+   "hours_after_latest_reading": 75,
    "weather_2pm": {
-    "wind_kmh": 9.0,
-    "wind_from_deg": 180,
-    "rain_mm_day": 2.9
+    "wind_kmh": 7.6,
+    "wind_from_deg": 172,
+    "rain_mm_day": 7.8
    },
    "flags": {
     "at_or_above_streak": false,
@@ -492,23 +492,23 @@
     "KS": 41.6
    },
    "api_2pm": {
-    "CA15W": 131,
-    "CA19B": 131,
-    "CA20B": 131,
-    "CA18B": 82
+    "CA15W": 152,
+    "CA19B": 152,
+    "CA20B": 153,
+    "CA18B": 72
    },
    "avg_2pm": {
-    "mid": 119,
-    "low": 82,
-    "high": 162
+    "mid": 132,
+    "low": 75,
+    "high": 145
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.12,
-   "hours_after_latest_reading": 101,
+   "latest_ratio_weight": 0.13,
+   "hours_after_latest_reading": 99,
    "weather_2pm": {
-    "wind_kmh": 2.9,
-    "wind_from_deg": 277,
-    "rain_mm_day": 5.7
+    "wind_kmh": 4.7,
+    "wind_from_deg": 238,
+    "rain_mm_day": 5.6
    },
    "flags": {
     "at_or_above_streak": false,
