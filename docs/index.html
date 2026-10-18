@@ -138,6 +138,13 @@
   .tile:nth-child(3)::before { background: var(--s3); }
   .tile:nth-child(4)::before { background: var(--s4); }
   .tiles.now { margin-bottom: 14px; }
+  /* section 4: nearby sensor at three fixed times */
+  .tiles.out { grid-template-columns: repeat(3, 1fr); margin-bottom: 10px; }
+  .tiles.out .tile .name { min-height: 0; }
+  .tiles.out .tile::before { display: none; }   /* no station colour: this is the sensor */
+  .tiles.out .tile .sub { white-space: nowrap; }
+  .tile .sub { font-size: .78rem; color: var(--ink-2); line-height: 1.35; }
+  .tile.pending .val, .tile.missing .val { color: var(--ink-3); font-size: 1.1rem; }
   .tile .name { font-weight: 600; font-size: .85rem; line-height: 1.25; min-height: 2.5em;
                 display: flex; align-items: center; justify-content: center; }
   .tile .val { font-size: 1.5rem; font-weight: 700; line-height: 1.3; }
@@ -177,7 +184,7 @@
   .ranges button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
   .tip i.dot-key { width: 8px; height: 8px; border: 0; border-radius: 50%; background: var(--ink); }
   .tip .lvl { color: var(--ink-2); }
-  /* section 6: the forecast is for planning only */
+  /* section 7: the forecast is for planning only */
   .plan {
     margin: 0 0 10px; padding: 8px 12px; border-radius: 10px; font-size: .9rem;
     border: 1px solid var(--ink-3); background: var(--tile);
@@ -230,6 +237,8 @@
   @media (max-width: 520px) {
     .boxes { grid-template-columns: 1fr; }
     .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tiles.out { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .tiles.out .tile .sub { font-size: .72rem; }
     .tile.mean { grid-column: 1 / -1; }
     .tile.mean .name { min-height: 0; }
     main { padding: 20px 10px 40px; }
@@ -276,14 +285,29 @@
     <ul class="small" id="notes"></ul>
   </section>
 
-  <!-- From here on: information only. Sections 4 and 5 do not make the decision. -->
+  <!-- Section 4: outdoor activities reference. It does not make the closure decision. -->
+  <div class="group" role="note">
+    <div class="line">OUTDOOR ACTIVITIES REFERENCE</div>
+    <p>Section 4 does not decide school closure. It shows a nearby sensor at three times of the school day.</p>
+  </div>
+
+  <section class="info" id="outdoorSection">
+    <h2><span class="n">4</span><span id="outTitle">Nearby sensor today</span></h2>
+    <div class="tiles out" id="outTiles"></div>
+    <p class="small" id="outNote">Low-cost sensor in Rawang Anggun, about 2.7 km from the school. Its 1-hour PM2.5
+      reading is turned into a number on the DOE API scale. Not calibrated: such sensors often read high in humid air.
+      The DOE API is a 24-hour average, so it reacts later than this reading.
+      <a href="sensor.html">More on the sensor →</a></p>
+  </section>
+
+  <!-- From here on: information only. Sections 5 to 7 do not make the decision. -->
   <div class="group" role="note">
     <div class="line">FOR INFORMATION ONLY</div>
-    <p>Sections 4, 5 and 6 do not decide school closure. They show the trend, the records and a forecast.</p>
+    <p>Sections 5, 6 and 7 do not decide school closure. They show the trend, the records and a forecast.</p>
   </div>
 
   <section class="info">
-    <h2><span class="n">4</span>Hourly API and Trend</h2>
+    <h2><span class="n">5</span>Hourly API and Trend</h2>
     <p class="small" id="latest"></p>
     <div class="tiles now" id="nowTiles"></div>
     <div class="legend" id="legend"></div>
@@ -292,7 +316,7 @@
   </section>
 
   <section class="info">
-    <h2><span class="n">5</span>Daily API records</h2>
+    <h2><span class="n">6</span>Daily API records</h2>
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
       this day means for the following day. School is always closed on weekends and holidays.</p>
@@ -301,7 +325,7 @@
   </section>
 
   <section class="info" id="forecastSection">
-    <h2><span class="n">6</span><span id="fcTitle">5-day forecast of the 2:00 pm average</span></h2>
+    <h2><span class="n">7</span><span id="fcTitle">5-day forecast of the 2:00 pm average</span></h2>
     <p class="plan"><b>Forecast for planning only.</b> Closure decisions use the real DOE readings at 2:00 pm.</p>
     <p class="small" id="fcIssued"></p>
     <div class="count" id="fcCount"></div>
@@ -322,7 +346,7 @@
       <li>If a station reading is late, one more collection runs about 15 minutes later.</li>
       <li>A reading that is still missing after that is collected in the next hour.</li>
       <li>Times are Malaysia time. This page refreshes by itself every 5 minutes.</li>
-      <li>Forecast (section 6): contains modified Copernicus Atmosphere Monitoring Service information
+      <li>Forecast (section 7): contains modified Copernicus Atmosphere Monitoring Service information
         (CAMS, run by ECMWF). Weather from ECMWF open data. Both through
         <a href="https://open-meteo.com/">Open-Meteo</a>. The forecast is made twice a day, at about
         7:30 am and 7:30 pm.</li>
@@ -399,7 +423,7 @@
     $("updated").textContent = newest
       ? "Newest DOE reading: " + dayLabel(newest) + ", " + clock(newest)
       : "No DOE reading yet.";
-    // Five boxes at the top of section 4: the newest hour that has all four stations, and its average.
+    // Five boxes at the top of section 5: the newest hour that has all four stations, and its average.
     // DOE sometimes publishes the stations of one hour at different minutes. A box with
     // no number would then look like a fault. No average here.
     var full = null;
@@ -949,7 +973,7 @@
     hit.addEventListener("pointerleave", leave);
   }
 
-  // ------------------------------------------------------------ forecast (section 6)
+  // ------------------------------------------------------------ forecast (section 7)
   // Observed 2 pm averages of the last 7 days (solid line, filled dots) and the CAMS
   // forecast for the next days (dashed line, open dots, grey band for the range).
   // Everything is black and grey; the limits are the same dashed red as elsewhere.
@@ -1182,10 +1206,68 @@
     m.appendChild(el("a", { href: "forecast.html" }, "How the forecast is made →"));
   }
 
+  // ------------------------------------------------------------ section 4: nearby sensor at 6:15, 11:15, 2:15
+  // The sensor row for 6:00 is the reading the 6:15 collection gets (likewise 11:00 and 2:00 pm).
+  var OUT_HOURS = [6, 11, 14];
+  var US_PTS = [[0,0],[12.0,50],[12.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+                [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  var DOE_PTS = [[0,0],[12.0,50],[12.1,51],[50.4,100],[50.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+                 [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  function lin(v, pts, xi, yi) {
+    for (var i = 1; i < pts.length; i++) {
+      if (v <= pts[i][xi]) { var a = pts[i - 1], b = pts[i]; return a[yi] + (b[yi] - a[yi]) * (v - a[xi]) / (b[xi] - a[xi]); }
+    }
+    var p = pts[pts.length - 2], q = pts[pts.length - 1];
+    return q[yi] + (q[yi] - p[yi]) * (v - q[xi]) / (q[xi] - p[xi]);
+  }
+  function doeCategory(api) {   // DOE API categories
+    return api <= 50 ? "Good" : api <= 100 ? "Moderate" : api <= 200 ? "Unhealthy" : api <= 300 ? "Very unhealthy" : "Hazardous";
+  }
+  function drawOutdoor(text) {
+    var host = $("outTiles"); host.textContent = "";
+    var nowMyt = new Date(Date.now() + 8 * 3600e3);              // Malaysia clock, read with getUTC*
+    var today = nowMyt.toISOString().slice(0, 10);
+    var mins = nowMyt.getUTCHours() * 60 + nowMyt.getUTCMinutes();
+    var rows = {};
+    (text || "").trim().split(/\r?\n/).slice(1).forEach(function (l) {
+      var c = l.split(","); if (c[0] && c[1] !== "" && !isNaN(+c[1])) rows[c[0]] = +c[1];
+    });
+    var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    $("outTitle").textContent = "Nearby sensor today · " + days[nowMyt.getUTCDay()] + " " + nowMyt.getUTCDate() + " " + mon[nowMyt.getUTCMonth()];
+    OUT_HOURS.forEach(function (h) {
+      var label = (h % 12 === 0 ? 12 : h % 12) + ":15 " + (h < 12 ? "am" : "pm");
+      var key = today + "T" + (h < 10 ? "0" : "") + h + ":00";
+      var tile = el("div", { "class": "tile" });
+      tile.appendChild(el("div", { "class": "name" }, label));
+      if (rows[key] !== undefined) {
+        var pm = lin(Math.max(0, rows[key]), US_PTS, 1, 0);
+        var api = Math.floor(lin(pm, DOE_PTS, 0, 1) + 0.5);
+        tile.appendChild(el("div", { "class": "val" }, String(api)));
+        tile.appendChild(el("div", { "class": "sub" }, "PM2.5 " + Math.round(pm) + " µg/m³"));
+        tile.appendChild(el("div", { "class": "sub" }, doeCategory(api)));
+      } else if (mins < h * 60 + 15) {
+        tile.className = "tile pending";
+        tile.appendChild(el("div", { "class": "val" }, "later"));
+        tile.appendChild(el("div", { "class": "sub" }, "after " + label));
+      } else {
+        tile.className = "tile missing";
+        tile.appendChild(el("div", { "class": "val" }, "–"));
+        tile.appendChild(el("div", { "class": "sub" }, "no reading"));
+      }
+      host.appendChild(tile);
+    });
+  }
+  function loadSensor() {
+    fetch("data/sensor.csv?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : ""; })
+      .then(drawOutdoor)
+      .catch(function () { drawOutdoor(""); });
+  }
+
   function load() {
     fetch("data/status.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (s) { lastStatus = s; render(s); loadForecast(); })
+      .then(function (s) { lastStatus = s; render(s); loadForecast(); loadSensor(); })
       .catch(function (e) {
         var w = $("warn"); w.hidden = false;
         w.textContent = "Could not load the data (" + e.message + "). Check the DOE website.";
