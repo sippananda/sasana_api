@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-18T23:16+08:00",
+ "generated_at": "2026-10-19T00:15+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,41 +52,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-18T23:00",
+  "datetime": "2026-10-19T00:00",
   "values": {
-   "CA15W": 158,
-   "CA19B": 159,
+   "CA15W": 159,
+   "CA19B": 160,
    "CA20B": 158,
-   "CA18B": 79
+   "CA18B": 80
   },
   "stations_used": 4,
   "average": 139
  },
  "today": {
-  "date": "2026-10-18",
-  "weekday": "Sun",
-  "school_day": false,
-  "no_school_reason": "weekend",
+  "date": "2026-10-19",
+  "weekday": "Mon",
+  "school_day": true,
+  "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 153,
-   "CA19B": 155,
-   "CA20B": 157,
-   "CA18B": 78
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 136,
-  "reading_state": "done",
-  "school_status": "closed",
-  "decision_next_day": "open",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
+  "school_status": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "reopen",
-  "reason_text": "Average is below 150. School reopens the next day.",
-  "next_date": "2026-10-19",
-  "next_weekday": "Mon",
-  "next_school_date": "2026-10-19"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-20",
+  "next_weekday": "Tue",
+  "next_school_date": "2026-10-20"
  },
  "holidays": [
   {
@@ -442,7 +442,6 @@
    },
    "stations_used": 4,
    "average": 136,
-   "reading_state": "done",
    "school_status": "closed",
    "decision_next_day": "open",
    "streak": 0,
@@ -517,16 +516,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-14T23:00",
-   "v": [
-    168,
-    172,
-    180,
-    155
-   ],
-   "avg": 169
-  },
   {
    "t": "2026-10-15T00:00",
    "v": [
@@ -1484,6 +1473,16 @@
     159,
     158,
     79
+   ],
+   "avg": 139
+  },
+  {
+   "t": "2026-10-19T00:00",
+   "v": [
+    159,
+    160,
+    158,
+    80
    ],
    "avg": 139
   }
