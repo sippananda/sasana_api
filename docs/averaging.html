@@ -67,6 +67,12 @@
   td.diff .v::after { content: " *"; }
   td.closes .s, td.closed .s { color: #c62828; font-weight: 600; }
   tr.now td { background: var(--tile); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .86rem; color: var(--ink-2); margin: 4px 0 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .chart svg { display: block; width: 100%; height: auto; }
+  .chart text { font: 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; fill: var(--ink-2); }
+  td.dim .v { font-weight: 400; color: var(--ink-3); }
+  details summary { cursor: pointer; margin: 10px 0 6px; font-size: .9rem; }
   footer { margin-top: 22px; padding: 0 4px; }
   @media (max-width: 560px) {
     section { padding: 16px 14px 18px; }
@@ -114,7 +120,29 @@
   </section>
 
   <section>
-    <h2><span class="n">3</span>Check with the nearby sensor</h2>
+    <h2><span class="n">3</span>Hour by hour</h2>
+    <p class="small">The same three methods for every hourly DOE reading. Each DOE hourly reading is already a
+      24-hour average, updated every hour, so these lines move slowly. The sensor's 24-hour average is on the
+      same footing. Its 1-hour reading is in the table only, because it is not averaged over 24 hours.</p>
+    <div class="legend">
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#111" stroke-width="2.5"/></svg>Official average</span>
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#1b6ac9" stroke-width="2.5" stroke-dasharray="7 4"/></svg>PM2.5 method</span>
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#8a8a85" stroke-width="2" stroke-dasharray="2 3"/></svg>Three stations</span>
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#7a3fa0" stroke-width="2.5" stroke-dasharray="10 3 2 3"/></svg>Sensor, 24-hour average</span>
+      <span><svg width="28" height="10"><line x1="1" y1="5" x2="27" y2="5" stroke="#d03b3b" stroke-width="1.2" stroke-dasharray="3 3"/></svg>Limits 150 and 180</span>
+    </div>
+    <div class="chart" id="hourChart"></div>
+    <p class="small" id="hourNote"></p>
+    <details>
+      <summary>Table: the last 24 hours</summary>
+      <div class="scroll"><table id="hours"></table></div>
+      <p class="small" style="margin-top:8px"><b>*</b> = on the other side of 150 or 180 than the official average.
+        The sensor's 24-hour average needs at least 18 hours of data.</p>
+    </details>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Check with the nearby sensor</h2>
     <p class="small">The low-cost sensor in Rawang Anggun is about 2.7 km from the school. Its 24-hour average,
       on the same DOE scale, shows which method is closest to the air near the school.
       <b>Not calibrated:</b> such sensors often read high in humid air.</p>
@@ -124,12 +152,16 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Limits</h2>
+    <h2><span class="n">5</span>Limits</h2>
     <ul class="small">
       <li>The PM2.5 method assumes that PM2.5 sets each station's API. This is true in haze. On clean days
         another pollutant can set the API, and the PM2.5 worked back from it is then too high.</li>
       <li>DOE publishes whole API numbers. Above API 150 one API point is about 1.9 µg/m³ of PM2.5, so a result
         close to a limit can change with one point.</li>
+      <li>The PM2.5 method still meets the steep part of the table, but only once, for the average. When the
+        four-station PM2.5 average is between 50.5 and 55.4 µg/m³, a small change moves the result a lot.
+        Example: on 18 October the PM2.5 method gave 151 at 2:00 pm, 134 at 4:00 pm and 151 again at 6:00 pm,
+        while the four-station PM2.5 average moved only between about 54 and 56 µg/m³.</li>
       <li>The results depend on the DOE table. If DOE changes the table, the PM2.5 method changes too.</li>
       <li>The PM2.5 method makes a low station count less. It does not remove the real difference:
         Kuala Selangor often has less PM2.5 than the other three.</li>
@@ -326,6 +358,105 @@
       "One or two weeks, with some haze days and some clear days, are needed before a conclusion.";
   }
 
+  // ---------- section 3: hour by hour ----------
+  function drawHours(s, hourlyText, sensorText) {
+    var hourly = parseCsv(hourlyText), sensor = parseCsv(sensorText);
+    var ids = s.stations.map(function (x) { return x.id; });
+    var sen = {};
+    sensor.forEach(function (r) {
+      var a = parseFloat(r.pm25_aqi);
+      if (isFinite(a)) sen[hourIndex(r.datetime_myt)] = pmFromUs(a);
+    });
+    function sensor24(h) {
+      var xs = [];
+      for (var i = h - 23; i <= h; i++) if (sen[i] !== undefined) xs.push(sen[i]);
+      return xs.length >= 18 ? { v: round(apiFromPm(mean(xs))), n: xs.length } : null;
+    }
+    var rows = [];
+    hourly.forEach(function (r) {
+      if (!ids.every(function (id) { return r[id] !== ""; })) return;   // only complete hours
+      var m = methods(r, s.stations, 4);
+      if (!m) return;
+      var h = hourIndex(r.datetime_myt), s24 = sensor24(h);
+      rows.push({ h: h, iso: r.datetime_myt, m: m, s24: s24 ? s24.v : null, n24: s24 ? s24.n : 0,
+                  s1: sen[h] !== undefined ? round(apiFromPm(sen[h])) : null });
+    });
+    if (!rows.length) { $("hourChart").textContent = "No hourly data."; return; }
+    var end = rows[rows.length - 1].h, start = end - 71;
+    var shown = rows.filter(function (r) { return r.h >= start; });
+
+    // chart
+    var W = 720, H = 300, L = 38, R = 10, T = 10, B = 34;
+    var vals = [150, 180];
+    shown.forEach(function (r) { [r.m.official, r.m.pm, r.m.three, r.s24].forEach(function (v) { if (v !== null) vals.push(v); }); });
+    var lo = Math.floor((Math.min.apply(null, vals) - 5) / 20) * 20, hi = Math.ceil((Math.max.apply(null, vals) + 5) / 20) * 20;
+    var X = function (h) { return L + (h - start) / (end - start) * (W - L - R); };
+    var Y = function (v) { return T + (hi - v) / (hi - lo) * (H - T - B); };
+    var NS = "http://www.w3.org/2000/svg";
+    function sv(tag, attrs, text) {
+      var e = document.createElementNS(NS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    var svg = sv("svg", { viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "Hourly comparison of the official average, the PM2.5 method, the three-station average and the sensor" });
+    for (var g = lo; g <= hi; g += 20) {
+      svg.appendChild(sv("line", { x1: L, x2: W - R, y1: Y(g), y2: Y(g), stroke: "#e3e3de", "stroke-width": 1 }));
+      svg.appendChild(sv("text", { x: L - 6, y: Y(g) + 4, "text-anchor": "end" }, String(g)));
+    }
+    for (var h = start; h <= end; h++) {
+      var d = new Date(h * 3600000);
+      if (d.getUTCHours() === 0) {
+        svg.appendChild(sv("line", { x1: X(h), x2: X(h), y1: T, y2: H - B, stroke: "#d9d9d3", "stroke-width": 1 }));
+        svg.appendChild(sv("text", { x: X(h) + 3, y: H - B + 14 }, DAYS[d.getUTCDay()] + " " + d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]));
+      }
+      if (d.getUTCHours() === s.reading_hour)
+        svg.appendChild(sv("text", { x: X(h), y: H - B + 28, "text-anchor": "middle", "font-size": "10" }, "2 pm"));
+    }
+    [150, 180].forEach(function (v) {
+      svg.appendChild(sv("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: "#d03b3b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }));
+    });
+    function line(get, attrs) {
+      var dstr = "", prev = null;
+      shown.forEach(function (r) {
+        var v = get(r);
+        if (v === null) { prev = null; return; }
+        dstr += (prev !== null && r.h === prev + 1 ? "L" : "M") + X(r.h).toFixed(1) + " " + Y(v).toFixed(1);
+        prev = r.h;
+      });
+      if (dstr) { attrs.d = dstr; attrs.fill = "none"; svg.appendChild(sv("path", attrs)); }
+    }
+    line(function (r) { return r.m.three; }, { stroke: "#8a8a85", "stroke-width": 2, "stroke-dasharray": "2 3" });
+    line(function (r) { return r.s24; }, { stroke: "#7a3fa0", "stroke-width": 2.5, "stroke-dasharray": "10 3 2 3" });
+    line(function (r) { return r.m.pm; }, { stroke: "#1b6ac9", "stroke-width": 2.5, "stroke-dasharray": "7 4" });
+    line(function (r) { return r.m.official; }, { stroke: "#111", "stroke-width": 2.5 });
+    $("hourChart").textContent = ""; $("hourChart").appendChild(svg);
+
+    var last = rows[rows.length - 1];
+    $("hourNote").textContent = "Newest complete hour, " + hourLabel(last.iso) + ": official " + last.m.official +
+      ", PM2.5 method " + last.m.pm + ", three stations " + last.m.three +
+      (last.s24 !== null ? ", sensor 24-hour " + last.s24 + " (" + last.n24 + " of 24 hours)" : "") + ".";
+
+    // table, newest first
+    var tb = $("hours"); tb.textContent = "";
+    var head = el("tr");
+    ["Time", "Official", "PM2.5 method", "Three stations", "Sensor, 24 h", "Sensor, 1 h"].forEach(function (x) { head.appendChild(el("th", {}, x)); });
+    tb.appendChild(head);
+    rows.slice(-24).reverse().forEach(function (r) {
+      var tr = el("tr");
+      tr.appendChild(el("td", {}, hourLabel(r.iso)));
+      var ob = band(r.m.official, s.rule);
+      ["official", "pm", "three"].forEach(function (k) {
+        var cls = k !== "official" && band(r.m[k], s.rule) !== ob ? "diff" : "";
+        tr.appendChild(cell(r.m[k], "", cls));
+      });
+      tr.appendChild(cell(r.s24, r.s24 !== null ? r.n24 + " h" : "", ""));
+      tr.appendChild(cell(r.s1, "", "dim"));
+      tb.appendChild(tr);
+    });
+  }
+
   var bust = "?t=" + Math.floor(Date.now() / 300000);
   Promise.all([
     fetch("data/status.json" + bust).then(function (r) { return r.json(); }),
@@ -333,6 +464,7 @@
     fetch("data/sensor.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; })
   ]).then(function (res) {
     drawDays(res[0]);
+    drawHours(res[0], res[1], res[2]);
     drawSensor(res[0], res[1], res[2]);
   }).catch(function () {
     $("days").textContent = "Could not load the data.";
