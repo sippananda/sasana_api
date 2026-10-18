@@ -35,6 +35,7 @@
   .abstract p.notice { margin-top: 10px; color: #c62828; font-weight: 700; }
   h2 { font-size: 1.2rem; margin: 34px 0 10px; font-weight: 700; }
   h3 { font-size: 1.02rem; margin: 22px 0 6px; font-weight: 700; font-style: italic; }
+  html[lang="zh-Hans"] h3 { font-style: normal; }
   p { margin: 0 0 12px; text-align: justify; }
   ul, ol { margin: 0 0 12px; padding-left: 1.4em; }
   li { margin: 4px 0; }
@@ -64,7 +65,7 @@
     <p class="byline">一位家长（AI 辅助） · 2026 年 10 月 18 日</p>
   </header>
 
-<div class="abstract"><h2>摘要</h2><p>马来西亚的 API 看的是过去 24 小时的平均空气，不是此刻的空气。所以烟霾来时，API 升得慢；烟霾走后，API 降得也慢。</p><p class="notice">本文为个人整理，仅供参考。作者以家长个人身份撰写，不代表学校立场，也不构成健康建议。</p></div>
+<div class="abstract"><h2>摘要</h2><p>马来西亚的 API 看的是过去 24 小时的平均空气，不是此刻的空气。所以烟霾来时，API 升得慢；烟霾走后，API 降得也慢。本文说明 API 的计算方法，用学校附近四个监测站的每小时数据说明这种滞后，与新加坡、美国、中国和香港比较，最后讨论取得较即时 PM2.5 数据的两个途径。</p><p class="notice">本文为个人整理，仅供参考。作者以家长个人身份撰写，不代表学校立场，也不构成健康建议。</p></div>
 
 <h2>引言</h2>
 <p>很多家长有过这样的经历：窗外很灰，闻到烟味，但 API 还显示“中等”。打开外国的空气 App，同一时间却显示“不健康”。哪个数字是对的？</p>
@@ -263,7 +264,61 @@
 <li><strong>外国 App 的数字与 API 不能直接比较。</strong> 环境局在 2026 年 10 月说明，两者的标准、平均时间和更新时间都不同。</li>
 </ul>
 
-<h2>七、本文的局限</h2>
+<h2>七、实时 PM2.5 从哪里来</h2>
+<p>API 有滞后，而环境局不公布每小时 PM2.5 浓度。要看到较即时的空气情况，有两个途径。</p>
+<h3>附近的低成本传感器</h3>
+<ul>
+<li>本网站从 2026 年 10 月 18 日起，每小时收集一个低成本传感器的读数。它位于 Rawang Anggun（Jalan Anggun 3P），距离学校约 2.7 公里；最近的环境局监测站在 19 公里外。</li>
+<li>传感器型号是 GAIA A08，内有一个 Plantower PMS5003 激光颗粒计数器，数据经 aqicn.org 公开。</li>
+<li>本网站把它的读数与四个环境局监测站比较，结果见<a href="sensor.html">传感器比较页面</a>。目前数据太少，还不能下结论。</li>
+<li>这个来源有几个限制：<ul>
+<li>传感器属于私人，可能随时离线或搬走。</li>
+<li>aqicn 提供的是美国 AQI 指数，不是浓度，需要换算。</li>
+<li>低成本传感器在湿度高时，读数往往偏高，需要用环境局的数据校准。</li>
+<li>只有一个计数器，出现故障时不容易发现。</li>
+</ul>
+</li>
+</ul>
+<h3>在学校设置传感器</h3>
+<p>学校也可以考虑在校园内设置自己的传感器。这样量到的就是学校本身的空气，数据也由学校掌握。</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>型号</th>
+<th>价格（2026 年 10 月所见）</th>
+<th>颗粒传感器</th>
+<th>数据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GAIA A08</td>
+<td>49 欧元</td>
+<td>1 个 PMS5003</td>
+<td>自动上传到 aqicn 地图</td>
+</tr>
+<tr>
+<td>AirGradient Open Air</td>
+<td>315 加元（加拿大商店）</td>
+<td>PMS5003T</td>
+<td>开放源代码，可传到自己的服务器</td>
+</tr>
+<tr>
+<td>PurpleAir</td>
+<td>未查</td>
+<td>2 个 Plantower，可互相核对</td>
+<td>PurpleAir 地图；实地测试最多</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>这类传感器需要 Wi-Fi 和户外 USB 电源，并放在有遮盖但通风的地方。</li>
+<li>两个传感器比一个可靠：一个故障时，另一个仍能工作；两者读数不一致时，也能及早发现问题。</li>
+<li>新传感器宜先运行一至两周，与环境局的 24 小时平均比较，得出校正系数。</li>
+<li>本网站的做法是：传感器数据只作参考，学校规则只使用环境局的官方 API。</li>
+</ul>
+
+<h2>八、本文的局限</h2>
 <ul>
 <li>数据只涵盖 2026 年 10 月 8 日至 18 日，约 10 天，四个监测站。</li>
 <li>环境局只公布 API，没有公布每小时 PM2.5 浓度。本文提到的浓度，都是按换算表从 API 反推的。</li>
@@ -291,6 +346,7 @@
 <li>美国环境保护局：<a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast 说明</a>；AirNow：<a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>；<a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast 例子（维基百科）</a></li>
 <li>中国生态环境部：<a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 环境空气质量指数（AQI）技术规定</a></li>
 <li>香港特区政府：<a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">空气质素健康指数说明</a>；<a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">2012 年起每小时公布 PM2.5</a></li>
+<li>传感器：<a href="https://aqicn.org/gaia/a08">GAIA A08（aqicn.org）</a>；<a href="https://telescopescanada.ca/products/airgradient-open-air-award-winning-outdoor-monitor-outdoor-air-quality-monitor">AirGradient Open Air（加拿大商店页面）</a>；<a href="https://www.aqmd.gov/aq-spec/sensordetail/purpleair-pa-ii-flex">PurpleAir PA-II Flex（南加州空气质量管理局 AQ-SPEC）</a></li>
 <li>24 小时滚动平均的滞后：<a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee 等，2023（曼谷研究）</a></li>
 <li>学校监测数据：<a href="https://sippananda.github.io/sasana_api/">Sasana 烟霾监测页</a>（环境局每小时 API）</li>
 </ol>

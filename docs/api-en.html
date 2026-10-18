@@ -31,6 +31,7 @@
   .abstract p.notice { margin-top: 10px; color: #c62828; font-weight: 700; }
   h2 { font-size: 1.2rem; margin: 34px 0 10px; font-weight: 700; }
   h3 { font-size: 1.02rem; margin: 22px 0 6px; font-weight: 700; font-style: italic; }
+  html[lang="zh-Hans"] h3 { font-style: normal; }
   p { margin: 0 0 12px; text-align: justify; }
   ul, ol { margin: 0 0 12px; padding-left: 1.4em; }
   li { margin: 4px 0; }
@@ -60,7 +61,7 @@
     <p class="byline">A parent with AI assistant · 18 October 2026</p>
   </header>
 
-<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, and compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong.</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
+<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong, and discusses two ways of obtaining more immediate PM2.5 data.</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
 
 <h2>Introduction</h2>
 <p>Many parents will recognise the following situation. The sky is grey and the air smells of smoke, yet the official API still reads "Moderate". At the same moment, a foreign air-quality app may well report "Unhealthy". The question is which of the two numbers is correct.</p>
@@ -259,7 +260,61 @@
 <li><strong>Figures from foreign apps cannot be compared directly with the API.</strong> In October 2026 the DOE explained that the scales, averaging periods and update intervals differ.</li>
 </ul>
 
-<h2>7. Limitations</h2>
+<h2>7. Sources of real-time PM2.5</h2>
+<p>The API lags behind the actual air, and the DOE does not publish hourly PM2.5 concentrations. Two routes are available for obtaining a more immediate picture.</p>
+<h3>A nearby low-cost sensor</h3>
+<ul>
+<li>Since 18 October 2026, this website has recorded the hourly readings of a low-cost sensor in Rawang Anggun (Jalan Anggun 3P). The sensor is about 2.7 km from the school, whereas the nearest DOE station is 19 km away.</li>
+<li>The sensor is a GAIA A08 with a single Plantower PMS5003 laser particle counter; its data are published through aqicn.org.</li>
+<li>The website compares its readings with the four DOE stations on the <a href="sensor.html">sensor comparison page</a>. So far there are too few data to draw conclusions.</li>
+<li>This source has several limitations:<ul>
+<li>The sensor is privately owned and may go offline or be moved at any time.</li>
+<li>aqicn reports a US AQI value rather than a concentration, which has to be converted.</li>
+<li>Low-cost sensors tend to read high in humid air and need to be calibrated against DOE data.</li>
+<li>With a single counter, a fault is difficult to detect.</li>
+</ul>
+</li>
+</ul>
+<h3>A sensor at the school</h3>
+<p>The school could also consider installing its own sensor on the campus. It would then measure the air at the school itself, and the data would be under the school's control.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Price (seen in October 2026)</th>
+<th>Particle sensor</th>
+<th>Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GAIA A08</td>
+<td>EUR 49</td>
+<td>1 × PMS5003</td>
+<td>Uploaded to the aqicn map automatically</td>
+</tr>
+<tr>
+<td>AirGradient Open Air</td>
+<td>CAD 315 (Canadian retailer)</td>
+<td>PMS5003T</td>
+<td>Open source; can send data to one's own server</td>
+</tr>
+<tr>
+<td>PurpleAir</td>
+<td>Not checked</td>
+<td>2 × Plantower, which cross-check each other</td>
+<td>PurpleAir map; the most widely field-tested</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>Such sensors need Wi-Fi and an outdoor USB power supply, and should be placed under cover but in free-flowing air.</li>
+<li>Two sensors are more reliable than one: if one fails the other continues, and a disagreement between them reveals a problem early.</li>
+<li>A new sensor is best run for one to two weeks alongside the DOE 24-hour averages to establish a correction factor.</li>
+<li>On this website, sensor data are shown for information only; the school rule uses the official DOE API alone.</li>
+</ul>
+
+<h2>8. Limitations</h2>
 <ul>
 <li>The data cover only 8 to 18 October 2026, about ten days, at four monitoring stations.</li>
 <li>The DOE publishes only the API and not hourly PM2.5 concentrations. All concentrations mentioned in this article are derived from the API using the conversion table.</li>
@@ -287,6 +342,7 @@
 <li>US Environmental Protection Agency: <a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast fact sheet</a>; AirNow: <a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>; <a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast example (Wikipedia)</a></li>
 <li>Ministry of Ecology and Environment, China: <a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 Technical Regulation on Ambient Air Quality Index</a></li>
 <li>Government of Hong Kong: <a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">Air Quality Health Index</a>; <a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">hourly PM2.5 published since 2012</a></li>
+<li>Sensors: <a href="https://aqicn.org/gaia/a08">GAIA A08 (aqicn.org)</a>; <a href="https://telescopescanada.ca/products/airgradient-open-air-award-winning-outdoor-monitor-outdoor-air-quality-monitor">AirGradient Open Air (Canadian retailer)</a>; <a href="https://www.aqmd.gov/aq-spec/sensordetail/purpleair-pa-ii-flex">PurpleAir PA-II Flex (South Coast AQMD AQ-SPEC)</a></li>
 <li>Lag of a 24-hour rolling average: <a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee et al., 2023 (Bangkok study)</a></li>
 <li>School monitor data: <a href="index.html">Sasana haze monitor</a> (hourly DOE API)</li>
 </ol>
