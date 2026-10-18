@@ -325,8 +325,15 @@
 </table></div>
 
 <h2>8 Sources of real-time PM2.5</h2>
-<p>The API lags behind the actual air, and the DOE does not publish hourly PM2.5 concentrations. Two routes are available for obtaining a more immediate picture.</p>
-<h3>8.1 A nearby low-cost sensor</h3>
+<h3>8.1 The limits of the API alone</h3>
+<p>As the preceding sections have shown, a member of the public who relies on the API alone faces three difficulties in judging the air at a given moment.</p>
+<ul>
+<li><strong>Delay.</strong> The API is a 24-hour average and lags the hourly data by about 10 to 13 hours. It rises slowly when haze arrives and falls slowly after the haze has cleared (Section 5).</li>
+<li><strong>No hourly PM2.5.</strong> The DOE publishes the API but not hourly PM2.5 concentrations (Section 4). The public therefore cannot compute a more immediate index, such as the US NowCast, for itself.</li>
+<li><strong>Uneven sensitivity of the conversion table.</strong> Between API 101 and 150, a small change in PM2.5 moves the API a long way; between 151 and 200, a large change in PM2.5 moves it only a little (Section 7). A rise or fall in the API alone therefore says little about how much the concentration has actually changed.</li>
+</ul>
+<p>A more immediate picture of the air requires data from outside the API. Two routes are discussed below.</p>
+<h3>8.2 A nearby low-cost sensor</h3>
 <ul>
 <li>Since 18 October 2026, this website has recorded the hourly readings of a low-cost sensor in Rawang Anggun (Jalan Anggun 3P). The sensor is about 2.7 km from the school, whereas the nearest DOE station is 19 km away.</li>
 <li>The sensor is a GAIA A08 with a single Plantower PMS5003 laser particle counter; its data are published through aqicn.org <span class="cite">[<a href="#ref-10">10</a>]</span>.</li>
@@ -339,7 +346,7 @@
 </ul>
 </li>
 </ul>
-<h3>8.2 A sensor at the school</h3>
+<h3>8.3 A sensor at the school</h3>
 <p>The school could also consider installing its own sensor on the campus. It would then measure the air at the school itself, and the data would be under the school's control.</p>
 <p class="tcap"><b>Table 5.</b>　Examples of low-cost sensors suitable for a school</p>
 
