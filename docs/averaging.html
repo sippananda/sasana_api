@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Other Ways to Average – Sasana Haze Monitor</title>
+<meta name="description" content="Reference only: the official 4-station API average compared with a PM2.5 average and a 3-station average.">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #111111;
+    --ink-2: #555555;
+    --ink-3: #74746f;
+    --rule: #d9d9d3;
+    --page: #e9e9e4;
+    --surface: #fafaf8;
+    --tile: #f0f0ec;
+    --edge: #d6d6d0;
+    --shadow: 0 1px 2px rgba(17,17,17,.05), 0 6px 18px rgba(17,17,17,.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
+  header { padding: 0 4px; }
+  .back { font-size: .9rem; color: var(--ink-2); }
+  .bottom-back { margin: 22px 4px 0; font-weight: 600; }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 8px 0 0; letter-spacing: -.015em; }
+  .tag {
+    display: inline-block; vertical-align: middle; margin-left: 6px; padding: 1px 8px;
+    border: 1.5px dashed var(--ink-3); border-radius: 10px; font-size: .75rem; font-weight: 700;
+    letter-spacing: .06em; color: var(--ink-2);
+  }
+  .sub { color: var(--ink-2); margin: 4px 0 0; }
+  section {
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
+    box-shadow: var(--shadow); margin-top: 16px; padding: 18px 20px 20px;
+  }
+  section > :last-child { margin-bottom: 0; }
+  h2 { font-size: 1.1rem; margin: 0 0 14px; display: flex; align-items: center; gap: 10px; }
+  h2 .n {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--ink-3); color: #fff; font-size: .85rem;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  p { margin: 0 0 10px; }
+  ul { margin: 0 0 10px; padding-left: 1.2em; }
+  li { margin-bottom: 4px; }
+  .small { font-size: .9rem; color: var(--ink-2); }
+  .note {
+    margin-top: 16px; padding: 12px 16px; border: 1.5px dashed var(--ink-3);
+    background: var(--tile); border-radius: 14px;
+  }
+  .note p:last-child { margin: 0; }
+  figure { margin: 14px 0 0; }
+  figure img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th:first-child, td:first-child { text-align: left; white-space: nowrap; }
+  th { font-weight: 600; color: var(--ink-2); background: #eeeeea; }
+  td .v { font-weight: 600; }
+  td .s { display: block; font-size: .78rem; color: var(--ink-3); white-space: nowrap; }
+  td.off .v { color: var(--ink-2); }
+  td.diff .v::after { content: " *"; }
+  td.closes .s, td.closed .s { color: #c62828; font-weight: 600; }
+  tr.now td { background: var(--tile); }
+  footer { margin-top: 22px; padding: 0 4px; }
+  @media (max-width: 560px) {
+    section { padding: 16px 14px 18px; }
+    h1 { font-size: 1.35rem; }
+    th, td { padding: 6px 5px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a class="back" href="./">← Back to the main page</a>
+    <h1>Other Ways to Average <span class="tag">REFERENCE</span></h1>
+    <p class="sub">The official 4-station average, compared with two other ways to combine the stations.</p>
+  </header>
+
+  <div class="note">
+    <p><b>This page is for reference only.</b> It does not decide school closure. The school rule uses the
+      official average of the four DOE API readings at 2:00 pm, as on the main page.</p>
+  </div>
+
+  <section>
+    <h2><span class="n">1</span>The three methods</h2>
+    <ul>
+      <li><b>Official average:</b> the plain average of the four stations' API numbers. This is the school rule.</li>
+      <li><b>PM2.5 method:</b> each station's API is turned back into PM2.5 with the DOE table (January 2025
+        version). The four PM2.5 values are averaged, and the average is turned into an API number again.</li>
+      <li><b>Three stations:</b> the plain average of Batu Muda, Petaling Jaya and Shah Alam, without
+        Kuala Selangor.</li>
+    </ul>
+    <p class="small">Why the first two can differ: the DOE table has a steep part between API 100 and 150.
+      A station in or below that part counts more in an average of API numbers than its PM2.5 would suggest.
+      Averaging PM2.5 first removes this effect.</p>
+    <figure><a href="img/avg_methods_en.png"><img src="img/avg_methods_en.png" alt="On 17 October the average of API was 150 and the average of PM2.5, as API, was 162." loading="lazy"></a></figure>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span>Day by day, at 2:00 pm</h2>
+    <p class="small">Each column applies the same school rule to its own numbers: closed after one day at 180 or
+      above, or after three days in a row at 150 or above; reopened after a day below 150.
+      <b>*</b> = on the other side of 150 or 180 than the official average.</p>
+    <div class="scroll"><table id="days"><tr><td class="small">Loading…</td></tr></table></div>
+    <p class="small" style="margin-top:8px">The small line under each number is the rule's result for that method
+      (count of high days, or closed and reopened). It ignores weekends and holidays, like the count on the main page.</p>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span>Check with the nearby sensor</h2>
+    <p class="small">The low-cost sensor in Rawang Anggun is about 2.7 km from the school. Its 24-hour average,
+      on the same DOE scale, shows which method is closest to the air near the school.
+      <b>Not calibrated:</b> such sensors often read high in humid air.</p>
+    <div class="scroll"><table id="sensor"><tr><td class="small">Loading…</td></tr></table></div>
+    <p class="small" style="margin-top:8px" id="sensorNote"></p>
+    <p class="small"><a href="sensor.html">More on the sensor →</a></p>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span>Limits</h2>
+    <ul class="small">
+      <li>The PM2.5 method assumes that PM2.5 sets each station's API. This is true in haze. On clean days
+        another pollutant can set the API, and the PM2.5 worked back from it is then too high.</li>
+      <li>DOE publishes whole API numbers. Above API 150 one API point is about 1.9 µg/m³ of PM2.5, so a result
+        close to a limit can change with one point.</li>
+      <li>The results depend on the DOE table. If DOE changes the table, the PM2.5 method changes too.</li>
+      <li>The PM2.5 method makes a low station count less. It does not remove the real difference:
+        Kuala Selangor often has less PM2.5 than the other three.</li>
+      <li>One sensor, not calibrated, only a few days of data. It cannot settle the question yet.</li>
+    </ul>
+  </section>
+
+  <p class="bottom-back"><a href="./">← Back to the main page</a></p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, attrs, text) {
+    var e = document.createElement(tag);
+    for (var k in attrs || {}) e.setAttribute(k, attrs[k]);
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+  // DOE PM2.5 table (January 2025 version) and the US EPA 2016 scale that aqicn uses.
+  var DOE = [[0,0],[12.0,50],[12.1,51],[50.4,100],[50.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+             [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  var US = [[0,0],[12.0,50],[12.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+            [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  function interp(v, pts, xi, yi) {
+    for (var i = 1; i < pts.length; i++) {
+      if (v <= pts[i][xi]) {
+        var a = pts[i - 1], b = pts[i];
+        return a[yi] + (b[yi] - a[yi]) * (v - a[xi]) / (b[xi] - a[xi]);
+      }
+    }
+    var p = pts[pts.length - 2], q = pts[pts.length - 1];
+    return q[yi] + (q[yi] - p[yi]) * (v - q[xi]) / (q[xi] - p[xi]);
+  }
+  function pmFromApi(a) { return interp(Math.max(0, a), DOE, 1, 0); }
+  function apiFromPm(c) { return interp(Math.max(0, c), DOE, 0, 1); }
+  function pmFromUs(a) { return interp(Math.max(0, a), US, 1, 0); }
+  function round(x) { return x === null ? null : Math.floor(x + 0.5); }   // 0.5 goes up, like the main page
+  function mean(xs) { return xs.length ? xs.reduce(function (a, b) { return a + b; }, 0) / xs.length : null; }
+
+  // The three methods for one set of station readings {id: API}.
+  function methods(values, stations, min) {
+    var all = [], three = [];
+    stations.forEach(function (x) {
+      var v = values[x.id];
+      if (v === null || v === undefined || v === "" || isNaN(+v)) return;
+      all.push(+v);
+      if (x.id !== "CA18B") three.push(+v);
+    });
+    if (all.length < min) return null;
+    return {
+      official: round(mean(all)),
+      pm: round(apiFromPm(mean(all.map(pmFromApi)))),
+      three: three.length >= 2 ? round(mean(three)) : null
+    };
+  }
+
+  // Same steps as scripts/policy.py: one call per calendar day, in date order.
+  function ruleRunner(rule) {
+    var status = "open", streak = 0;
+    return function (avg) {
+      if (avg === null) return { status: status, text: "no data" };
+      var nxt, text;
+      if (status === "open") {
+        streak = avg >= rule.close_from_streak ? streak + 1 : 0;
+        if (avg >= rule.close_from_single_day) { nxt = "closed"; text = "closes next day"; }
+        else if (streak >= rule.streak_days) { nxt = "closed"; text = "closes next day"; }
+        else if (avg >= rule.close_from_streak) { nxt = "open"; text = "high day " + streak + " of " + rule.streak_days; }
+        else { nxt = "open"; text = ""; }
+      } else if (avg < rule.reopen_below) { nxt = "open"; text = "reopens next day"; }
+      else { nxt = "closed"; text = "stays closed"; }
+      var cls = status === "closed" ? (nxt === "open" ? "" : "closed") : (nxt === "closed" ? "closes" : "");
+      if (status === "closed" || nxt === "closed") streak = 0;
+      status = nxt;
+      return { text: text, cls: cls };
+    };
+  }
+  function band(v, rule) { return v === null ? null : v >= rule.close_from_single_day ? 2 : v >= rule.close_from_streak ? 1 : 0; }
+
+  var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function dayLabel(iso) {
+    var d = new Date(iso.slice(0, 10) + "T00:00:00Z");
+    return DAYS[d.getUTCDay()] + " " + d.getUTCDate() + " " + MONTHS[d.getUTCMonth()];
+  }
+  function hourLabel(iso) {
+    var h = +iso.slice(11, 13), ap = h < 12 ? "am" : "pm", h12 = h % 12 === 0 ? 12 : h % 12;
+    return dayLabel(iso) + ", " + h12 + ":00 " + ap;
+  }
+  function cell(v, extra, cls) {
+    var td = el("td", cls ? { "class": cls } : {});
+    td.appendChild(el("span", { "class": "v" }, v === null ? "–" : String(v)));
+    if (extra) td.appendChild(el("span", { "class": "s" }, extra));
+    return td;
+  }
+
+  function drawDays(s) {
+    var rule = s.rule, start = rule.start_date || "";
+    var run = { official: ruleRunner(rule), pm: ruleRunner(rule), three: ruleRunner(rule) };
+    var rows = [];
+    s.daily.forEach(function (d) {
+      if (d.date < start) return;
+      var m = methods(d.values, s.stations, rule.min_stations) || { official: null, pm: null, three: null };
+      if (d.average !== null && d.average !== undefined) m.official = d.average;   // the page's own number
+      var r = { date: d.date, m: m, res: {} };
+      ["official", "pm", "three"].forEach(function (k) { r.res[k] = run[k](m[k]); });
+      rows.push(r);
+    });
+    var tb = $("days"); tb.textContent = "";
+    var head = el("tr");
+    ["Date", "Official average", "PM2.5 method", "Three stations"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
+    tb.appendChild(head);
+    rows.reverse().forEach(function (r) {
+      var tr = el("tr");
+      tr.appendChild(el("td", {}, dayLabel(r.date)));
+      var ob = band(r.m.official, rule);
+      ["official", "pm", "three"].forEach(function (k) {
+        var v = r.m[k], res = r.res[k] || {};
+        var cls = [res.cls || ""];
+        if (k !== "official" && v !== null && ob !== null && band(v, rule) !== ob) cls.push("diff");
+        tr.appendChild(cell(v, res.text, cls.join(" ").trim()));
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function parseCsv(text) {
+    var lines = (text || "").trim().split(/\r?\n/);
+    if (!lines.length || !lines[0]) return [];
+    var head = lines[0].split(",");
+    return lines.slice(1).map(function (l) {
+      var c = l.split(","), r = {};
+      head.forEach(function (h, i) { r[h] = c[i] === undefined ? "" : c[i]; });
+      return r;
+    });
+  }
+  function hourIndex(iso) { return Math.round(Date.parse(iso + ":00Z") / 3600000); }
+
+  function drawSensor(s, hourlyText, sensorText) {
+    var hourly = parseCsv(hourlyText), sensor = parseCsv(sensorText);
+    var sen = {};
+    sensor.forEach(function (r) {
+      var a = parseFloat(r.pm25_aqi);
+      if (isFinite(a)) sen[hourIndex(r.datetime_myt)] = pmFromUs(a);
+    });
+    function sensor24(h) {                       // 24-hour average ending at hour h, at least 18 hours
+      var xs = [];
+      for (var i = h - 23; i <= h; i++) if (sen[i] !== undefined) xs.push(sen[i]);
+      return xs.length >= 18 ? { v: round(apiFromPm(mean(xs))), n: xs.length } : null;
+    }
+    // Rows: the newest complete hour, then 2:00 pm of each day with a sensor value.
+    var rows = [], ids = s.stations.map(function (x) { return x.id; });
+    var complete = hourly.filter(function (r) { return ids.every(function (id) { return r[id] !== ""; }); });
+    var newest = complete.length ? complete[complete.length - 1] : null;
+    if (newest) rows.push({ label: "Now: " + hourLabel(newest.datetime_myt), r: newest, now: true });
+    complete.filter(function (r) { return +r.datetime_myt.slice(11, 13) === s.reading_hour && r !== newest; })
+      .reverse().forEach(function (r) { rows.push({ label: hourLabel(r.datetime_myt), r: r }); });
+    var tb = $("sensor"); tb.textContent = "";
+    var head = el("tr");
+    ["Time", "Official average", "PM2.5 method", "Three stations", "Sensor, 24 h"].forEach(function (h) { head.appendChild(el("th", {}, h)); });
+    tb.appendChild(head);
+    var shown = 0, closest = null;
+    rows.forEach(function (row) {
+      var sv = sensor24(hourIndex(row.r.datetime_myt));
+      if (!sv && !row.now) return;
+      var m = methods(row.r, s.stations, s.rule.min_stations);
+      if (!m) return;
+      var tr = el("tr", row.now ? { "class": "now" } : {});
+      tr.appendChild(el("td", {}, row.label));
+      var near = null;
+      if (sv) {   // methods ranked by distance to the sensor
+        near = ["official", "pm", "three"].map(function (k) { return { k: k, d: Math.abs(m[k] - sv.v) }; })
+          .sort(function (a, b) { return a.d - b.d; });
+      }
+      ["official", "pm", "three"].forEach(function (k) {
+        tr.appendChild(cell(m[k], sv ? (m[k] - sv.v >= 0 ? "+" : "") + (m[k] - sv.v) + " vs sensor" : "", ""));
+      });
+      tr.appendChild(cell(sv ? sv.v : null, sv ? sv.n + " of 24 hours" : "under 18 hours", ""));
+      tb.appendChild(tr);
+      shown++;
+      if (row.now && near) closest = near;
+    });
+    var names = { official: "the official average", pm: "the PM2.5 method", three: "the three-station average" };
+    var days = Object.keys(sen).length / 24, said = "";
+    if (closest) {
+      // Within 3 points counts as a tie: the sensor is not that exact.
+      var tied = closest.filter(function (x) { return x.d - closest[0].d < 3; }).map(function (x) { return names[x.k]; });
+      said = "Right now the sensor is " + (tied.length > 1 ? "about equally close to " + tied.join(" and ")
+        : "closest to " + tied[0]) + ". ";
+    }
+    $("sensorNote").textContent = said +
+      "The sensor has about " + (Math.round(days * 10) / 10) + " days of data. " +
+      "One or two weeks, with some haze days and some clear days, are needed before a conclusion.";
+  }
+
+  var bust = "?t=" + Math.floor(Date.now() / 300000);
+  Promise.all([
+    fetch("data/status.json" + bust).then(function (r) { return r.json(); }),
+    fetch("data/hourly.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; }),
+    fetch("data/sensor.csv" + bust).then(function (r) { return r.ok ? r.text() : ""; })
+  ]).then(function (res) {
+    drawDays(res[0]);
+    drawSensor(res[0], res[1], res[2]);
+  }).catch(function () {
+    $("days").textContent = "Could not load the data.";
+  });
+})();
+</script>
+</body>
+</html>
