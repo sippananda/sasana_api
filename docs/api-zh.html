@@ -275,7 +275,58 @@
 <li><strong>其他地方的官方做法。</strong> 新加坡国家环境局的说法是：即时活动参考 1 小时 PM2.5，次日计划参考 24 小时 PSI 预报。美国的官方地图以 NowCast 显示“现在”的数字。</li>
 <li><strong>学者的看法。</strong> 双威大学的 Fatimah Ahamad 博士在接受 SAYS 访问时表示，较长的平均时间能反映累积的健康风险，但在烟霾突然加重时，可能掩盖正在形成的烟霾<span class="cite">[<a href="#ref-4">4</a>]</span>。</li>
 <li><strong>外国 App 的数字与 API 不能直接比较。</strong> 环境局在 2026 年 10 月说明，两者的标准、平均时间和更新时间都不同<span class="cite">[<a href="#ref-5">5</a>]</span>。</li>
+<li><strong>换算表各段的敏感度不同。</strong> 按 2026 年 10 月版本，API 101–150 这一段很陡：PM2.5 只要变化约 5 微克/立方米，API 就会在 100 和 150 之间移动。上升和下降都一样，所以在这一段，小变化看起来像大变化。API 151–200 这一段则很平：PM2.5 从 60 升到 110，几乎翻倍，API 只从约 153 升到 179，所以严重烟霾时的变化看起来较小。例如 10 月 16 日傍晚，瓜拉雪兰莪站 4 小时内从 152 降到 99，按换算表反推，PM2.5 只从约 57 降到约 50。</li>
+<li><strong>与旧版本相比，新版本较早触发界线。</strong> 在 PM2.5 约 50 至 150 微克/立方米之间，2026 年 10 月版本算出的 API 都比 2021 年 9 月版本高。按新版本，学校的 150 界线相当于 PM2.5 24 小时平均约 55 微克/立方米，180 界线约 112 微克/立方米；按旧版本则分别约 113 和 135。</li>
+<li><strong>与健康标准的对照。</strong> 世界卫生组织没有类似 API 的指数，而是订出 PM2.5 浓度的指引值：24 小时平均 15 微克/立方米，年平均 5 微克/立方米，另有四级过渡目标<span class="cite">[<a href="#ref-13">13</a>]</span>。马来西亚 2020 年的环境空气质量标准是 24 小时平均 35 微克/立方米<span class="cite">[<a href="#ref-14">14</a>]</span>。按 2026 年 10 月版本，API 100（“中等”的上限）相当于 50.4 微克/立方米，高于马来西亚本身的 2020 年标准，也高于世界卫生组织的指引值（表 4）。</li>
 </ul>
+<p class="tcap"><b>表 4</b>　PM2.5 24 小时平均的参考数值（微克/立方米）</p>
+
+<div class="tw"><table>
+<thead>
+<tr>
+<th>参考数值</th>
+<th>PM2.5 24 小时平均</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>世界卫生组织指引值（2021）</td>
+<td>15</td>
+</tr>
+<tr>
+<td>世界卫生组织过渡目标 4</td>
+<td>25</td>
+</tr>
+<tr>
+<td>马来西亚环境空气质量标准（2020）</td>
+<td>35</td>
+</tr>
+<tr>
+<td>世界卫生组织过渡目标 3</td>
+<td>37.5</td>
+</tr>
+<tr>
+<td>世界卫生组织过渡目标 2；马来西亚过渡目标（2018）</td>
+<td>50</td>
+</tr>
+<tr>
+<td>API 100（2026 年 10 月版本）</td>
+<td>50.4</td>
+</tr>
+<tr>
+<td>API 150，学校界线（2026 年 10 月版本）</td>
+<td>55.4</td>
+</tr>
+<tr>
+<td>世界卫生组织过渡目标 1；马来西亚过渡目标（2015）</td>
+<td>75</td>
+</tr>
+<tr>
+<td>API 180，学校界线（2026 年 10 月版本）</td>
+<td>约 112</td>
+</tr>
+</tbody>
+</table></div>
 
 <h2>8 实时 PM2.5 从哪里来</h2>
 <p>API 有滞后，而环境局不公布每小时 PM2.5 浓度。要看到较即时的空气情况，有两个途径。</p>
@@ -294,7 +345,7 @@
 </ul>
 <h3>8.2 在学校设置传感器</h3>
 <p>学校也可以考虑在校园内设置自己的传感器。这样量到的就是学校本身的空气，数据也由学校掌握。</p>
-<p class="tcap"><b>表 4</b>　可用于学校的低成本传感器（例子）</p>
+<p class="tcap"><b>表 5</b>　可用于学校的低成本传感器（例子）</p>
 
 <div class="tw"><table>
 <thead>
@@ -364,6 +415,8 @@
 <li id="ref-10">传感器：<a href="https://aqicn.org/gaia/a08">GAIA A08（aqicn.org）</a>；<a href="https://telescopescanada.ca/products/airgradient-open-air-award-winning-outdoor-monitor-outdoor-air-quality-monitor">AirGradient Open Air（加拿大商店页面）</a>；<a href="https://www.aqmd.gov/aq-spec/sensordetail/purpleair-pa-ii-flex">PurpleAir PA-II Flex（南加州空气质量管理局 AQ-SPEC）</a></li>
 <li id="ref-11">24 小时滚动平均的滞后：<a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee 等，2023（曼谷研究）</a></li>
 <li id="ref-12">学校监测数据：<a href="https://sippananda.github.io/sasana_api/">Sasana 烟霾监测页</a>（环境局每小时 API）</li>
+<li id="ref-13">世界卫生组织空气质量指引（2021）：<a href="https://www.airclim.org/who-air-quality-guidelines">AirClim 摘要</a></li>
+<li id="ref-14">马来西亚环境局：<a href="https://www.greenpeace.org/static/planet4-thailand-stateless/2019/03/93bbcf82-93bbcf82-air-quality-standard-bi.pdf">新马来西亚环境空气质量标准（Greenpeace 存档副本）</a></li>
 </ol>
 
 <h2>附录 A　PM2.5 换算成分指数的公式</h2>
@@ -376,7 +429,7 @@
 <li>I_low、I_high：该段对应的指数下限和上限</li>
 </ul>
 <p>环境局先后发布了两份官方文件：2021 年 9 月版本放在环境局网站，2026 年 10 月 14 日的版本放在 APIMS 网站。两者的 PM2.5 分段不一样<span class="cite">[<a href="#ref-1">1</a>, <a href="#ref-2">2</a>]</span>，分歧在 API 100 至 200 之间，正好是烟霾时最常见的范围：</p>
-<p class="tcap"><b>表 5</b>　两份环境局 PM2.5 换算表的分段（微克/立方米）</p>
+<p class="tcap"><b>表 6</b>　两份环境局 PM2.5 换算表的分段（微克/立方米）</p>
 
 <div class="tw"><table>
 <thead>
