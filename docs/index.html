@@ -220,6 +220,8 @@
   td.open { color: var(--open); font-weight: 600; }
   td.high { color: var(--high); font-weight: 600; }
   tr.muted td { color: var(--ink-3); }
+  th.ref, td.ref { color: var(--ink-3); }
+  td.ref.differs { color: var(--ink-2); font-weight: 600; }
   ul { margin: 0 0 10px; padding-left: 20px; }
   li { margin-bottom: 4px; }
   a { color: #0b57d0; }
@@ -296,6 +298,11 @@
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
       this day means for the following day. School is always closed on weekends and holidays.</p>
+    <p class="small" style="margin-top:8px"><b>PM2.5 method (for reference only):</b> another way to average the four
+      stations. Each station's API is turned back into PM2.5 with the DOE table (January 2025 version). The four
+      PM2.5 values are averaged, and the average is turned into an API number again. This column does not decide
+      school closure. It assumes that PM2.5 sets the API, which is true in haze.
+      <b>*</b> = this method falls on the other side of 150 or 180 than the official average.</p>
     <p class="small" style="margin-top:8px">Download:
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
   </section>
@@ -638,12 +645,38 @@
   }
 
   // ------------------------------------------------------------ table
+  // Reference only: average of PM2.5 instead of API. Each station's API is turned back into PM2.5 with the
+  // DOE table (January 2025 version), the PM2.5 values are averaged, and the mean is turned into API again.
+  var DOE = [[0,0],[12.0,50],[12.1,51],[50.4,100],[50.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
+             [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
+  function interp(v, pts, xi, yi) {
+    for (var i = 1; i < pts.length; i++) {
+      if (v <= pts[i][xi]) {
+        var a = pts[i - 1], b = pts[i];
+        return a[yi] + (b[yi] - a[yi]) * (v - a[xi]) / (b[xi] - a[xi]);
+      }
+    }
+    var p = pts[pts.length - 2], q = pts[pts.length - 1];
+    return q[yi] + (q[yi] - p[yi]) * (v - q[xi]) / (q[xi] - p[xi]);
+  }
+  function pmAverageApi(d, stations) {
+    var pm = [];
+    stations.forEach(function (x) {
+      var v = d.values[x.id];
+      if (v !== null && v !== undefined) pm.push(interp(Math.max(0, v), DOE, 1, 0));
+    });
+    if (!pm.length || d.average === null) return null;
+    var mean = pm.reduce(function (a, b) { return a + b; }, 0) / pm.length;
+    return Math.floor(interp(mean, DOE, 0, 1) + 0.5);       // rounded like the official average
+  }
+  function band(v, rule) { return v >= rule.close_from_single_day ? 2 : v >= rule.close_from_streak ? 1 : 0; }
+
   function drawTable(s) {
     var tb = $("daily"); tb.textContent = "";
     var head = el("tr");
-    ["Date", "Average", "School that day", "Decision for the next day"].concat(
+    ["Date", "Average", "PM2.5 method (ref.)", "School that day", "Decision for the next day"].concat(
       s.stations.map(function (x) { return x.short; })).forEach(function (h, i) {
-      head.appendChild(el("th", i === 2 || i === 3 ? { "class": "l" } : {}, h));
+      head.appendChild(el("th", i === 3 || i === 4 ? { "class": "l" } : i === 2 ? { "class": "ref" } : {}, h));
     });
     tb.appendChild(head);
     // School is always closed on a weekend or a holiday, whatever the rule says.
@@ -653,6 +686,9 @@
       var tr = el("tr", d.reason === "before_start" ? { "class": "muted" } : {});
       tr.appendChild(el("td", {}, dayLabel(parse(d.date))));
       tr.appendChild(el("td", { "class": "strong" }, d.average === null ? "no data" : num(d.average)));
+      var pa = pmAverageApi(d, s.stations);
+      var differs = pa !== null && band(pa, s.rule) !== band(d.average, s.rule);
+      tr.appendChild(el("td", { "class": "ref" + (differs ? " differs" : "") }, pa === null ? "–" : pa + (differs ? " *" : "")));
       var noSchool = d.school_day === false;
       tr.appendChild(el("td", { "class": "l " + (noSchool ? "" : d.school_status || "") },
         noSchool ? off(d.no_school_reason)
