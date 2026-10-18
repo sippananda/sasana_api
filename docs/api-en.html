@@ -27,6 +27,7 @@
   .abstract { margin: 0 0 28px; padding: 14px 24px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: .95rem; }
   .abstract h2 { font-size: .95rem; text-align: center; margin: 0 0 6px; letter-spacing: .08em; }
   .abstract p { margin: 0; }
+  .abstract p.notice { margin-top: 10px; color: #c62828; font-weight: 700; }
   h2 { font-size: 1.2rem; margin: 34px 0 10px; font-weight: 700; }
   h3 { font-size: 1.02rem; margin: 22px 0 6px; font-weight: 700; font-style: italic; }
   p { margin: 0 0 12px; text-align: justify; }
@@ -58,7 +59,7 @@
     <p class="byline">A parent with AI assistant · 18 October 2026</p>
   </header>
 
-<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, and compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong.</p></div>
+<div class="abstract"><h2>Abstract</h2><p>Malaysia's Air Pollutant Index (API) describes the average air quality over the preceding 24 hours rather than the air at the present moment. As a result, the index rises slowly when haze arrives and falls equally slowly after the haze has cleared. This article explains how the API is calculated, examines the delay introduced by the 24-hour average using hourly readings from four stations near the school, and compares the Malaysian approach with those of Singapore, the United States, China and Hong Kong.</p><p class="notice">This article is a personal compilation, provided for information only. The author writes as an individual parent. It does not represent the position of the school and does not constitute health advice.</p></div>
 
 <h2>Introduction</h2>
 <p>Many parents will recognise the following situation. The sky is grey and the air smells of smoke, yet the official API still reads "Moderate". At the same moment, a foreign air-quality app may well report "Unhealthy". The question is which of the two numbers is correct.</p>
@@ -177,7 +178,7 @@
 <ul>
 <li>At 2:00 pm on 17 October, the average API of the four stations was 150. This figure represents the air from 3:00 pm on 16 October to 2:00 pm on 17 October, not only the air at 2:00 pm.</li>
 <li>At 10:00 am on 18 October, the average was still 139, only 11 points below the previous afternoon. Even when the air improves, the index declines slowly.</li>
-<li><strong>An exception:</strong> under the formula published on the APIMS website, the entire range from API 101 to 150 corresponds to only about 5 µg/m³ of PM2.5, so the API can change very quickly within this range. Between 4:00 pm and 8:00 pm on 16 October, the Kuala Selangor station fell from 152 to 99. Given the school's threshold of 150, a very small change in air quality can determine the outcome.</li>
+<li><strong>An exception:</strong> under the formula published on the APIMS website, the entire range from API 101 to 150 corresponds to only about 5 µg/m³ of PM2.5, so the API can change very quickly within this range. Between 4:00 pm and 8:00 pm on 16 October, the Kuala Selangor station fell from 152 to 99. Near 150, a very small change in concentration is enough to move the API across that value.</li>
 </ul>
 <h3>Hourly readings at the four stations</h3>
 <p>The figure below shows all hourly API readings at the four stations from the evening of 8 October to 11:00 am on 18 October. The light blue band marks the range from API 100 to 150.</p>
@@ -248,14 +249,22 @@
 </ul>
 <p>In 2023, the Malaysian researchers Varkkey and Ashfold argued that the DOE could publish hourly PM2.5 data without new equipment, as this would only require the release of data that already exist.</p>
 
-<h2>6. Interpreting the numbers: guidance for parents</h2>
-<p>The API is well suited to decisions such as whether school should open the next day. For decisions about immediate outdoor activity, several further indicators are helpful.</p>
+<h2>6. Discussion</h2>
 <ul>
-<li><strong>Consider the trend, not only the value.</strong> Compare the API over the last few hours. A steady rise indicates that air quality is deteriorating and that the actual conditions may already be worse than the index suggests. A steady fall indicates that the air has probably been improving for some time.</li>
-<li><strong>Take account of what you can see and smell.</strong> Dr Fatimah Ahamad of Sunway University advises that, once smoke can be smelled, the precautions for "Unhealthy" should be followed, regardless of the official category.</li>
-<li><strong>Do not compare foreign apps directly with the API.</strong> Many use the US scale, and some display a 1-hour value. In October 2026 the DOE itself explained that the scales, averaging periods and update intervals differ.</li>
-<li><strong>Treat low-cost sensors as indicative only.</strong> They reflect conditions near the home, but their accuracy declines unless they are calibrated regularly.</li>
-<li><strong>For school closures, follow the school's notice.</strong> The school bases its decision on the official API at 2:00 pm, which is reasonable because the 24-hour average is stable.</li>
+<li><strong>The two kinds of figure answer different questions.</strong> The 24-hour average reflects cumulative exposure over the past day and can be compared with health standards defined over 24 hours; the hourly figure reflects the air at the present moment.</li>
+<li><strong>The difference between them is greatest when air quality changes rapidly.</strong> When haze first arrives, the 24-hour average understates current conditions; just after the haze clears, it overstates them (see Figure 1). In stable conditions the two are similar.</li>
+<li><strong>Official practice elsewhere.</strong> Singapore's National Environment Agency advises using the 1-hour PM2.5 reading for immediate activities and the 24-hour PSI forecast for planning the next day. Official maps in the United States show the NowCast as the current value.</li>
+<li><strong>Academic views.</strong> Dr Fatimah Ahamad of Sunway University told SAYS that a longer averaging period reflects cumulative health risk, but may mask a haze episode that is still developing.</li>
+<li><strong>Figures from foreign apps cannot be compared directly with the API.</strong> In October 2026 the DOE explained that the scales, averaging periods and update intervals differ.</li>
+</ul>
+
+<h2>7. Limitations</h2>
+<ul>
+<li>The data cover only 8 to 18 October 2026, about ten days, at four monitoring stations.</li>
+<li>The DOE publishes only the API and not hourly PM2.5 concentrations. All concentrations mentioned in this article are derived from the API using the conversion table.</li>
+<li>Two conversion tables are available online, and the DOE has not confirmed which is currently in use. The data checks in this article favour the version on the APIMS website.</li>
+<li>The link between the Kuala Selangor readings and sea breezes is a conjecture that has not been verified against wind data.</li>
+<li>The author is not an air-quality specialist. In case of any discrepancy, the DOE's information takes precedence.</li>
 </ul>
 
 <h2>Conclusion</h2>
