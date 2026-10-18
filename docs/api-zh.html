@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>马来西亚 API 是怎样算出来的？ – Sasana 烟霾监测</title>
+<meta name="description" content="马来西亚空气污染指数（API）的计算方法、24 小时平均带来的滞后，以及与新加坡、美国、中国和香港的对比。">
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #111111; --ink-2: #555555; --ink-3: #74746f;
+    --rule: #d9d9d3; --page: #e9e9e4; --surface: #fafaf8; --tile: #f0f0ec; --edge: #d6d6d0;
+    --shadow: 0 1px 2px rgba(17,17,17,.05), 0 6px 18px rgba(17,17,17,.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    /* No "system-ui": on some Android phones it drops letters. See index.html. */
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
+  header { padding: 0 4px; }
+  .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .92rem; }
+  .top a { color: var(--ink-2); }
+  .lang { padding: 2px 12px; border: 1px solid var(--edge); border-radius: 14px; background: var(--surface); text-decoration: none; }
+  h1 { font-size: 1.6rem; line-height: 1.25; margin: 14px 0 0; letter-spacing: -.015em; text-wrap: balance; }
+  .sub { color: var(--ink-2); margin: 6px 0 0; font-size: .92rem; }
+  section {
+    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
+    box-shadow: var(--shadow); margin-top: 16px; padding: 18px 20px 20px;
+  }
+  section > :last-child { margin-bottom: 0; }
+  section.lead p:first-child { font-weight: 600; }
+  section.appendix { background: var(--tile); }
+  h2 { font-size: 1.15rem; margin: 0 0 12px; }
+  h3 { font-size: 1rem; margin: 18px 0 6px; }
+  p { margin: 0 0 10px; }
+  ul, ol { margin: 0 0 10px; padding-left: 1.3em; }
+  li { margin: 3px 0; }
+  a { color: #1f5fbf; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: .9rem; display: block; overflow-x: auto; }
+  th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
+  th { background: #ececE7; font-weight: 600; }
+  figure { margin: 8px 0 14px; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 8px; background: #fff; }
+  figcaption { font-size: .85rem; color: var(--ink-2); margin-top: 6px; }
+  .formula {
+    font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.05rem;
+    background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px; overflow-x: auto;
+  }
+  footer { margin: 22px 4px 0; font-size: .85rem; color: var(--ink-2); }
+  @media (max-width: 480px) { section { padding: 16px 14px 16px; } h1 { font-size: 1.4rem; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="top"><a href="index.html">← 返回烟霾页面</a><a class="lang" href="api-en.html" lang="en">English</a></div>
+    <h1>马来西亚 API 是怎样算出来的？</h1>
+    <p class="sub">2026 年 10 月 18 日</p>
+  </header>
+
+<section class="lead"><p>马来西亚的 API 看的是过去 24 小时的平均空气，不是此刻的空气。所以烟霾来时，API 升得慢；烟霾走后，API 降得也慢。</p>
+<p>很多家长有过这样的经历：窗外很灰，闻到烟味，但 API 还显示“中等”。打开外国的空气 App，同一时间却显示“不健康”。哪个数字是对的？</p>
+<p>两个数字都可能没有错。它们只是在回答不同的问题。本文用简单的话说明三件事：</p>
+<ul>
+<li>API 是怎样算出来的；</li>
+<li>为什么 24 小时平均会“慢半拍”；</li>
+<li>新加坡、美国、中国和香港怎样处理同一个问题。</li>
+</ul></section>
+
+<section>
+<h2>一、API 是什么</h2>
+<p>API 是“空气污染指数”（Air Pollutant Index），由马来西亚环境局（DOE）公布。它把空气里的污染物换算成一个没有单位的数字。数字越大，空气越差。</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>状态</th>
+<th>环境局的健康建议（简化）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–50</td>
+<td>良好</td>
+<td>户外活动不受限制</td>
+</tr>
+<tr>
+<td>51–100</td>
+<td>中等</td>
+<td>户外活动不受限制</td>
+</tr>
+<tr>
+<td>101–200</td>
+<td>不健康</td>
+<td>老人、孕妇、儿童和心肺病患者减少户外活动</td>
+</tr>
+<tr>
+<td>201–300</td>
+<td>非常不健康</td>
+<td>高风险人群留在室内</td>
+</tr>
+<tr>
+<td>301 以上</td>
+<td>危险</td>
+<td>公众避免户外活动</td>
+</tr>
+</tbody>
+</table>
+<p>环境局在全国有 68 个监测站，每小时更新一次 API。官方的查看渠道是 APIMS 网站和 MyJAS EQMS 手机 App。</p>
+</section>
+
+<section>
+<h2>二、API 怎样计算</h2>
+<p>API 等于六种污染物“分指数”中最高的一个。环境局的官方计算文件分三步说明：</p>
+<ol>
+<li><strong>测量六种污染物。</strong> 它们是 PM2.5、PM10、臭氧、一氧化碳、二氧化氮和二氧化硫。</li>
+<li><strong>按各自的时间求平均。</strong> 每种污染物的平均时间不同，因为人体能承受的接触时间不同。</li>
+<li><strong>换算成分指数，再取最高值。</strong> 每个平均浓度用一条公式换算成 0 至 500 的分指数。最高的分指数就是该站的 API。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>污染物</th>
+<th>平均时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PM2.5（细悬浮微粒）</td>
+<td>24 小时</td>
+</tr>
+<tr>
+<td>PM10（可吸入悬浮微粒）</td>
+<td>24 小时</td>
+</tr>
+<tr>
+<td>臭氧</td>
+<td>8 小时，也看 1 小时</td>
+</tr>
+<tr>
+<td>一氧化碳</td>
+<td>8 小时</td>
+</tr>
+<tr>
+<td>二氧化氮</td>
+<td>1 小时</td>
+</tr>
+<tr>
+<td>二氧化硫</td>
+<td>1 小时</td>
+</tr>
+</tbody>
+</table>
+<p>举例：某站 PM2.5 的分指数是 152，臭氧是 40，其他更低。那么该站 API 就是 152，主要污染物是 PM2.5。</p>
+<p>环境局的文件也说明，在马来西亚，API 大多数时候由微粒决定，烟霾期间尤其如此。PM2.5 从 2017 年起列入计算（文件的写法），新闻多以 2018 年 8 月为对外公布的开始。换算公式放在本文附录。</p>
+</section>
+
+<section>
+<h2>三、公布了什么，没有公布什么</h2>
+<p>环境局公布每站每小时的 API 和主要污染物，也公布了换算公式；但公众看不到每小时的 PM2.5 浓度。</p>
+<ul>
+<li><strong>公布了：</strong> 每小时的 API 数字、状态和主要污染物。</li>
+<li><strong>公布了：</strong> PM2.5 等污染物换算成 API 的公式。环境局网站上有官方的《API 计算》文件，用马来文和英文写成。</li>
+<li><strong>没有公布：</strong> 每小时的 PM2.5 浓度（单位：微克/立方米）。马来亚大学的 Helena Varkkey 副教授指出，政府手上有每小时数据，只是没有对外公布。</li>
+</ul>
+<p>所以，一般公众只能看到 24 小时平均后的 API。看不到“这一个小时”的空气有多差。</p>
+<p><strong>一个需要注意的地方：</strong> 网上有两份官方《API 计算》文件，PM2.5 的换算数字不一样（见附录）。哪一份是现在系统使用的，环境局没有说明。这不影响本文的主要结论：24 小时平均会带来滞后。</p>
+</section>
+
+<section>
+<h2>四、为什么 24 小时平均会“慢半拍”</h2>
+<p>24 小时滚动平均每小时只换掉二十四分之一的数据。所以烟霾来了，要约一天才完全反映；烟霾走了，也要约一天才消失。</p>
+<ul>
+<li>每过一小时，平均值加入最新的一小时，去掉 24 小时前的一小时。</li>
+<li>最新的一小时只占平均值的二十四分之一。</li>
+<li>所以 API 的高峰比实际高峰来得晚，也比实际高峰低。一项用曼谷数据的研究发现，这种平均比每小时数据晚约 10 至 13 小时。</li>
+</ul>
+<figure><img src="img/api_lag_zh.png" alt="示意图：24 小时滚动平均比每小时浓度慢约一天" loading="lazy"><figcaption>示意数据，不是真实测量。24 小时平均和 NowCast 按公开公式计算。</figcaption></figure>
+
+<p>烟霾到达后，美国的 NowCast 几小时内就升高。24 小时平均却要到烟霾散去时才升到最高，之后又要一整天才降回来。</p>
+<h3>学校监测数据中的例子</h3>
+<ul>
+<li>10 月 17 日下午 2 时，四站平均 API 是 150。这个数字代表 16 日下午 3 时至 17 日下午 2 时的空气，不只是 17 日下午的空气。</li>
+<li>到 18 日早上 10 时，平均还有 139，只比前一天下午低 11 点。空气即使已经好转，数字也是慢慢下降。</li>
+<li><strong>例外：</strong> 按 APIMS 网站版本的公式，API 101 至 150 只对应约 5 微克/立方米的浓度差。所以 API 在这一段可以变得很快。例如 10 月 16 日下午 4 时至晚上 8 时，瓜拉雪兰莪站从 152 降到 99。对学校的 150 界线来说，一点点浓度变化就可能改变结果。</li>
+</ul>
+</section>
+
+<section>
+<h2>五、其他地方怎样做</h2>
+<p>新加坡、美国、中国和香港也用 24 小时或较长的平均来评估健康风险，但都另外给公众一个“较即时”的数字。马来西亚是这五个地方中唯一只给一个 24 小时数字的。</p>
+<table>
+<thead>
+<tr>
+<th>地方</th>
+<th>主要指数</th>
+<th>主要指数的平均时间</th>
+<th>较即时的数字</th>
+<th>政府建议的用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>马来西亚</td>
+<td>API</td>
+<td>PM2.5：24 小时滚动平均</td>
+<td>没有</td>
+<td>只看 API</td>
+</tr>
+<tr>
+<td>新加坡</td>
+<td>PSI</td>
+<td>24 小时</td>
+<td>1 小时 PM2.5 浓度，分四级（正常、偏高、高、非常高），2016 年起分级</td>
+<td>马上要做的活动看 1 小时 PM2.5；计划明天的活动看 24 小时 PSI 预报</td>
+</tr>
+<tr>
+<td>美国</td>
+<td>AQI</td>
+<td>每日 AQI：当天零时至午夜的 24 小时平均</td>
+<td>NowCast：过去 12 小时的加权平均；空气变化快时，接近 3 小时平均</td>
+<td>官方地图和 App 显示的“现在”就是 NowCast</td>
+</tr>
+<tr>
+<td>中国</td>
+<td>AQI</td>
+<td>日报：24 小时平均</td>
+<td>实时报每小时公布 PM2.5 的 1 小时浓度和 24 小时平均浓度</td>
+<td>日报看全天，实时报看现在</td>
+</tr>
+<tr>
+<td>香港</td>
+<td>AQHI（1 至 10+）</td>
+<td>3 小时移动平均，四种污染物的健康风险相加</td>
+<td>指数本身就是 3 小时；另外每小时公布 PM2.5 浓度（2012 年起）</td>
+<td>按健康风险级别调整活动</td>
+</tr>
+</tbody>
+</table>
+<p>几个重点：</p>
+<ul>
+<li><strong>新加坡</strong>的做法和马来西亚最接近，但多了一个 1 小时 PM2.5。新马两地常被拿来比较，其实比较时要先看清楚是 1 小时还是 24 小时的数字。</li>
+<li><strong>美国</strong>的 NowCast 是一个折中：在空气稳定时像 12 小时平均，在空气变化快时像 3 小时平均。美国环境保护局的例子是：一小时的高峰过后，NowCast 每过一小时减半；同一天的 24 小时平均只剩高峰的二十四分之一。</li>
+<li><strong>香港</strong>在 2013 年底改用 AQHI，直接用 3 小时平均，所以反应最快。</li>
+</ul>
+<p>马来西亚学者 Varkkey 和 Ashfold 在 2023 年建议：公布每小时 PM2.5 不需要新的设备，只是把已有的数据公开。</p>
+</section>
+
+<section>
+<h2>六、家长怎样看数字</h2>
+<p>API 适合做“明天上不上课”这类决定；“现在能不能出门”要多看几样东西。</p>
+<ul>
+<li><strong>看方向，不只看数字。</strong> 比较最近几个小时的 API。连续上升，说明空气正在变差，而且实际情况可能比数字更差。连续下降，说明空气已经好转了一段时间。</li>
+<li><strong>相信自己的感觉。</strong> 双威大学的 Fatimah Ahamad 博士建议：已经闻到烟味，就按“不健康”的建议做防护，不要只看“中等”。</li>
+<li><strong>外国 App 的数字不能直接比。</strong> 它们常用美国的标准，有的显示 1 小时数字。环境局在 2026 年 10 月也说明，两者的标准、平均时间和更新时间都不同。</li>
+<li><strong>低成本传感器只作参考。</strong> 它能反映住家附近的情况，但需要定期校准，否则会越来越不准。</li>
+<li><strong>学校的决定以学校通知为准。</strong> 学校按下午 2 时的官方 API 做决定，这是合理的，因为 24 小时平均较稳定。</li>
+</ul>
+</section>
+
+<section>
+<h2>结论</h2>
+<ul>
+<li>API 是六种污染物分指数中的最高值；烟霾时通常由 PM2.5 决定。</li>
+<li>PM2.5 用 24 小时滚动平均，所以 API 比实际空气慢大约半天，峰值被压低。</li>
+<li>环境局公布了换算公式，但没有公布每小时的 PM2.5 浓度。</li>
+<li>新加坡、美国、中国和香港都另外给公众一个较即时的数字。马来西亚若同时公布每小时 PM2.5，家长就能更快做判断。</li>
+</ul>
+</section>
+
+<section class="appendix">
+<h2>附录一：PM2.5 换算成分指数的公式</h2>
+<p>每个分指数都用同一种“分段直线”公式。先找出浓度落在哪一段，再按比例换算：</p>
+<p class="formula">SI = (I<sub>high</sub> − I<sub>low</sub>) ÷ (C<sub>high</sub> − C<sub>low</sub>) × (C − C<sub>low</sub>) + I<sub>low</sub></p>
+
+<ul>
+<li>C：PM2.5 的 24 小时平均浓度（微克/立方米）</li>
+<li>C_low、C_high：该段的浓度下限和上限</li>
+<li>I_low、I_high：该段对应的指数下限和上限</li>
+</ul>
+<p>网上有两份环境局的官方文件，PM2.5 的分段不一样。分歧在 API 100 至 200 之间，正好是烟霾时最常见的范围：</p>
+<table>
+<thead>
+<tr>
+<th>API 分段</th>
+<th>APIMS 网站版本（微克/立方米）</th>
+<th>环境局网站 2021 年版本（微克/立方米）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–50</td>
+<td>0–12.0</td>
+<td>0–12.0</td>
+</tr>
+<tr>
+<td>51–100</td>
+<td>12.1–50.4</td>
+<td>12.1–75.5</td>
+</tr>
+<tr>
+<td>101–150</td>
+<td>50.5–55.4</td>
+<td>75.5–150.4（101–200 为一段）</td>
+</tr>
+<tr>
+<td>151–200</td>
+<td>55.5–150.4</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>201–300</td>
+<td>150.5–250.4</td>
+<td>150.5–250.4</td>
+</tr>
+<tr>
+<td>301–400</td>
+<td>250.5–350.4</td>
+<td>250.5–350.4</td>
+</tr>
+<tr>
+<td>401–500</td>
+<td>350.5–500.4</td>
+<td>350.5–500.4</td>
+</tr>
+</tbody>
+</table>
+<figure><img src="img/api_slopes_zh.png" alt="两份 PM2.5 换算表的斜率对比" loading="lazy"><figcaption>两份环境局官方换算表，按同一比例画出。</figcaption></figure>
+
+<p>斜率表示 PM2.5 每增加 1 微克/立方米，API 增加多少点。APIMS 版本在 API 101–150 最陡（斜率 10），在 151–200 最平（斜率 0.52）；2021 年版本在 100 以上只有一段，斜率 1.32。</p>
+<p>例子：PM2.5 的 24 小时平均是 100 微克/立方米。</p>
+<ul>
+<li>按 APIMS 网站版本：SI = 49 ÷ 94.9 × (100 − 55.5) + 151 ≈ 174</li>
+<li>按 2021 年版本：SI = 99 ÷ 74.9 × (100 − 75.5) + 101 ≈ 133</li>
+</ul>
+<p>同一个浓度，相差约 40 点。哪一份是现在使用的，有待环境局确认。</p>
+</section>
+
+<section class="appendix">
+<h2>附录二：名词解释</h2>
+<ul>
+<li><strong>PM2.5：</strong> 直径 2.5 微米或以下的悬浮微粒，能深入肺部。烟霾的主要成分。</li>
+<li><strong>分指数：</strong> 一种污染物的平均浓度换算出来的指数。</li>
+<li><strong>滚动平均：</strong> 每小时重新计算一次，总是取最近 24 个小时。</li>
+<li><strong>NowCast：</strong> 美国用的“现在”估计值，对最近几小时给更大的比重。</li>
+<li><strong>滞后：</strong> 指数的变化比实际空气的变化来得晚。</li>
+</ul>
+</section>
+
+<section class="appendix">
+<h2>资料来源</h2>
+<ul>
+<li>马来西亚环境局：<a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">API 计算（APIMS 网站版本）</a></li>
+<li>马来西亚环境局：<a href="https://www.doe.gov.my/wp-content/uploads/2021/09/API_Calculation.pdf">API 计算（2021 年版本）</a></li>
+<li>马来西亚环境局：<a href="https://www.doe.gov.my/en/2021/10/26/english-air-pollutant-index-api-2/">Air Pollutant Index (API) 说明页</a></li>
+<li>SAYS（2026 年 8 月 28 日）：<a href="https://says.com/my/news/aqi-api-explaining-malaysias-air-quality-confusion">Malaysia Once Made CNN Apologise For Its Haze Coverage</a>（Varkkey、Fatimah 的看法）</li>
+<li>Malay Mail（2026 年 10 月 8 日）：<a href="https://www.malaymail.com/news/malaysia/2026/10/08/hazy-math-doe-explains-why-your-aqi-says-250-when-the-official-api-is-175/238237">DoE explains why your AQI says 250 when the official API is 175</a></li>
+<li>新加坡国家环境局：<a href="https://www.nea.gov.sg/media/news/advisories/index/haze-situation-update-18-september-2019">Haze Situation Update（2019 年 9 月 18 日）</a>；<a href="https://www.nea.gov.sg/media/news/advisories/haze-situation-update-(30-october-2016)">1 小时 PM2.5 分级的引入（2016 年 10 月 30 日）</a></li>
+<li>美国环境保护局：<a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast 说明</a>；AirNow：<a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>；<a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast 例子（维基百科）</a></li>
+<li>中国生态环境部：<a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 环境空气质量指数（AQI）技术规定</a></li>
+<li>香港特区政府：<a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">空气质素健康指数说明</a>；<a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">2012 年起每小时公布 PM2.5</a></li>
+<li>24 小时滚动平均的滞后：<a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee 等，2023（曼谷研究）</a></li>
+<li>学校监测数据：<a href="https://sippananda.github.io/sasana_api/">Sasana 烟霾监测页</a>（环境局每小时 API）</li>
+</ul>
+</section>
+
+  <footer>
+    <p>本文由一位家长整理，不是学校或环境局的官方文件。</p>
+    <p><a href="index.html">← 返回烟霾页面</a></p>
+  </footer>
+</main>
+</body>
+</html>
