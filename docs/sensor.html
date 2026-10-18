@@ -100,13 +100,20 @@
 
   <section>
     <h2><span class="n">2</span>Over time</h2>
+    <p><b>Sensor, hourly</b></p>
+    <div class="legend">
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2"/><circle cx="13" cy="5" r="2.6" fill="#fff" stroke="var(--sensor)" stroke-width="1.5"/></svg>Sensor PM2.5, hourly (US AQI)</span>
+    </div>
+    <div class="chart" id="hourChart"></div>
+    <p class="small" id="hourNote"></p>
+
+    <p style="margin-top:18px"><b>Sensor 24-hour mean and the DOE 4-station average</b></p>
     <div class="legend">
       <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="#111" stroke-width="2.5"/></svg>DOE 4-station average (API)</span>
-      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="1.2" stroke-dasharray="2 2"/></svg>Sensor, hourly (US AQI)</span>
-      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor, 24-hour mean (US AQI)</span>
+      <span><svg width="26" height="10"><line x1="1" y1="5" x2="25" y2="5" stroke="var(--sensor)" stroke-width="2.5" stroke-dasharray="7 4"/></svg>Sensor PM2.5, 24-hour mean (US AQI)</span>
     </div>
-    <div class="chart" id="timeChart"></div>
-    <p class="small" id="timeNote"></p>
+    <div class="chart" id="meanChart"></div>
+    <p class="small" id="meanNote"></p>
   </section>
 
   <section>
@@ -316,57 +323,105 @@
     $("result").innerHTML = html;
   }
 
-  // ---------- chart: over time ----------
-  function drawTime(d) {
-    var box = $("timeChart");
+  // ---------- charts: over time ----------
+  // lines: [{src, attrs, dots}]; returns false when there is nothing to draw.
+  function drawLines(box, lines, start, end, label) {
     box.innerHTML = "";
-    var hours = Object.keys(d.doe).map(Number);
-    if (!d.senHours.length) { $("timeNote").textContent = "The chart starts when the sensor has data."; return; }
-    var end = Math.max(d.senHours[d.senHours.length - 1], Math.max.apply(null, hours));
-    var start = Math.max(d.senHours[0] - 24, end - 14 * 24);
     var W = Math.max(300, box.clientWidth), phone = W < 520;
-    var H = phone ? 230 : 280, L = 34, R = 10, T = 10, B = 26;
+    var H = phone ? 220 : 260, L = 34, R = 10, T = 10, B = 26;
     var vals = [];
-    for (var h = start; h <= end; h++) {
-      [d.doe[h], d.sen[h], d.mean24[h]].forEach(function (v) { if (v !== undefined) vals.push(v); });
-    }
-    var top = Math.max(100, Math.ceil(Math.max.apply(null, vals) / 50) * 50);
+    lines.forEach(function (ln) {
+      for (var h = start; h <= end; h++) if (ln.src[h] !== undefined) vals.push(ln.src[h]);
+    });
+    if (!vals.length) return false;
+    var lo = Math.max(0, Math.floor((Math.min.apply(null, vals) - 10) / 50) * 50);
+    var top = Math.max(lo + 50, Math.ceil((Math.max.apply(null, vals) + 5) / 50) * 50);
     var x = function (h) { return L + (W - L - R) * (h - start) / Math.max(1, end - start); };
-    var y = function (v) { return T + (H - T - B) * (1 - v / top); };
-    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "DOE average and sensor over time" }, box);
-    for (var g = 0; g <= top; g += 50) {
+    var y = function (v) { return T + (H - T - B) * (1 - (v - lo) / (top - lo)); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": label }, box);
+    var gstep = top - lo > 150 ? 50 : 25;
+    for (var g = lo; g <= top; g += gstep) {
       el("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "var(--grid)" }, svg);
       txt(svg, L - 5, y(g) + 4, g, "end");
     }
-    // day ticks at midnight
-    var span = (end - start) / 24, every = span > 10 ? 2 : 1;
-    for (var hh = Math.ceil(start / 24) * 24, i = 0; hh <= end; hh += 24, i++) {
-      el("line", { x1: x(hh), x2: x(hh), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
-      if (i % every === 0) {
-        var dd = new Date(hh * 3600000);
-        txt(svg, x(hh), H - 8, (phone ? "" : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dd.getUTCDay()] + " ") + dd.getUTCDate(), "middle");
+    var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var span = end - start;
+    if (span <= 48) {
+      // short record: a tick every 3 or 6 hours, day name at midnight
+      var step = span <= 24 ? 3 : 6;
+      for (var hh = Math.ceil(start / step) * step; hh <= end; hh += step) {
+        var dt = new Date(hh * 3600000), hr = dt.getUTCHours();
+        el("line", { x1: x(hh), x2: x(hh), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
+        var t = hr === 0 ? DAYS[dt.getUTCDay()] + " " + dt.getUTCDate()
+                         : (hr % 12 || 12) + (hr < 12 ? " am" : " pm");
+        if (!phone || hr % 6 === 0) txt(svg, x(hh), H - 8, t, "middle");
+      }
+    } else {
+      var every = span / 24 > 10 ? 2 : 1;
+      for (var hd = Math.ceil(start / 24) * 24, i = 0; hd <= end; hd += 24, i++) {
+        el("line", { x1: x(hd), x2: x(hd), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
+        if (i % every === 0) {
+          var dd = new Date(hd * 3600000);
+          txt(svg, x(hd), H - 8, (phone ? "" : DAYS[dd.getUTCDay()] + " ") + dd.getUTCDate(), "middle");
+        }
       }
     }
-    function path(src, attrs) {
+    lines.forEach(function (ln) {
       var dstr = "", pen = false;
       for (var h = start; h <= end; h++) {
-        var v = src[h];
+        var v = ln.src[h];
         if (v === undefined) { pen = false; continue; }
         dstr += (pen ? "L" : "M") + x(h).toFixed(1) + " " + y(v).toFixed(1);
         pen = true;
       }
-      if (dstr) { attrs.d = dstr; attrs.fill = "none"; el("path", attrs, svg); }
-    }
-    path(d.sen, { stroke: "var(--sensor)", "stroke-width": 1.2, "stroke-dasharray": "2 2" });
-    path(d.mean24, { stroke: "var(--sensor)", "stroke-width": 2.5, "stroke-dasharray": "7 4" });
-    path(d.doe, { stroke: "#111", "stroke-width": 2.5 });
-    // single points (a line needs two hours)
-    d.senHours.forEach(function (h) {
-      if (h >= start && d.sen[h - 1] === undefined && d.sen[h + 1] === undefined) {
-        el("circle", { cx: x(h), cy: y(d.sen[h]), r: 3.5, fill: "#fff", stroke: "var(--sensor)", "stroke-width": 1.5 }, svg);
+      if (dstr) { var a = {}; for (var k in ln.attrs) a[k] = ln.attrs[k]; a.d = dstr; a.fill = "none"; el("path", a, svg); }
+      // dots: always for a lone hour, and for every hour when asked and there is room
+      var room = (W - L - R) / Math.max(1, span) >= 6;
+      for (var h2 = start; h2 <= end; h2++) {
+        if (ln.src[h2] === undefined) continue;
+        var lone = ln.src[h2 - 1] === undefined && ln.src[h2 + 1] === undefined;
+        if (lone || (ln.dots && room)) {
+          el("circle", { cx: x(h2).toFixed(1), cy: y(ln.src[h2]).toFixed(1), r: 2.8, fill: "#fff",
+                         stroke: ln.attrs.stroke, "stroke-width": 1.5 }, svg);
+        }
       }
     });
-    $("timeNote").textContent = "The chart shows up to the last 14 days. DOE API and US AQI are different scales on the same axis.";
+    return true;
+  }
+
+  function drawTime(d) {
+    if (!d.senHours.length) {
+      $("hourChart").innerHTML = ""; $("meanChart").innerHTML = "";
+      $("hourNote").textContent = "The chart starts when the sensor has data.";
+      $("meanNote").textContent = "";
+      return;
+    }
+    var first = d.senHours[0], last = d.senHours[d.senHours.length - 1];
+    var doeHours = Object.keys(d.doe).map(Number);
+    var end = Math.max(last, Math.max.apply(null, doeHours));
+    var start = Math.max(first, end - 14 * 24);
+
+    drawLines($("hourChart"), [
+      { src: d.sen, attrs: { stroke: "var(--sensor)", "stroke-width": 2 }, dots: true }
+    ], start, end, "Sensor PM2.5, hourly");
+    var newest = d.sen[last];
+    $("hourNote").textContent = "Newest: " + newest + " at " + hourLabel(last, true) +
+      ". Shows up to the last 14 days.";
+
+    var meanHours = Object.keys(d.mean24).map(Number);
+    if (!meanHours.length) {
+      drawLines($("meanChart"), [{ src: d.doe, attrs: { stroke: "#111", "stroke-width": 2.5 } }],
+                start, end, "DOE 4-station average");
+      $("meanNote").textContent = "The sensor 24-hour mean starts after 18 hours of sensor data, at about " +
+        hourLabel(first + 17, true) + ". Until then, only the DOE line is shown.";
+      return;
+    }
+    drawLines($("meanChart"), [
+      { src: d.doe, attrs: { stroke: "#111", "stroke-width": 2.5 } },
+      { src: d.mean24, attrs: { stroke: "var(--sensor)", "stroke-width": 2.5, "stroke-dasharray": "7 4" } }
+    ], start, end, "Sensor 24-hour mean and DOE 4-station average");
+    $("meanNote").textContent = "Both lines are 24-hour means, so they can be compared hour by hour. " +
+      "DOE API and US AQI are different scales on the same axis.";
   }
 
   // ---------- chart: scatter ----------
