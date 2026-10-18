@@ -6,73 +6,72 @@
 <title>How is Malaysia's API calculated? – Sasana Haze Monitor</title>
 <meta name="description" content="How Malaysia's Air Pollutant Index is worked out, why its 24-hour average lags, and how Singapore, the US, China and Hong Kong compare.">
 <style>
-  :root {
-    color-scheme: light;
-    --ink: #111111; --ink-2: #555555; --ink-3: #74746f;
-    --rule: #d9d9d3; --page: #e9e9e4; --surface: #fafaf8; --tile: #f0f0ec; --edge: #d6d6d0;
-    --shadow: 0 1px 2px rgba(17,17,17,.05), 0 6px 18px rgba(17,17,17,.06);
-  }
+  :root { color-scheme: light; --ink: #1a1a1a; --ink-2: #555; --rule: #cfcfcf; }
   * { box-sizing: border-box; }
   body {
-    margin: 0; background: var(--page); color: var(--ink);
-    /* No "system-ui": on some Android phones it drops letters. See index.html. */
-    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0; background: #fff; color: var(--ink);
+    font: 17px/1.75 Georgia, "Times New Roman", "Noto Serif", serif;
   }
-  main { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
-  header { padding: 0 4px; }
-  .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .92rem; }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 20px 56px; }
+  .top {
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    font: .85rem/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
   .top a { color: var(--ink-2); }
-  .lang { padding: 2px 12px; border: 1px solid var(--edge); border-radius: 14px; background: var(--surface); text-decoration: none; }
-  h1 { font-size: 1.6rem; line-height: 1.25; margin: 14px 0 0; letter-spacing: -.015em; text-wrap: balance; }
-  .sub { color: var(--ink-2); margin: 6px 0 0; font-size: .92rem; }
-  section {
-    background: var(--surface); border: 1px solid var(--edge); border-radius: 16px;
-    box-shadow: var(--shadow); margin-top: 16px; padding: 18px 20px 20px;
+  header.paper { text-align: center; margin: 36px 0 28px; }
+  header.paper p { text-align: center; }
+  .tw { overflow-x: auto; margin: 14px 0 18px; }
+  h1 { font-size: 1.75rem; line-height: 1.3; margin: 0; font-weight: 700; text-wrap: balance; }
+  .subtitle { font-size: 1.05rem; color: var(--ink-2); margin: 8px 0 0; text-wrap: balance; }
+  .byline { margin: 18px 0 0; font-size: .95rem; }
+  .abstract { margin: 0 0 28px; padding: 14px 24px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); font-size: .95rem; }
+  .abstract h2 { font-size: .95rem; text-align: center; margin: 0 0 6px; letter-spacing: .08em; }
+  .abstract p { margin: 0; }
+  h2 { font-size: 1.2rem; margin: 34px 0 10px; font-weight: 700; }
+  h3 { font-size: 1.02rem; margin: 22px 0 6px; font-weight: 700; font-style: italic; }
+  p { margin: 0 0 12px; text-align: justify; }
+  ul, ol { margin: 0 0 12px; padding-left: 1.4em; }
+  li { margin: 4px 0; }
+  a { color: #1f4f9a; }
+  table {
+    border-collapse: collapse; width: 100%; font-size: .88rem; line-height: 1.5;
+    border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);
   }
-  section > :last-child { margin-bottom: 0; }
-  section.lead p:first-child { font-weight: 600; }
-  section.appendix { background: var(--tile); }
-  h2 { font-size: 1.15rem; margin: 0 0 12px; }
-  h3 { font-size: 1rem; margin: 18px 0 6px; }
-  p { margin: 0 0 10px; }
-  ul, ol { margin: 0 0 10px; padding-left: 1.3em; }
-  li { margin: 3px 0; }
-  a { color: #1f5fbf; }
-  table { width: 100%; border-collapse: collapse; margin: 6px 0 12px; font-size: .9rem; display: block; overflow-x: auto; }
-  th, td { text-align: left; vertical-align: top; padding: 7px 10px; border-bottom: 1px solid var(--rule); }
-  th { background: #ececE7; font-weight: 600; }
-  figure { margin: 8px 0 14px; }
-  figure img { width: 100%; height: auto; display: block; border-radius: 8px; background: #fff; }
-  figcaption { font-size: .85rem; color: var(--ink-2); margin-top: 6px; }
-  .formula {
-    font-family: "Cambria Math", "Times New Roman", serif; font-size: 1.05rem;
-    background: #fff; border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px; overflow-x: auto;
-  }
-  footer { margin: 22px 4px 0; font-size: .85rem; color: var(--ink-2); }
-  @media (max-width: 480px) { section { padding: 16px 14px 16px; } h1 { font-size: 1.4rem; } }
+  th { border-bottom: 1px solid var(--ink); font-weight: 700; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 10px; }
+  figure { margin: 20px 0 22px; }
+  figure img { width: 100%; height: auto; display: block; }
+  figcaption { font-size: .88rem; color: var(--ink-2); margin-top: 8px; line-height: 1.55; }
+  .formula { text-align: center; font-style: italic; font-size: 1.05rem; margin: 14px 0; overflow-x: auto; }
+  ol.refs { font-size: .9rem; line-height: 1.6; }
+  ol.refs li { margin: 6px 0; }
+  footer { margin: 40px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--ink-2); }
+  @media (max-width: 480px) { body { font-size: 16px; } h1 { font-size: 1.45rem; } p { text-align: left; } .abstract { padding: 12px 6px; } }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <div class="top"><a href="index.html">← Back to the haze page</a><a class="lang" href="api-zh.html" lang="zh-Hans">中文</a></div>
+  <div class="top"><a href="index.html">← Back to the haze page</a><a href="api-zh.html" lang="zh-Hans">中文</a></div>
+  <header class="paper">
     <h1>How is Malaysia's API calculated?</h1>
-    <p class="sub">18 October 2026</p>
+    <p class="subtitle">The lag of the 24-hour average, and a comparison with Singapore, the United States, China and Hong Kong</p>
+    <p class="byline">A parent · 18 October 2026</p>
   </header>
 
-<section class="lead"><p>Malaysia's API tells you what the air has been like over the past 24 hours, not what it is like right now. That is why it climbs slowly when haze rolls in, and falls just as slowly once the haze has cleared.</p>
+<div class="abstract"><h2>Abstract</h2><p>Malaysia's API tells you what the air has been like over the past 24 hours, not what it is like right now. That is why it climbs slowly when haze rolls in, and falls just as slowly once the haze has cleared.</p></div>
+
+<h2>Introduction</h2>
 <p>Most parents have been there: the sky is grey, the air smells of smoke, yet the official API still says "Moderate". Open a foreign air-quality app at the same moment and it says "Unhealthy". Which one is right?</p>
 <p>Quite possibly both. The two numbers are answering different questions. This article explains:</p>
 <ul>
 <li>how the API is worked out;</li>
 <li>why a 24-hour average always lags behind the real air;</li>
 <li>how Singapore, the United States, China and Hong Kong deal with the same problem.</li>
-</ul></section>
+</ul>
 
-<section>
 <h2>1. What the API is</h2>
 <p>The Air Pollutant Index (API) is published by the Department of Environment (DOE). It condenses the pollution in the air into a single number with no unit: the higher the number, the worse the air.</p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>API</th>
@@ -107,11 +106,9 @@
 <td>Everyone should avoid outdoor activity</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>The DOE runs 68 monitoring stations across the country, and each one updates its API every hour. The official places to check it are the APIMS website and the MyJAS EQMS app.</p>
-</section>
 
-<section>
 <h2>2. How the API is calculated</h2>
 <p>A station's API is simply the highest of six <strong>sub-indexes</strong>, one for each pollutant. The DOE's own calculation document sets out three steps:</p>
 <ol>
@@ -119,7 +116,7 @@
 <li><strong>Average each over its own time window.</strong> The windows differ because the body tolerates each pollutant for a different length of time.</li>
 <li><strong>Convert each average into a sub-index from 0 to 500, then take the highest.</strong> That highest value becomes the station's API.</li>
 </ol>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>Pollutant</th>
@@ -152,12 +149,10 @@
 <td>1 hour</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>Suppose a station's PM2.5 sub-index is 152, its ozone sub-index is 40, and the rest are lower. Its API is then 152, with PM2.5 as the main pollutant.</p>
 <p>According to the DOE, particles set the API most of the time in Malaysia, and almost always during haze. The document dates the addition of PM2.5 to 2017, while news reports give August 2018 as the start of public display. The conversion formula is in Appendix 1.</p>
-</section>
 
-<section>
 <h2>3. What is published, and what is not</h2>
 <p>The DOE publishes the hourly API for each station and the formula behind it, but not the hourly PM2.5 readings themselves.</p>
 <ul>
@@ -167,9 +162,7 @@
 </ul>
 <p>The public therefore sees only the smoothed, 24-hour figure, never the hour-by-hour reading that would show how bad the air is right now.</p>
 <p><strong>There is a catch:</strong> the DOE has put two different versions of its calculation document online, and their PM2.5 figures do not match (see Appendix 1). The DOE has not said which one its system uses today. This does not change the main point of this article, which is that the 24-hour average makes the API run late.</p>
-</section>
 
-<section>
 <h2>4. Why a 24-hour average runs late</h2>
 <p>A 24-hour rolling average replaces only one twenty-fourth of its data each hour, so it takes about a day to fully register new haze, and about a day to shake it off again.</p>
 <ul>
@@ -177,7 +170,7 @@
 <li>Because the newest hour counts for only 1/24 of the total, the API peaks later than the real air, and lower.</li>
 <li>A study of Bangkok data found that this kind of average trails the hourly readings by about 10 to 13 hours.</li>
 </ul>
-<figure><img src="img/api_lag_en.png" alt="Example chart: the 24-hour rolling average lags the hourly level by about a day" loading="lazy"><figcaption>Example data, not a real measurement. The 24-hour average and NowCast use the published formulas.</figcaption></figure>
+<figure><a href="img/api_lag_en.png"><img src="img/api_lag_en.png" alt="Example chart: the 24-hour rolling average lags the hourly level by about a day" loading="lazy"></a><figcaption><b>Figure 1.</b> The 24-hour rolling average compared with the hourly level. Example data, not a real measurement; the 24-hour average and NowCast use the published formulas.</figcaption></figure>
 
 <p>When haze arrives, the US NowCast picks it up within a few hours. The 24-hour average, by contrast, only reaches its peak at the moment the haze clears, and then needs another full day to come back down.</p>
 <h3>An example from the school monitor</h3>
@@ -186,12 +179,20 @@
 <li>By 10:00 am on 18 October the average was still 139, only 11 points lower than the afternoon before. Even when the air improves, the number comes down slowly.</li>
 <li><strong>The exception:</strong> under the formula on the APIMS website, the whole range from API 101 to 150 covers only about 5 µg/m³ of PM2.5, so the API can move very quickly here. Between 4:00 pm and 8:00 pm on 16 October, the Kuala Selangor station dropped from 152 to 99. With the school's limit set at 150, a very small change in the air can decide the outcome.</li>
 </ul>
-</section>
+<h3>Hourly readings at the four stations</h3>
+<p>The chart below shows every hourly API reading at the four stations from the evening of 8 October to 11:00 am on 18 October. The light blue band marks the range from API 100 to 150.</p>
+<figure><a href="img/hourly_all_en.png"><img src="img/hourly_all_en.png" alt="Hourly API of the four stations, 8 to 18 October 2026" loading="lazy"></a><figcaption><b>Figure 2.</b> Hourly API at the four stations, 8 to 18 October 2026. The light blue band is API 100–150. Data: Department of Environment Malaysia.</figcaption></figure>
 
-<section>
+<ul>
+<li><strong>A single station crosses the 100–150 band quickly</strong>, usually within a few hours: the fall on 10–11 October, the rise on 13–14 October, and the sharp drop at Kuala Selangor on the evening of 16 October. This is what the steep band would lead you to expect.</li>
+<li><strong>The four-station average, by contrast, can sit in the band for much longer.</strong> Since 17 October, the three Kuala Lumpur and Selangor stations have stayed above 150 while Kuala Selangor has stayed below 100, so the average lands in between.</li>
+<li><strong>An average between 100 and 150 therefore does not mean that any one station is in that range.</strong> More often it means the stations disagree widely.</li>
+<li><strong>Kuala Selangor often behaves differently.</strong> It is on the coast, usually reads lower than the other three, and rises and falls more sharply. Sea breezes may explain this, but it has not yet been checked against wind data.</li>
+</ul>
+
 <h2>5. How other countries do it</h2>
 <p>Singapore, the United States, China and Hong Kong also use 24-hour or longer averages to judge health risk, but each of them gives the public a faster number as well. Of the five places compared here, Malaysia is the only one that offers just the 24-hour figure.</p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>Place</th>
@@ -238,7 +239,7 @@
 <td>Adjust activities to the health-risk band</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>A few things stand out:</p>
 <ul>
 <li><strong>Singapore</strong> works most like Malaysia, but adds a 1-hour PM2.5 reading. The two countries are often compared, so it pays to check first whether a number is a 1-hour or a 24-hour figure.</li>
@@ -246,9 +247,7 @@
 <li><strong>Hong Kong</strong> switched to the AQHI at the end of 2013. Because it uses a 3-hour average, it responds fastest of all.</li>
 </ul>
 <p>In 2023, the Malaysian researchers Varkkey and Ashfold argued that the DOE could publish hourly PM2.5 without any new equipment, since it would simply mean releasing data it already has.</p>
-</section>
 
-<section>
 <h2>6. How parents can read the numbers</h2>
 <p>The API is well suited to decisions such as whether there is school tomorrow. For "can we go outside now?", it helps to look at more than one thing.</p>
 <ul>
@@ -258,9 +257,7 @@
 <li><strong>Treat low-cost sensors as a guide only.</strong> They show the air near your home, but they drift unless they are calibrated regularly.</li>
 <li><strong>For school, follow the school's notice.</strong> The school decides on the official 2:00 pm API, which is a sensible choice because the 24-hour average is steady.</li>
 </ul>
-</section>
 
-<section>
 <h2>Conclusion</h2>
 <ul>
 <li>The API is the highest of six sub-indexes, and during haze it is usually set by PM2.5.</li>
@@ -268,9 +265,22 @@
 <li>The DOE publishes the formula but not the hourly PM2.5 readings.</li>
 <li>Singapore, the United States, China and Hong Kong all give the public a faster number. If Malaysia published hourly PM2.5 as well, parents could make better-timed decisions.</li>
 </ul>
-</section>
 
-<section class="appendix">
+<h2>References</h2>
+<ol class="refs">
+<li>Department of Environment Malaysia: <a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">API Calculation (APIMS website version)</a></li>
+<li>Department of Environment Malaysia: <a href="https://www.doe.gov.my/wp-content/uploads/2021/09/API_Calculation.pdf">API Calculation (2021 version)</a></li>
+<li>Department of Environment Malaysia: <a href="https://www.doe.gov.my/en/2021/10/26/english-air-pollutant-index-api-2/">Air Pollutant Index (API)</a></li>
+<li>SAYS (28 August 2026): <a href="https://says.com/my/news/aqi-api-explaining-malaysias-air-quality-confusion">Malaysia Once Made CNN Apologise For Its Haze Coverage</a> (views of Varkkey and Fatimah)</li>
+<li>Malay Mail (8 October 2026): <a href="https://www.malaymail.com/news/malaysia/2026/10/08/hazy-math-doe-explains-why-your-aqi-says-250-when-the-official-api-is-175/238237">DoE explains why your AQI says 250 when the official API is 175</a></li>
+<li>National Environment Agency, Singapore: <a href="https://www.nea.gov.sg/media/news/advisories/index/haze-situation-update-18-september-2019">Haze Situation Update (18 September 2019)</a>; <a href="https://www.nea.gov.sg/media/news/advisories/haze-situation-update-(30-october-2016)">introduction of 1-hour PM2.5 bands (30 October 2016)</a></li>
+<li>US Environmental Protection Agency: <a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast fact sheet</a>; AirNow: <a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>; <a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast example (Wikipedia)</a></li>
+<li>Ministry of Ecology and Environment, China: <a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 Technical Regulation on Ambient Air Quality Index</a></li>
+<li>Government of Hong Kong: <a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">Air Quality Health Index</a>; <a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">hourly PM2.5 published since 2012</a></li>
+<li>Lag of a 24-hour rolling average: <a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee et al., 2023 (Bangkok study)</a></li>
+<li>School monitor data: <a href="index.html">Sasana haze monitor</a> (hourly DOE API)</li>
+</ol>
+
 <h2>Appendix 1: the formula from PM2.5 to sub-index</h2>
 <p>Every sub-index uses the same stepwise straight-line formula: find the band the concentration falls in, then scale it within that band.</p>
 <p class="formula">SI = (I<sub>high</sub> − I<sub>low</sub>) ÷ (C<sub>high</sub> − C<sub>low</sub>) × (C − C<sub>low</sub>) + I<sub>low</sub></p>
@@ -281,7 +291,7 @@
 <li>I_low, I_high: the lower and upper index of the band</li>
 </ul>
 <p>Two official DOE documents can be found online, and they disagree on the PM2.5 bands between API 100 and 200, which is exactly the range seen most often during haze:</p>
-<table>
+<div class="tw"><table>
 <thead>
 <tr>
 <th>API step</th>
@@ -326,8 +336,8 @@
 <td>350.5–500.4</td>
 </tr>
 </tbody>
-</table>
-<figure><img src="img/api_slopes_en.png" alt="Slopes of the two PM2.5 tables" loading="lazy"><figcaption>The two official DOE tables, drawn to the same scale.</figcaption></figure>
+</table></div>
+<figure><a href="img/api_slopes_en.png"><img src="img/api_slopes_en.png" alt="Slopes of the two PM2.5 tables" loading="lazy"></a><figcaption><b>Figure 3.</b> Slopes of the two official DOE PM2.5 tables, drawn to the same scale.</figcaption></figure>
 
 <p>The slope is the number of API points added by each extra µg/m³ of PM2.5. The APIMS version is steepest between API 101 and 150 (slope 10) and flattest between 151 and 200 (slope 0.52), while the 2021 version has a single band above API 100 with a slope of 1.32.</p>
 <p>For example, take a 24-hour average PM2.5 of 100 µg/m³:</p>
@@ -336,9 +346,7 @@
 <li>2021 version: SI = 99 ÷ 74.9 × (100 − 75.5) + 101 ≈ 133</li>
 </ul>
 <p>The same air gives two results about 40 points apart. Which version is in use still needs to be confirmed by the DOE.</p>
-</section>
 
-<section class="appendix">
 <h2>Appendix 2: word list</h2>
 <ul>
 <li><strong>PM2.5:</strong> particles 2.5 micrometres across or smaller. They reach deep into the lungs and make up most of the haze.</li>
@@ -347,27 +355,9 @@
 <li><strong>NowCast:</strong> the US estimate of current air quality, which gives more weight to the last few hours.</li>
 <li><strong>Lag:</strong> the delay between a change in the real air and the change in the index.</li>
 </ul>
-</section>
-
-<section class="appendix">
-<h2>Sources</h2>
-<ul>
-<li>Department of Environment Malaysia: <a href="https://eqms.doe.gov.my/Documents/APIMS/API_Calculation.pdf">API Calculation (APIMS website version)</a></li>
-<li>Department of Environment Malaysia: <a href="https://www.doe.gov.my/wp-content/uploads/2021/09/API_Calculation.pdf">API Calculation (2021 version)</a></li>
-<li>Department of Environment Malaysia: <a href="https://www.doe.gov.my/en/2021/10/26/english-air-pollutant-index-api-2/">Air Pollutant Index (API)</a></li>
-<li>SAYS (28 August 2026): <a href="https://says.com/my/news/aqi-api-explaining-malaysias-air-quality-confusion">Malaysia Once Made CNN Apologise For Its Haze Coverage</a> (views of Varkkey and Fatimah)</li>
-<li>Malay Mail (8 October 2026): <a href="https://www.malaymail.com/news/malaysia/2026/10/08/hazy-math-doe-explains-why-your-aqi-says-250-when-the-official-api-is-175/238237">DoE explains why your AQI says 250 when the official API is 175</a></li>
-<li>National Environment Agency, Singapore: <a href="https://www.nea.gov.sg/media/news/advisories/index/haze-situation-update-18-september-2019">Haze Situation Update (18 September 2019)</a>; <a href="https://www.nea.gov.sg/media/news/advisories/haze-situation-update-(30-october-2016)">introduction of 1-hour PM2.5 bands (30 October 2016)</a></li>
-<li>US Environmental Protection Agency: <a href="https://19january2021snapshot.epa.gov/sites/static/files/2018-01/documents/nowcastfactsheet.pdf">NowCast fact sheet</a>; AirNow: <a href="https://forum.airnowtech.org/t/daily-and-hourly-aqi-pm2-5/171">Daily and Hourly AQI – PM2.5</a>; <a href="https://en.wikipedia.org/wiki/NowCast_(air_quality_index)">NowCast example (Wikipedia)</a></li>
-<li>Ministry of Ecology and Environment, China: <a href="https://www.cnemc.cn/jcgf/dqhj/201706/W020181008687879597492.pdf">HJ 633—2012 Technical Regulation on Ambient Air Quality Index</a></li>
-<li>Government of Hong Kong: <a href="https://www.gov.hk/en/residents/environment/air/aqhi.htm">Air Quality Health Index</a>; <a href="https://www.info.gov.hk/gia/general/201203/08/P201203080162_print.htm">hourly PM2.5 published since 2012</a></li>
-<li>Lag of a 24-hour rolling average: <a href="https://doi.org/10.1186/s42834-023-00165-y">Sooktawee et al., 2023 (Bangkok study)</a></li>
-<li>School monitor data: <a href="index.html">Sasana haze monitor</a> (hourly DOE API)</li>
-</ul>
-</section>
 
   <footer>
-    <p>Written by a parent. This is not an official document of the school or the DOE.</p>
+    <p>Written by a parent. This is not an official document of the school or the DOE. Data up to 11:00 am on 18 October 2026.</p>
     <p><a href="index.html">← Back to the haze page</a></p>
   </footer>
 </main>
