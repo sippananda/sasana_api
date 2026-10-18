@@ -118,7 +118,7 @@
         <li>aqicn reports the sensor as a US AQI number (US EPA 2016 scale). It is turned back into PM2.5 in µg/m³.</li>
         <li>The PM2.5 values of the last 3, 6 or 24 hours are averaged. A 3-hour average needs all 3 hours,
           a 6-hour average at least 5 hours, a 24-hour average at least 18 hours.</li>
-        <li>The average is turned into an API number with the DOE table of 14 October 2026 (the one on the APIMS website).</li>
+        <li>The average is turned into an API number with the DOE table of January 2025 (the one on the APIMS website).</li>
         <li>Above API 150 the two scales use the same PM2.5 bands, so there the hourly value is the same number on both scales.</li>
         <li>The sensor is not calibrated. Low-cost sensors can read high in very humid air. Until the comparison
           below has about two weeks of data, treat these numbers as a rough guide only.</li>
@@ -358,7 +358,7 @@
 
 
   // ---------- section 1: sensor on the DOE API scale ----------
-  // US EPA 2016 PM2.5 breakpoints (the scale aqicn uses) and the DOE table of 14 Oct 2026.
+  // US EPA 2016 PM2.5 breakpoints (the scale aqicn uses) and the DOE table of January 2025.
   var US = [[0,0],[12.0,50],[12.1,51],[35.4,100],[35.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
             [250.4,300],[250.5,301],[350.4,400],[350.5,401],[500.4,500]];
   var DOE = [[0,0],[12.0,50],[12.1,51],[50.4,100],[50.5,101],[55.4,150],[55.5,151],[150.4,200],[150.5,201],
