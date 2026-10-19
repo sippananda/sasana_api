@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-19T23:18+08:00",
+ "generated_at": "2026-10-20T00:06+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -63,30 +63,30 @@
   "average": 145
  },
  "today": {
-  "date": "2026-10-19",
-  "weekday": "Mon",
+  "date": "2026-10-20",
+  "weekday": "Tue",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 161,
-   "CA19B": 157,
-   "CA20B": 153,
-   "CA18B": 93
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 141,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-20",
-  "next_weekday": "Tue",
-  "next_school_date": "2026-10-20"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-21",
+  "next_weekday": "Wed",
+  "next_school_date": "2026-10-21"
  },
  "holidays": [
   {
@@ -464,7 +464,6 @@
    },
    "stations_used": 4,
    "average": 141,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -543,16 +542,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-15T23:00",
-   "v": [
-    165,
-    163,
-    169,
-    159
-   ],
-   "avg": 164
-  },
   {
    "t": "2026-10-16T00:00",
    "v": [
