@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-20T14:02+08:00",
+ "generated_at": "2026-10-20T14:19+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,12 +52,12 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-20T13:00",
+  "datetime": "2026-10-20T14:00",
   "values": {
-   "CA15W": 174,
-   "CA19B": 169,
-   "CA20B": 169,
-   "CA18B": 99
+   "CA15W": 175,
+   "CA19B": 170,
+   "CA20B": 170,
+   "CA18B": 97
   },
   "stations_used": 4,
   "average": 153
@@ -71,19 +71,19 @@
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": null,
-   "CA19B": null,
-   "CA20B": null,
-   "CA18B": null
+   "CA15W": 175,
+   "CA19B": 170,
+   "CA20B": 170,
+   "CA18B": 97
   },
-  "stations_used": 0,
-  "average": null,
-  "reading_state": "waiting",
+  "stations_used": 4,
+  "average": 153,
+  "reading_state": "done",
   "school_status": "open",
-  "decision_next_day": null,
-  "streak": 0,
-  "reason": "pending",
-  "reason_text": "Waiting for the 2:00 pm reading from DOE.",
+  "decision_next_day": "open",
+  "streak": 1,
+  "reason": "counting",
+  "reason_text": "Average is 150 or above. Day 1 of 3. School stays open.",
   "next_date": "2026-10-21",
   "next_weekday": "Wed",
   "next_school_date": "2026-10-21"
@@ -469,6 +469,29 @@
    "streak": 0,
    "reason": "below",
    "reason_text": "Average is below 150. School stays open."
+  },
+  {
+   "date": "2026-10-20",
+   "weekday": "Tue",
+   "school_day": true,
+   "no_school_reason": null,
+   "no_school_name": null,
+   "next_school_day": true,
+   "next_no_school_reason": null,
+   "values": {
+    "CA15W": 175,
+    "CA19B": 170,
+    "CA20B": 170,
+    "CA18B": 97
+   },
+   "stations_used": 4,
+   "average": 153,
+   "reading_state": "done",
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 1,
+   "reason": "counting",
+   "reason_text": "Average is 150 or above. Day 1 of 3. School stays open."
   }
  ],
  "averages": [
@@ -539,6 +562,10 @@
   [
    "2026-10-19",
    141
+  ],
+  [
+   "2026-10-20",
+   153
   ]
  ],
  "hourly": [
@@ -1499,6 +1526,16 @@
     169,
     169,
     99
+   ],
+   "avg": 153
+  },
+  {
+   "t": "2026-10-20T14:00",
+   "v": [
+    175,
+    170,
+    170,
+    97
    ],
    "avg": 153
   }
