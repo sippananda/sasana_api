@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-21T23:18+08:00",
+ "generated_at": "2026-10-22T00:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,10 +52,10 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-21T23:00",
+  "datetime": "2026-10-22T00:00",
   "values": {
    "CA15W": 152,
-   "CA19B": 156,
+   "CA19B": 155,
    "CA20B": 154,
    "CA18B": 77
   },
@@ -63,30 +63,30 @@
   "average": 135
  },
  "today": {
-  "date": "2026-10-21",
-  "weekday": "Wed",
+  "date": "2026-10-22",
+  "weekday": "Thu",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 155,
-   "CA19B": 156,
-   "CA20B": 155,
-   "CA18B": 80
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 137,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-22",
-  "next_weekday": "Thu",
-  "next_school_date": "2026-10-22"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-23",
+  "next_weekday": "Fri",
+  "next_school_date": "2026-10-23"
  },
  "holidays": [
   {
@@ -508,7 +508,6 @@
    },
    "stations_used": 4,
    "average": 137,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -595,16 +594,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-17T23:00",
-   "v": [
-    160,
-    165,
-    166,
-    97
-   ],
-   "avg": 147
-  },
   {
    "t": "2026-10-18T00:00",
    "v": [
@@ -1560,6 +1549,16 @@
    "v": [
     152,
     156,
+    154,
+    77
+   ],
+   "avg": 135
+  },
+  {
+   "t": "2026-10-22T00:00",
+   "v": [
+    152,
+    155,
     154,
     77
    ],
