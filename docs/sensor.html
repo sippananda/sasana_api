@@ -151,17 +151,33 @@
   </section>
 
   <section>
-    <h2><span class="n">4</span>Sensor against the DOE average</h2>
-    <p class="small">One dot per hour. Sensor 24-hour mean across, DOE average up. A tight band of dots
-      means the two move together.</p>
+    <h2><span class="n">4</span><span>Sensor against the DOE average, in PM<sub>2.5</sub></span></h2>
+    <p class="small">Both sides are turned into PM<sub>2.5</sub> in µg/m³ first, so they use the same unit.
+      One dot per hour. Sensor 24-hour mean across, DOE 4-station mean up. A tight band of dots
+      means the two move together. Dots on the grey 1 : 1 line mean the same PM<sub>2.5</sub>.</p>
+    <div class="boxes" id="scatterBoxes"></div>
     <div class="chart" id="scatter"></div>
     <p class="small" id="scatterNote"></p>
+    <details class="small">
+      <summary>How the PM<sub>2.5</sub> values are worked out</summary>
+      <ul>
+        <li>Sensor: the hourly US AQI from aqicn is turned back into PM<sub>2.5</sub> with the US EPA 2016 table.
+          Then the last 24 hours are averaged (at least 18 hours).</li>
+        <li>DOE: each station's API is turned back into a 24-hour mean PM<sub>2.5</sub> with the DOE table of
+          January 2025. Then the four stations are averaged in µg/m³.</li>
+        <li>This assumes PM<sub>2.5</sub> sets the API. In haze this is true. On clean days another pollutant
+          (for example ozone) can set it, and then the DOE value is too high.</li>
+        <li>DOE API 101–150 covers only 50.5–55.4 µg/m³. So a small error in PM<sub>2.5</sub> there is a large
+          error in API. This is why the comparison is made in µg/m³, not on the index scales.</li>
+      </ul>
+    </details>
   </section>
 
   <section>
     <h2><span class="n">5</span>Which stations follow the sensor best?</h2>
-    <p class="small">Each DOE station, and some averages, compared with the sensor. Higher r means a closer
-      match. The main page and the rule still use the 4-station average.</p>
+    <p class="small">Each DOE station, and some averages, compared with the sensor, all in PM<sub>2.5</sub>
+      (µg/m³, worked out as in section 4). Averages are taken in µg/m³. Higher r means a closer
+      match. The main page and the rule still use the 4-station average of the API.</p>
     <div id="stationTable"></div>
     <p class="small" id="stationNote"></p>
   </section>
@@ -318,7 +334,24 @@
       });
       return out;
     }
-    return { doe: doe, sen: sen, mean24: mean24, senHours: senHours, pairs: pairs, series: series };
+    // PM2.5 versions (µg/m³) for sections 4 and 5: DOE API -> 24-hour PM2.5 per station, sensor US AQI -> PM2.5
+    function seriesPm(ids) {
+      var out = {};
+      Object.keys(byHour).forEach(function (k) {
+        var o = byHour[k], v = ids.map(function (id) { return o[id] === undefined ? null : pmFromApi(o[id]); });
+        if (v.every(function (x) { return x !== null; })) out[k] = v.reduce(function (a, b) { return a + b; }, 0) / v.length;
+      });
+      return out;
+    }
+    var senPm = {}, mean24Pm = {};
+    Object.keys(sen).forEach(function (k) { senPm[k] = pmFromUs(sen[k]); });
+    senHours.forEach(function (h) {
+      var s = 0, n = 0;
+      for (var i = 0; i < 24; i++) if (senPm[h - i] !== undefined) { s += senPm[h - i]; n++; }
+      if (n >= 18) mean24Pm[h] = s / n;
+    });
+    return { doe: doe, sen: sen, mean24: mean24, senHours: senHours, pairs: pairs, series: series,
+             doePm: seriesPm(["CA15W", "CA19B", "CA20B", "CA18B"]), senPm: senPm, mean24Pm: mean24Pm, seriesPm: seriesPm };
   }
 
   function fmtR(r) { return r === null ? "–" : r.toFixed(2); }
@@ -376,6 +409,7 @@
   }
   function pmFromUs(aqi) { return interp(Math.max(0, aqi), US, 1, 0); }
   function apiFromPm(pm) { return interp(Math.max(0, pm), DOE, 0, 1); }
+  function pmFromApi(api) { return interp(Math.max(0, api), DOE, 1, 0); }
   var WINDOWS = [{ n: 1, min: 1, label: "Last hour" }, { n: 3, min: 3, label: "3-hour average" },
                  { n: 6, min: 5, label: "6-hour average" }, { n: 24, min: 18, label: "24-hour average" }];
   function sensorApi(d) {
@@ -532,33 +566,47 @@
       "DOE API and US AQI are different scales on the same axis.";
   }
 
-  // ---------- chart: scatter ----------
+  // ---------- section 4: scatter in PM2.5 ----------
   function drawScatter(d) {
     var box = $("scatter");
     box.innerHTML = "";
-    var use24 = Object.keys(d.mean24).length > 0;
-    var pts = d.pairs(use24 ? d.mean24 : d.sen, 0);
+    var use24 = Object.keys(d.mean24Pm).length > 0;
+    var pts = d.pairs(use24 ? d.mean24Pm : d.senPm, 0, d.doePm);
+    var p1 = d.pairs(d.senPm, 0, d.doePm);
+    var r24 = pearson(d.pairs(d.mean24Pm, 0, d.doePm)), r1 = pearson(p1);
+    var ratio = median(pts.map(function (p) { return p[1] / p[0]; }));
+    var f = fit(pts);
+    $("scatterBoxes").innerHTML =
+      '<div class="box"><div class="k">r, sensor 24-hour mean</div><div class="v">' + fmtR(r24) + '</div>' +
+        '<div class="d">' + (r24 === null ? "needs a full day of sensor data" : strength(r24) + ", " + pts.length + " h") + '</div></div>' +
+      '<div class="box"><div class="k">r, sensor hourly</div><div class="v">' + fmtR(r1) + '</div>' +
+        '<div class="d">' + (r1 === null ? "needs more hours" : strength(r1) + ", " + p1.length + " h") + '</div></div>' +
+      '<div class="box"><div class="k">DOE ÷ sensor, PM<sub>2.5</sub> (median)</div><div class="v">' + (ratio === null ? "–" : "×" + ratio.toFixed(2)) + '</div>' +
+        '<div class="d">' + (use24 ? "using the 24-hour mean" : "using hourly values") + '</div></div>';
     if (pts.length < 2) { $("scatterNote").textContent = "The dots appear when there are matching hours."; return; }
     var W = Math.max(300, box.clientWidth), phone = W < 520;
-    var H = Math.min(phone ? 300 : 340, W), L = 38, R = 12, T = 10, B = 34;
+    var H = Math.min(phone ? 300 : 360, W), L = 38, R = 12, T = 10, B = 34;
     var xs = pts.map(function (p) { return p[0]; }), ys = pts.map(function (p) { return p[1]; });
-    var xtop = Math.max(100, Math.ceil(Math.max.apply(null, xs) / 50) * 50);
-    var ytop = Math.max(100, Math.ceil(Math.max.apply(null, ys) / 50) * 50);
-    var x = function (v) { return L + (W - L - R) * v / xtop; };
-    var y = function (v) { return T + (H - T - B) * (1 - v / ytop); };
-    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Scatter of sensor against DOE average" }, box);
-    for (var g = 0; g <= ytop; g += 50) {
+    var all = xs.concat(ys, [55.4]);
+    var lo = Math.max(0, Math.floor((Math.min.apply(null, all) - 5) / 10) * 10);
+    var top = Math.max(lo + 20, Math.ceil((Math.max.apply(null, all) + 2) / 10) * 10);
+    var step = top - lo > 120 ? 40 : top - lo > 60 ? 20 : 10;
+    var x = function (v) { return L + (W - L - R) * (v - lo) / (top - lo); };
+    var y = function (v) { return T + (H - T - B) * (1 - (v - lo) / (top - lo)); };
+    var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Scatter of sensor PM2.5 against DOE PM2.5" }, box);
+    for (var g = lo; g <= top; g += step) {
       el("line", { x1: L, x2: W - R, y1: y(g), y2: y(g), stroke: "var(--grid)" }, svg);
       txt(svg, L - 5, y(g) + 4, g, "end");
+      el("line", { x1: x(g), x2: x(g), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
+      txt(svg, x(g), H - B + 14, g, "middle");
     }
-    for (var gx = 0; gx <= xtop; gx += 50) {
-      el("line", { x1: x(gx), x2: x(gx), y1: T, y2: H - B, stroke: "var(--grid)" }, svg);
-      txt(svg, x(gx), H - B + 14, gx, "middle");
-    }
-    txt(svg, (L + W - R) / 2, H - 4, "Sensor " + (use24 ? "24-hour mean" : "hourly") + " (US AQI)", "middle");
-    var yl = txt(svg, 11, (T + H - B) / 2, "DOE average (API)", "middle");
+    // 55.4 µg/m³ = DOE API 150 (school limit), on the DOE axis
+    el("line", { x1: L, x2: W - R, y1: y(55.4), y2: y(55.4), stroke: "#d03b3b", "stroke-width": 1.2, "stroke-dasharray": "3 3" }, svg);
+    txt(svg, W - R - 2, y(55.4) - 4, "55.4 = API 150", "end").setAttribute("fill", "#d03b3b");
+    el("line", { x1: x(lo), y1: y(lo), x2: x(top), y2: y(top), stroke: "#999", "stroke-width": 1.2 }, svg);
+    txt(svg, (L + W - R) / 2, H - 4, "Sensor " + (use24 ? "24-hour mean" : "hourly") + " PM2.5 (µg/m³)", "middle");
+    var yl = txt(svg, 11, (T + H - B) / 2, "DOE 4-station PM2.5 (µg/m³)", "middle");
     yl.setAttribute("transform", "rotate(-90 11 " + ((T + H - B) / 2) + ")");
-    var f = fit(pts);
     if (f) {
       var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
       el("line", { x1: x(x0), y1: y(f.a + f.b * x0), x2: x(x1), y2: y(f.a + f.b * x1),
@@ -568,15 +616,16 @@
       el("circle", { cx: x(p[0]).toFixed(1), cy: y(p[1]).toFixed(1), r: phone ? 2.6 : 3,
                      fill: "none", stroke: "var(--sensor)", "stroke-width": 1.2, opacity: .8 }, svg);
     });
-    $("scatterNote").textContent = f
-      ? "Dashed line: best straight line, DOE ≈ " + f.a.toFixed(0) + " + " + f.b.toFixed(2) + " × sensor. " + pts.length + " hours."
-      : pts.length + " hours.";
+    $("scatterNote").textContent = (f
+      ? "Dashed line: best straight line, DOE ≈ " + f.a.toFixed(1) + " + " + f.b.toFixed(2) + " × sensor (µg/m³). "
+      : "") + "Grey line: 1 : 1. Red dashed line: 55.4 µg/m³, the PM2.5 at DOE API 150. " + pts.length + " hours." +
+      (pts.length < MIN_HOURS ? " Too few hours for a firm result." : "");
   }
 
-  // ---------- section 4: per station ----------
+  // ---------- section 5: per station, in PM2.5 ----------
   function showStations(d) {
     var rows = SERIES.map(function (s) {
-      var t = d.series(s.ids), p1 = d.pairs(d.sen, 0, t), p24 = d.pairs(d.mean24, 0, t);
+      var t = d.seriesPm(s.ids), p1 = d.pairs(d.senPm, 0, t), p24 = d.pairs(d.mean24Pm, 0, t);
       var base = p24.length ? p24 : p1;
       return { s: s, r1: pearson(p1), r24: pearson(p24), n: p1.length,
                ratio: median(base.map(function (p) { return p[1] / p[0]; })) };
@@ -589,7 +638,7 @@
     var key = rows.some(function (r) { return r.r24 !== null; }) ? "r24" : "r1";
     var best = null;
     rows.forEach(function (r, i) { if (r[key] !== null && (best === null || r[key] > rows[best][key])) best = i; });
-    var html = '<div style="overflow-x:auto"><table><thead><tr><th>Compared with the sensor</th><th>r, 24-hour mean</th>' +
+    var html = '<div style="overflow-x:auto"><table><thead><tr><th>Compared with the sensor (PM<sub>2.5</sub>)</th><th>r, 24-hour mean</th>' +
       '<th>r, hourly</th><th>DOE ÷ sensor</th><th>Hours</th></tr></thead><tbody>';
     rows.forEach(function (r, i) {
       var name = esc(r.s.name) + (i === best ? " ← best" : "");
@@ -602,6 +651,7 @@
     $("stationTable").innerHTML = html;
     var n = rows[5].n;
     $("stationNote").textContent = (n < MIN_HOURS ? "Too few hours to compare yet (" + n + "). " : "") +
+      "DOE ÷ sensor: median ratio of the PM2.5 values; ×1.00 means the same µg/m³. " +
       "Small differences in r (less than about 0.03) do not mean much.";
   }
 
