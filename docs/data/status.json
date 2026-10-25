@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-25T23:16+08:00",
+ "generated_at": "2026-10-26T00:15+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,40 +52,40 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-25T23:00",
+  "datetime": "2026-10-26T00:00",
   "values": {
-   "CA15W": 79,
-   "CA19B": 54,
-   "CA20B": 54,
-   "CA18B": 54
+   "CA15W": 77,
+   "CA19B": 53,
+   "CA20B": 53,
+   "CA18B": 53
   },
   "stations_used": 4,
-  "average": 60
+  "average": 59
  },
  "today": {
-  "date": "2026-10-25",
-  "weekday": "Sun",
+  "date": "2026-10-26",
+  "weekday": "Mon",
   "school_day": false,
-  "no_school_reason": "weekend",
-  "no_school_name": null,
-  "next_school_day": false,
-  "next_no_school_reason": "holiday",
+  "no_school_reason": "holiday",
+  "no_school_name": "Replacement public holiday in Selangor (Sultan's Silver Jubilee)",
+  "next_school_day": true,
+  "next_no_school_reason": null,
   "values": {
-   "CA15W": 89,
-   "CA19B": 65,
-   "CA20B": 65,
-   "CA18B": 61
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 70,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-26",
-  "next_weekday": "Mon",
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-27",
+  "next_weekday": "Tue",
   "next_school_date": "2026-10-27"
  },
  "holidays": [
@@ -596,7 +596,6 @@
    },
    "stations_used": 4,
    "average": 70,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -699,16 +698,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-21T23:00",
-   "v": [
-    152,
-    156,
-    154,
-    77
-   ],
-   "avg": 135
-  },
   {
    "t": "2026-10-22T00:00",
    "v": [
@@ -1668,6 +1657,16 @@
     54
    ],
    "avg": 60
+  },
+  {
+   "t": "2026-10-26T00:00",
+   "v": [
+    77,
+    53,
+    53,
+    53
+   ],
+   "avg": 59
   }
  ]
 }
