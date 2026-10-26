@@ -199,3 +199,4 @@ datetime_myt,pm25_aqi,pm10_aqi,pm1_aqi,rh_percent,temp_c,wind_ms,source
 2026-10-26T05:00,31,8,15,,,,feed
 2026-10-26T06:00,0,0,0,,,,feed
 2026-10-26T07:00,0,0,0,,,,feed
+2026-10-26T08:00,6,2,0,,,,feed
