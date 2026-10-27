@@ -1,5 +1,5 @@
 {
- "issued": "2026-10-27T10:20+08:00",
+ "issued": "2026-10-28T00:45+08:00",
  "reading_hour": 14,
  "cells": {
   "KL": {
@@ -51,16 +51,6 @@
    "spread": 0.4
   },
   "days": [
-   {
-    "date": "2026-10-13",
-    "obs_api": 88.7,
-    "obs_pm": 41.5,
-    "cams_pm": 92.5,
-    "ratio": 0.449,
-    "haze": false,
-    "used": false,
-    "cell": "KL"
-   },
    {
     "date": "2026-10-14",
     "obs_api": 161.0,
@@ -192,6 +182,16 @@
     "cell": "KL"
    },
    {
+    "date": "2026-10-27",
+    "obs_api": 66.7,
+    "obs_pm": 24.3,
+    "cams_pm": 47.6,
+    "ratio": 0.512,
+    "haze": false,
+    "used": false,
+    "cell": "KL"
+   },
+   {
     "date": "2026-10-07",
     "obs_api": 152.0,
     "obs_pm": 57.4,
@@ -229,16 +229,6 @@
     "ratio": 1.844,
     "haze": true,
     "used": true,
-    "cell": "KS"
-   },
-   {
-    "date": "2026-10-13",
-    "obs_api": 77.0,
-    "obs_pm": 32.4,
-    "cams_pm": 47.2,
-    "ratio": 0.687,
-    "haze": false,
-    "used": false,
     "cell": "KS"
    },
    {
@@ -370,89 +360,67 @@
     "haze": false,
     "used": false,
     "cell": "KS"
+   },
+   {
+    "date": "2026-10-27",
+    "obs_api": 49.0,
+    "obs_pm": 11.8,
+    "cams_pm": 16.1,
+    "ratio": 0.729,
+    "haze": false,
+    "used": false,
+    "cell": "KS"
    }
   ]
  },
  "anchor": {
-  "time": "2026-10-27T10:00",
+  "time": "2026-10-28T00:00",
   "avg_api": 62,
   "stations": {
    "CA15W": {
-    "api": 89.0,
-    "ratio": 0.957
+    "api": 86.0,
+    "ratio": 0.993
    },
    "CA19B": {
     "api": 53.0,
-    "ratio": 0.313
+    "ratio": 0.344
    },
    "CA20B": {
-    "api": 55.0,
-    "ratio": 0.348
+    "api": 57.0,
+    "ratio": 0.423
    },
    "CA18B": {
     "api": 51.0,
-    "ratio": 0.91
+    "ratio": 0.937
    }
   }
  },
  "days": [
   {
-   "date": "2026-10-27",
-   "weekday": "Tue",
-   "cams_pm25_24h": {
-    "KL": 45.6,
-    "KS": 13.4
-   },
-   "api_2pm": {
-    "CA15W": 92,
-    "CA19B": 56,
-    "CA20B": 58,
-    "CA18B": 51
-   },
-   "avg_2pm": {
-    "mid": 64,
-    "low": 59,
-    "high": 69
-   },
-   "method": "from latest reading",
-   "latest_ratio_weight": null,
-   "hours_after_latest_reading": 4,
-   "weather_2pm": {
-    "wind_kmh": 2.4,
-    "wind_from_deg": 207,
-    "rain_mm_day": 20.5
-   },
-   "flags": {
-    "at_or_above_streak": false,
-    "at_or_above_single_day": false
-   },
-   "confidence": "high"
-  },
-  {
    "date": "2026-10-28",
    "weekday": "Wed",
    "cams_pm25_24h": {
-    "KL": 33.0,
-    "KS": 8.7
+    "KL": 33.4,
+    "KS": 9.9
    },
    "api_2pm": {
-    "CA15W": 79,
-    "CA19B": 68,
-    "CA20B": 68,
-    "CA18B": 29
+    "CA15W": 77,
+    "CA19B": 28,
+    "CA20B": 41,
+    "CA18B": 42
    },
    "avg_2pm": {
-    "mid": 61,
-    "low": 51,
-    "high": 72
+    "mid": 47,
+    "low": 41,
+    "high": 53
    },
-   "method": "mixed factor",
-   "latest_ratio_weight": 0.56,
-   "hours_after_latest_reading": 28,
+   "method": "from latest reading",
+   "latest_ratio_weight": null,
+   "hours_after_latest_reading": 14,
    "weather_2pm": {
-    "wind_kmh": 7.4,
-    "wind_from_deg": 219,
-    "rain_mm_day": 9.3
+    "wind_kmh": 3.5,
+    "wind_from_deg": 204,
+    "rain_mm_day": 2.9
    },
    "flags": {
     "at_or_above_streak": false,
@@ -464,27 +432,27 @@
    "date": "2026-10-29",
    "weekday": "Thu",
    "cams_pm25_24h": {
-    "KL": 48.4,
-    "KS": 15.7
+    "KL": 47.7,
+    "KS": 17.6
    },
    "api_2pm": {
-    "CA15W": 112,
-    "CA19B": 92,
-    "CA20B": 92,
-    "CA18B": 50
+    "CA15W": 103,
+    "CA19B": 87,
+    "CA20B": 87,
+    "CA18B": 54
    },
    "avg_2pm": {
-    "mid": 87,
-    "low": 66,
-    "high": 130
+    "mid": 83,
+    "low": 65,
+    "high": 112
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.34,
-   "hours_after_latest_reading": 52,
+   "latest_ratio_weight": 0.45,
+   "hours_after_latest_reading": 38,
    "weather_2pm": {
-    "wind_kmh": 7.1,
-    "wind_from_deg": 255,
-    "rain_mm_day": 17.8
+    "wind_kmh": 5.1,
+    "wind_from_deg": 266,
+    "rain_mm_day": 23.3
    },
    "flags": {
     "at_or_above_streak": false,
@@ -496,27 +464,27 @@
    "date": "2026-10-30",
    "weekday": "Fri",
    "cams_pm25_24h": {
-    "KL": 24.9,
-    "KS": 14.4
+    "KL": 23.3,
+    "KS": 13.2
    },
    "api_2pm": {
-    "CA15W": 70,
-    "CA19B": 67,
-    "CA20B": 67,
-    "CA18B": 44
+    "CA15W": 68,
+    "CA19B": 64,
+    "CA20B": 64,
+    "CA18B": 42
    },
    "avg_2pm": {
-    "mid": 62,
-    "low": 51,
-    "high": 72
+    "mid": 60,
+    "low": 48,
+    "high": 69
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.21,
-   "hours_after_latest_reading": 76,
+   "latest_ratio_weight": 0.27,
+   "hours_after_latest_reading": 62,
    "weather_2pm": {
-    "wind_kmh": 6.0,
-    "wind_from_deg": 245,
-    "rain_mm_day": 18.6
+    "wind_kmh": 1.0,
+    "wind_from_deg": 45,
+    "rain_mm_day": 3.4
    },
    "flags": {
     "at_or_above_streak": false,
@@ -528,33 +496,33 @@
    "date": "2026-10-31",
    "weekday": "Sat",
    "cams_pm25_24h": {
-    "KL": 36.2,
-    "KS": 14.1
+    "KL": 32.2,
+    "KS": 15.5
    },
    "api_2pm": {
-    "CA15W": 86,
-    "CA19B": 84,
-    "CA20B": 84,
-    "CA18B": 42
+    "CA15W": 81,
+    "CA19B": 77,
+    "CA20B": 77,
+    "CA18B": 47
    },
    "avg_2pm": {
-    "mid": 74,
-    "low": 59,
-    "high": 91
+    "mid": 71,
+    "low": 56,
+    "high": 83
    },
    "method": "mixed factor",
-   "latest_ratio_weight": 0.12,
-   "hours_after_latest_reading": 100,
+   "latest_ratio_weight": 0.17,
+   "hours_after_latest_reading": 86,
    "weather_2pm": {
-    "wind_kmh": 8.1,
-    "wind_from_deg": 193,
-    "rain_mm_day": 4.4
+    "wind_kmh": 9.7,
+    "wind_from_deg": 182,
+    "rain_mm_day": 12.5
    },
    "flags": {
     "at_or_above_streak": false,
     "at_or_above_single_day": false
    },
-   "confidence": "low"
+   "confidence": "medium"
   }
  ],
  "credit": "Contains modified Copernicus Atmosphere Monitoring Service information (CAMS, ECMWF). Weather: ECMWF open data. Both via Open-Meteo."
