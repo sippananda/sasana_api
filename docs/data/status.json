@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-27T23:22+08:00",
+ "generated_at": "2026-10-28T00:18+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,41 +52,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-27T23:00",
+  "datetime": "2026-10-28T00:00",
   "values": {
    "CA15W": 86,
-   "CA19B": 52,
-   "CA20B": 56,
+   "CA19B": 53,
+   "CA20B": 57,
    "CA18B": 51
   },
   "stations_used": 4,
-  "average": 61
+  "average": 62
  },
  "today": {
-  "date": "2026-10-27",
-  "weekday": "Tue",
+  "date": "2026-10-28",
+  "weekday": "Wed",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
   "next_school_day": true,
   "next_no_school_reason": null,
   "values": {
-   "CA15W": 89,
-   "CA19B": 54,
-   "CA20B": 57,
-   "CA18B": 49
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 62,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-28",
-  "next_weekday": "Wed",
-  "next_school_date": "2026-10-28"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-29",
+  "next_weekday": "Thu",
+  "next_school_date": "2026-10-29"
  },
  "holidays": [],
  "daily": [
@@ -634,7 +634,6 @@
    },
    "stations_used": 4,
    "average": 62,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -745,16 +744,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-23T23:00",
-   "v": [
-    158,
-    136,
-    107,
-    77
-   ],
-   "avg": 120
-  },
   {
    "t": "2026-10-24T00:00",
    "v": [
@@ -1714,6 +1703,16 @@
     51
    ],
    "avg": 61
+  },
+  {
+   "t": "2026-10-28T00:00",
+   "v": [
+    86,
+    53,
+    57,
+    51
+   ],
+   "avg": 62
   }
  ]
 }
