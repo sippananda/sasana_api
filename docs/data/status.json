@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-29T23:44+08:00",
+ "generated_at": "2026-10-30T00:08+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,41 +52,41 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-29T23:00",
+  "datetime": "2026-10-30T00:00",
   "values": {
    "CA15W": 84,
-   "CA19B": 46,
-   "CA20B": 54,
-   "CA18B": 42
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 57
+  "stations_used": 1,
+  "average": 84
  },
  "today": {
-  "date": "2026-10-29",
-  "weekday": "Thu",
+  "date": "2026-10-30",
+  "weekday": "Fri",
   "school_day": true,
   "no_school_reason": null,
   "no_school_name": null,
-  "next_school_day": true,
-  "next_no_school_reason": null,
+  "next_school_day": false,
+  "next_no_school_reason": "weekend",
   "values": {
-   "CA15W": 86,
-   "CA19B": 53,
-   "CA20B": 59,
-   "CA18B": 51
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 62,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-30",
-  "next_weekday": "Fri",
-  "next_school_date": "2026-10-30"
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-10-31",
+  "next_weekday": "Sat",
+  "next_school_date": "2026-11-02"
  },
  "holidays": [],
  "daily": [
@@ -678,7 +678,6 @@
    },
    "stations_used": 4,
    "average": 62,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -797,16 +796,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-25T23:00",
-   "v": [
-    79,
-    54,
-    54,
-    54
-   ],
-   "avg": 60
-  },
   {
    "t": "2026-10-26T00:00",
    "v": [
@@ -1766,6 +1755,16 @@
     42
    ],
    "avg": 57
+  },
+  {
+   "t": "2026-10-30T00:00",
+   "v": [
+    84,
+    null,
+    null,
+    null
+   ],
+   "avg": null
   }
  ]
 }
