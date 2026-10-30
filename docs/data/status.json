@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-30T23:22+08:00",
+ "generated_at": "2026-10-31T00:26+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,40 +52,40 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-30T23:00",
+  "datetime": "2026-10-31T00:00",
   "values": {
-   "CA15W": 83,
-   "CA19B": 50,
-   "CA20B": 52,
-   "CA18B": 36
+   "CA15W": 85,
+   "CA19B": 51,
+   "CA20B": 53,
+   "CA18B": 39
   },
   "stations_used": 4,
-  "average": 55
+  "average": 57
  },
  "today": {
-  "date": "2026-10-30",
-  "weekday": "Fri",
-  "school_day": true,
-  "no_school_reason": null,
+  "date": "2026-10-31",
+  "weekday": "Sat",
+  "school_day": false,
+  "no_school_reason": "weekend",
   "no_school_name": null,
   "next_school_day": false,
   "next_no_school_reason": "weekend",
   "values": {
-   "CA15W": 82,
-   "CA19B": 38,
-   "CA20B": 40,
-   "CA18B": 32
+   "CA15W": null,
+   "CA19B": null,
+   "CA20B": null,
+   "CA18B": null
   },
-  "stations_used": 4,
-  "average": 48,
-  "reading_state": "done",
+  "stations_used": 0,
+  "average": null,
+  "reading_state": "before",
   "school_status": "open",
-  "decision_next_day": "open",
+  "decision_next_day": null,
   "streak": 0,
-  "reason": "below",
-  "reason_text": "Average is below 150. School stays open.",
-  "next_date": "2026-10-31",
-  "next_weekday": "Sat",
+  "reason": "pending",
+  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "next_date": "2026-11-01",
+  "next_weekday": "Sun",
   "next_school_date": "2026-11-02"
  },
  "holidays": [],
@@ -700,7 +700,6 @@
    },
    "stations_used": 4,
    "average": 48,
-   "reading_state": "done",
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -823,16 +822,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-26T23:00",
-   "v": [
-    80,
-    50,
-    52,
-    41
-   ],
-   "avg": 56
-  },
   {
    "t": "2026-10-27T00:00",
    "v": [
@@ -1792,6 +1781,16 @@
     36
    ],
    "avg": 55
+  },
+  {
+   "t": "2026-10-31T00:00",
+   "v": [
+    85,
+    51,
+    53,
+    39
+   ],
+   "avg": 57
   }
  ]
 }
