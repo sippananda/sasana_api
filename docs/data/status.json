@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-31T13:16+08:00",
+ "generated_at": "2026-10-31T14:16+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,12 +52,12 @@
   }
  ],
  "latest": {
-  "datetime": "2026-10-31T13:00",
+  "datetime": "2026-10-31T14:00",
   "values": {
-   "CA15W": 76,
+   "CA15W": 74,
    "CA19B": 60,
-   "CA20B": 63,
-   "CA18B": 52
+   "CA20B": 64,
+   "CA18B": 53
   },
   "stations_used": 4,
   "average": 63
@@ -71,19 +71,19 @@
   "next_school_day": false,
   "next_no_school_reason": "weekend",
   "values": {
-   "CA15W": null,
-   "CA19B": null,
-   "CA20B": null,
-   "CA18B": null
+   "CA15W": 74,
+   "CA19B": 60,
+   "CA20B": 64,
+   "CA18B": 53
   },
-  "stations_used": 0,
-  "average": null,
-  "reading_state": "before",
+  "stations_used": 4,
+  "average": 63,
+  "reading_state": "done",
   "school_status": "open",
-  "decision_next_day": null,
+  "decision_next_day": "open",
   "streak": 0,
-  "reason": "pending",
-  "reason_text": "The 2:00 pm reading is not taken yet.",
+  "reason": "below",
+  "reason_text": "Average is below 150. School stays open.",
   "next_date": "2026-11-01",
   "next_weekday": "Sun",
   "next_school_date": "2026-11-02"
@@ -705,6 +705,29 @@
    "streak": 0,
    "reason": "below",
    "reason_text": "Average is below 150. School stays open."
+  },
+  {
+   "date": "2026-10-31",
+   "weekday": "Sat",
+   "school_day": false,
+   "no_school_reason": "weekend",
+   "no_school_name": null,
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
+   "values": {
+    "CA15W": 74,
+    "CA19B": 60,
+    "CA20B": 64,
+    "CA18B": 53
+   },
+   "stations_used": 4,
+   "average": 63,
+   "reading_state": "done",
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 0,
+   "reason": "below",
+   "reason_text": "Average is below 150. School stays open."
   }
  ],
  "averages": [
@@ -819,19 +842,13 @@
   [
    "2026-10-30",
    48
+  ],
+  [
+   "2026-10-31",
+   63
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-27T13:00",
-   "v": [
-    89,
-    54,
-    57,
-    49
-   ],
-   "avg": 62
-  },
   {
    "t": "2026-10-27T14:00",
    "v": [
@@ -1789,6 +1806,16 @@
     60,
     63,
     52
+   ],
+   "avg": 63
+  },
+  {
+   "t": "2026-10-31T14:00",
+   "v": [
+    74,
+    60,
+    64,
+    53
    ],
    "avg": 63
   }
