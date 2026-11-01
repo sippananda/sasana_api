@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-01T19:16+08:00",
+ "generated_at": "2026-11-01T20:04+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -752,6 +752,533 @@
    "reason_text": "Average is below 150. School stays open."
   }
  ],
+ "season": {
+  "active": false,
+  "name": "2026",
+  "first_day": "2026-10-09",
+  "last_day": "2026-10-31",
+  "paused_on": "2026-11-01",
+  "days": 23,
+  "days_with_reading": 23,
+  "high_days": 5,
+  "very_high_days": 0,
+  "highest": {
+   "date": "2026-10-09",
+   "average": 168
+  },
+  "closed_school_days": [],
+  "closed_days": [
+   "2026-10-18"
+  ],
+  "records": [
+   {
+    "date": "2026-10-09",
+    "weekday": "Fri",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 172,
+     "CA19B": 168,
+     "CA20B": 176,
+     "CA18B": 155
+    },
+    "stations_used": 4,
+    "average": 168,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 1,
+    "reason": "counting",
+    "reason_text": "Average is 150 or above. Day 1 of 3. School stays open."
+   },
+   {
+    "date": "2026-10-10",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 165,
+     "CA19B": 157,
+     "CA20B": 162,
+     "CA18B": 102
+    },
+    "stations_used": 4,
+    "average": 147,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-11",
+    "weekday": "Sun",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 84,
+     "CA19B": 76,
+     "CA20B": 76,
+     "CA18B": 68
+    },
+    "stations_used": 4,
+    "average": 76,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-12",
+    "weekday": "Mon",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 76,
+     "CA19B": 66,
+     "CA20B": 75,
+     "CA18B": 61
+    },
+    "stations_used": 4,
+    "average": 70,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-13",
+    "weekday": "Tue",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 94,
+     "CA19B": 80,
+     "CA20B": 92,
+     "CA18B": 77
+    },
+    "stations_used": 4,
+    "average": 86,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-14",
+    "weekday": "Wed",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 164,
+     "CA19B": 156,
+     "CA20B": 163,
+     "CA18B": 92
+    },
+    "stations_used": 4,
+    "average": 144,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-15",
+    "weekday": "Thu",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 163,
+     "CA19B": 169,
+     "CA20B": 181,
+     "CA18B": 160
+    },
+    "stations_used": 4,
+    "average": 168,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 1,
+    "reason": "counting",
+    "reason_text": "Average is 150 or above. Day 1 of 3. School stays open."
+   },
+   {
+    "date": "2026-10-16",
+    "weekday": "Fri",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 167,
+     "CA19B": 174,
+     "CA20B": 170,
+     "CA18B": 153
+    },
+    "stations_used": 4,
+    "average": 166,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 2,
+    "reason": "counting",
+    "reason_text": "Average is 150 or above. Day 2 of 3. School stays open."
+   },
+   {
+    "date": "2026-10-17",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 162,
+     "CA19B": 170,
+     "CA20B": 170,
+     "CA18B": 98
+    },
+    "stations_used": 4,
+    "average": 150,
+    "school_status": "open",
+    "decision_next_day": "closed",
+    "streak": 3,
+    "reason": "streak",
+    "reason_text": "Average is 150 or above for 3 days in a row. School closes the next day."
+   },
+   {
+    "date": "2026-10-18",
+    "weekday": "Sun",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 153,
+     "CA19B": 155,
+     "CA20B": 157,
+     "CA18B": 78
+    },
+    "stations_used": 4,
+    "average": 136,
+    "school_status": "closed",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "reopen",
+    "reason_text": "Average is below 150. School reopens the next day."
+   },
+   {
+    "date": "2026-10-19",
+    "weekday": "Mon",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 161,
+     "CA19B": 157,
+     "CA20B": 153,
+     "CA18B": 93
+    },
+    "stations_used": 4,
+    "average": 141,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-20",
+    "weekday": "Tue",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 175,
+     "CA19B": 170,
+     "CA20B": 170,
+     "CA18B": 97
+    },
+    "stations_used": 4,
+    "average": 153,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 1,
+    "reason": "counting",
+    "reason_text": "Average is 150 or above. Day 1 of 3. School stays open."
+   },
+   {
+    "date": "2026-10-21",
+    "weekday": "Wed",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 155,
+     "CA19B": 156,
+     "CA20B": 155,
+     "CA18B": 80
+    },
+    "stations_used": 4,
+    "average": 137,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-22",
+    "weekday": "Thu",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 155,
+     "CA19B": 154,
+     "CA20B": 152,
+     "CA18B": 76
+    },
+    "stations_used": 4,
+    "average": 134,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-23",
+    "weekday": "Fri",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 155,
+     "CA19B": 153,
+     "CA20B": 152,
+     "CA18B": 78
+    },
+    "stations_used": 4,
+    "average": 135,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-24",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 160,
+     "CA19B": 96,
+     "CA20B": 89,
+     "CA18B": 66
+    },
+    "stations_used": 4,
+    "average": 103,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-25",
+    "weekday": "Sun",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "holiday",
+    "values": {
+     "CA15W": 89,
+     "CA19B": 65,
+     "CA20B": 65,
+     "CA18B": 61
+    },
+    "stations_used": 4,
+    "average": 70,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-26",
+    "weekday": "Mon",
+    "school_day": false,
+    "no_school_reason": "holiday",
+    "no_school_name": "Replacement public holiday in Selangor (Sultan's Silver Jubilee)",
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 75,
+     "CA19B": 50,
+     "CA20B": 45,
+     "CA18B": 53
+    },
+    "stations_used": 4,
+    "average": 56,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-27",
+    "weekday": "Tue",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 89,
+     "CA19B": 54,
+     "CA20B": 57,
+     "CA18B": 49
+    },
+    "stations_used": 4,
+    "average": 62,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-28",
+    "weekday": "Wed",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 84,
+     "CA19B": 52,
+     "CA20B": 58,
+     "CA18B": 33
+    },
+    "stations_used": 4,
+    "average": 57,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-29",
+    "weekday": "Thu",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": true,
+    "next_no_school_reason": null,
+    "values": {
+     "CA15W": 86,
+     "CA19B": 53,
+     "CA20B": 59,
+     "CA18B": 51
+    },
+    "stations_used": 4,
+    "average": 62,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-30",
+    "weekday": "Fri",
+    "school_day": true,
+    "no_school_reason": null,
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 82,
+     "CA19B": 38,
+     "CA20B": 40,
+     "CA18B": 32
+    },
+    "stations_used": 4,
+    "average": 48,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   },
+   {
+    "date": "2026-10-31",
+    "weekday": "Sat",
+    "school_day": false,
+    "no_school_reason": "weekend",
+    "no_school_name": null,
+    "next_school_day": false,
+    "next_no_school_reason": "weekend",
+    "values": {
+     "CA15W": 74,
+     "CA19B": 60,
+     "CA20B": 64,
+     "CA18B": 53
+    },
+    "stations_used": 4,
+    "average": 63,
+    "school_status": "open",
+    "decision_next_day": "open",
+    "streak": 0,
+    "reason": "below",
+    "reason_text": "Average is below 150. School stays open."
+   }
+  ]
+ },
  "averages": [
   [
    "2026-10-03",
@@ -875,16 +1402,6 @@
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-10-28T19:00",
-   "v": [
-    85,
-    53,
-    60,
-    35
-   ],
-   "avg": 58
-  },
   {
    "t": "2026-10-28T20:00",
    "v": [
