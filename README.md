@@ -7,6 +7,28 @@ Everything runs on GitHub. No computer at home or at school is needed.
 
 ![How it works](flow.png)
 
+## Off-season (since 1 Nov 2026)
+
+The haze has cleared. The page is in off-season mode until the next haze season.
+
+- `config.json` has a switch: `"season": {"active": false, ...}`.
+- Off-season, the page shows a banner, a short season note, a summary of the season
+  (`first_day` to `last_day`), the rule, and the daily records of the season.
+- The hourly chart, the nearby sensor and the forecast are hidden. Their code is kept.
+- The collector runs three times a day: 7:15 am, 3:15 pm and 11:15 pm Malaysia time.
+  Each run reads the last 24 hours from DOE and fills the last 7 days. So no hour is lost.
+- There is no second pull for late readings off-season.
+- The forecast workflow has no schedule. It can still be started by hand.
+- The hourly Claude scheduled task is paused. A weekly Claude task checks that new data still arrives.
+
+**To start the haze season again:**
+
+1. In `config.json`, set `"active": true`. Set `first_day` and `last_day` for the new season when it ends.
+2. In `.github/workflows/collect.yml`, change the schedule back to `"15 * * * *"`.
+3. In `.github/workflows/forecast.yml`, put the two schedule lines back (they are in a comment there).
+4. Resume the hourly Claude scheduled task "Haze monitor: start collector every hour".
+5. Check the rule with the school first. The national guidance changed on 15 Oct 2026.
+
 ## What it does
 
 - Once per hour, at minute 15, GitHub runs `scripts/collect.py`.

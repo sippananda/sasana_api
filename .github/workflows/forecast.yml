@@ -4,10 +4,13 @@ name: Forecast air quality (CAMS)
 # 07:30 and 19:30 Malaysia time (23:30 and 11:30 UTC).
 # This is separate from the hourly DOE collection. A failure here never
 # stops the collection, and the forecast never feeds the closure rule.
+# OFF-SEASON (since 1 Nov 2026): the schedule is switched off. The forecast is
+# not shown on the page. It can still be started by hand.
+# HAZE SEASON: put the two schedule lines back:
+#   schedule:
+#     - cron: "30 23 * * *"
+#     - cron: "30 11 * * *"
 on:
-  schedule:
-    - cron: "30 23 * * *"
-    - cron: "30 11 * * *"
   workflow_dispatch:
 
 permissions:

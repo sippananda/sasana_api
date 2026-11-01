@@ -2,8 +2,12 @@ name: Collect air quality data
 
 on:
   schedule:
-    # Minute 15 of every hour. GitHub may start a run some minutes late.
-    - cron: "15 * * * *"
+    # OFF-SEASON (since 1 Nov 2026): three runs a day, 7:15 am, 3:15 pm and 11:15 pm
+    # Malaysia time (23:15, 07:15 and 15:15 UTC). Each run reads the last 24 hours from
+    # DOE and fills the last 7 days, so a late or missed run loses no hour.
+    # HAZE SEASON: change this line back to "15 * * * *" (minute 15 of every hour),
+    # and resume the hourly Claude scheduled task. See README, section "Off-season".
+    - cron: "15 7,15,23 * * *"
   workflow_dispatch:
     inputs:
       retry:

@@ -351,11 +351,50 @@ def build_status(hourly, cfg, now):
                      for day, name in sorted(holidays(cfg).items())
                      if day >= now.date().isoformat()][:12],
         "daily": evaluated[-30:],
+        # The haze season switch. Off-season it carries the season summary and all its days.
+        "season": season_info(evaluated, cfg),
         # Every day on record, short form: [date, 2 pm average]. For the dot graph in
         # section 2. It can show a longer time than the 30 days in "daily".
         "averages": [[d["date"], d["average"]] for d in evaluated if d["average"] is not None],
         "hourly": recent,
     }, evaluated
+
+
+def season_info(evaluated, cfg):
+    """The haze season switch from config.json, with a summary of the season.
+
+    Off-season (active false) the page shows this summary instead of the daily
+    decision. The rule is still worked out in the data files, as before.
+    """
+    season = cfg.get("season") or {}
+    active = season.get("active", True) is not False
+    out = {"active": active}
+    if active:
+        return out
+    first = season.get("first_day") or cfg["rule"]["start_date"]
+    last = season.get("last_day") or (evaluated[-1]["date"] if evaluated else first)
+    rows = [d for d in evaluated if first <= d["date"] <= last]
+    rule = cfg["rule"]
+    with_avg = [d for d in rows if d["average"] is not None]
+    top = max(with_avg, key=lambda d: d["average"]) if with_avg else None
+    closed = [d["date"] for d in rows
+              if d["school_day"] and d.get("school_status") == policy.CLOSED]
+    out.update({
+        "name": season.get("name"),
+        "first_day": first,
+        "last_day": last,
+        "paused_on": season.get("paused_on"),
+        "days": len(rows),
+        "days_with_reading": len(with_avg),
+        "high_days": sum(d["average"] >= rule["close_from_streak"] for d in with_avg),
+        "very_high_days": sum(d["average"] >= rule["close_from_single_day"] for d in with_avg),
+        "highest": {"date": top["date"], "average": top["average"]} if top else None,
+        "closed_school_days": closed,
+        # Every day the rule closed, weekends and holidays too.
+        "closed_days": [d["date"] for d in rows if d.get("school_status") == policy.CLOSED],
+        "records": rows,
+    })
+    return out
 
 
 def daily_csv_text(evaluated, cfg):
@@ -499,7 +538,9 @@ def main():
     # Tell the workflow whether one more run is needed.
     if os.environ.get("GITHUB_OUTPUT"):
         with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
-            fh.write(f"complete={'false' if missing else 'true'}\n")
+            # Off-season there is no second pull: the next run gets the last 24 hours anyway.
+            off = status["season"]["active"] is False
+            fh.write(f"complete={'false' if missing and not off else 'true'}\n")
 
     if got_current == 0:
         log("ERROR: no new readings from DOE in this run.")

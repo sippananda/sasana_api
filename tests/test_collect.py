@@ -33,7 +33,7 @@ class Collector(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def collect(self, now, start_date=None, no_school=None, table_first_date=None, extra_env=None):
+    def collect(self, now, start_date=None, no_school=None, table_first_date=None, extra_env=None, season=None):
         env = dict(os.environ,
                    MONITOR_NOW=now, MONITOR_DATA_DIR=str(self.data),
                    APIMS_RETRY_WAIT="0", NO_PROXY="127.0.0.1", no_proxy="127.0.0.1",
@@ -44,6 +44,8 @@ class Collector(unittest.TestCase):
         cfg["rule"]["start_date"] = start_date or "2026-10-10"
         cfg["no_school_dates"] = no_school or []
         cfg["table_first_date"] = table_first_date
+        # Haze season on, unless a test asks for the off-season.
+        cfg["season"] = season or {"active": True}
         path = Path(self.tmp.name) / "config.json"
         path.write_text(json.dumps(cfg))
         env["MONITOR_CONFIG"] = str(path)
@@ -193,6 +195,30 @@ class Collector(unittest.TestCase):
         self.assertEqual(out.read_text(), "complete=false\n")
         self.assertIn("Reading 14:00 not complete, missing: Batu Muda, Petaling Jaya, Shah Alam, Kuala Selangor",
                       run.stdout)
+
+    def test_off_season_gives_a_summary_and_no_second_pull(self):
+        out = Path(self.tmp.name) / "github_output"
+        gh = {"GITHUB_OUTPUT": str(out), "GITHUB_ACTIONS": "true"}
+        season = {"active": False, "name": "2026", "first_day": "2026-10-04",
+                  "last_day": "2026-10-09", "paused_on": "2026-10-11"}
+        # 2:20 pm, the 2:00 pm reading is not in yet. Off-season, no second run is started.
+        run, status = self.collect("2026-10-11T14:20", start_date="2026-10-04", extra_env=gh, season=season)
+        self.assertEqual(out.read_text(), "complete=true\n")
+        z = status["season"]
+        self.assertFalse(z["active"])
+        self.assertEqual((z["first_day"], z["last_day"], z["days"]), ("2026-10-04", "2026-10-09", 6))
+        self.assertEqual([r["date"] for r in z["records"]][0], "2026-10-04")
+        self.assertEqual(z["records"][-1]["date"], "2026-10-09")
+        avgs = [r["average"] for r in z["records"] if r["average"] is not None]
+        self.assertEqual(z["highest"]["average"], max(avgs))
+        self.assertEqual(z["high_days"], sum(a >= 150 for a in avgs))
+        self.assertEqual(z["very_high_days"], sum(a >= 180 for a in avgs))
+        # Closed school days come from the rule, on school days only.
+        closed = [r["date"] for r in z["records"] if r["school_day"] and r["school_status"] == "closed"]
+        self.assertEqual(z["closed_school_days"], closed)
+        # The season on: no summary.
+        _, status = self.collect("2026-10-11T15:37", start_date="2026-10-04")
+        self.assertEqual(status["season"], {"active": True})
 
     def test_fallback_when_hourly_table_is_down(self):
         fake_apims.BROKEN["table"] = True

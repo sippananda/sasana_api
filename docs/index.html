@@ -68,6 +68,19 @@
   .group p { margin: 4px 0 0; font-size: .9rem; color: var(--ink-2); }
   section.info h2 .n { background: var(--ink-3); }   /* grey number: not part of the decision */
   .small { font-size: .9rem; color: var(--ink-2); }
+  /* Haze season switch (config.json "season"). Off-season, parts marked "on" are hidden
+     and parts marked "off" are shown. */
+  body.off [data-season="on"], body:not(.off) [data-season="off"] { display: none !important; }
+  .paused {
+    margin-top: 16px; padding: 12px 16px; border: 1px solid var(--ink-3);
+    background: var(--surface); border-radius: 14px; font-weight: 600;
+  }
+  .paused span { display: block; font-weight: 400; font-size: .9rem; color: var(--ink-2); margin-top: 2px; }
+  .facts { list-style: none; padding: 0; margin: 0 0 14px; display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .facts li { border: 1px solid var(--rule); background: var(--tile); border-radius: 12px; padding: 10px 12px; }
+  .facts b { display: block; font-size: 1.5rem; line-height: 1.2; }
+  .facts span { font-size: .85rem; color: var(--ink-2); }
   .warn {
     margin-top: 16px; padding: 12px 16px; border: 1px solid #b26a00;
     background: #fff4e0; border-radius: 14px; font-weight: 600;
@@ -256,23 +269,40 @@
     <p class="meta" id="updated">Loading…</p>
   </header>
   <div class="warn" id="warn" hidden></div>
+  <div class="paused" id="paused" data-season="off">Haze monitoring is paused for the season.
+    <span id="pausedSub">The page shows a summary of the haze season.</span></div>
 
   <section>
-    <h2><span class="n">1</span>Is school open?</h2>
-    <div class="boxes" id="boxes"></div>
-    <p class="reason" id="reason"></p>
-    <p class="between" id="between" hidden></p>
+    <h2><span class="n">1</span><span data-season="on">Is school open?</span><span data-season="off">Season status</span></h2>
+    <div data-season="on">
+      <div class="boxes" id="boxes"></div>
+      <p class="reason" id="reason"></p>
+      <p class="between" id="between" hidden></p>
+    </div>
+    <ul data-season="off" id="offNote">
+      <li>The haze has cleared. Haze monitoring is paused until the next haze season.</li>
+      <li>This page does not work out the closure rule now.</li>
+      <li>Any school closure is announced by the school.</li>
+      <li>DOE readings are still collected a few times a day, as a record of clean air.</li>
+    </ul>
     <p class="official"><b>Official announcement:</b> the school's email and class WhatsApp message.
-      This page calculates automatically from DOE data.</p>
+      <span data-season="on">This page calculates automatically from DOE data.</span></p>
   </section>
 
   <section>
     <h2><span class="n">2</span><span id="readTitle">2:00 pm reading</span></h2>
-    <div class="tiles" id="tiles"></div>
-    <p class="avg" id="avg"></p>
-    <h3 id="levelsTitle">What the 2:00 pm average means</h3>
-    <p class="small" id="levelsSub"></p>
-    <div class="levels" id="levels"></div>
+    <div data-season="on">
+      <div class="tiles" id="tiles"></div>
+      <p class="avg" id="avg"></p>
+      <h3 id="levelsTitle">What the 2:00 pm average means</h3>
+      <p class="small" id="levelsSub"></p>
+      <div class="levels" id="levels"></div>
+    </div>
+    <div data-season="off">
+      <p class="small" id="seasonSpan"></p>
+      <ul class="facts" id="facts"></ul>
+      <ul class="small" id="seasonNotes"></ul>
+    </div>
     <h3 id="dotsTitle">2:00 pm average, day by day</h3>
     <p class="small" id="dotsSub"></p>
     <div class="ranges" id="ranges" hidden></div>
@@ -287,12 +317,12 @@
   </section>
 
   <!-- Section 4: outdoor activities reference. It does not make the closure decision. -->
-  <div class="group" role="note">
+  <div class="group" role="note" data-season="on">
     <div class="line">OUTDOOR ACTIVITIES REFERENCE</div>
     <p>Section 4 does not decide school closure. It shows a nearby sensor at three times of the school day.</p>
   </div>
 
-  <section class="info" id="outdoorSection">
+  <section class="info" id="outdoorSection" data-season="on">
     <h2><span class="n">4</span><span id="outTitle">Nearby sensor today</span></h2>
     <div class="tiles out" id="outTiles"></div>
     <p class="small" id="outNote">Low-cost sensor in Rawang Anggun, about 2.7 km from the school. Each box is the
@@ -305,10 +335,11 @@
   <!-- From here on: information only. Sections 5 to 7 do not make the decision. -->
   <div class="group" role="note">
     <div class="line">FOR INFORMATION ONLY</div>
-    <p>Sections 5, 6 and 7 do not decide school closure. They show the trend, the records and a forecast.</p>
+    <p data-season="on">Sections 5, 6 and 7 do not decide school closure. They show the trend, the records and a forecast.</p>
+    <p data-season="off">Section 4 shows the daily records of the haze season.</p>
   </div>
 
-  <section class="info">
+  <section class="info" data-season="on">
     <h2><span class="n">5</span>Hourly API and Trend</h2>
     <p class="small" id="latest"></p>
     <div class="tiles now" id="nowTiles"></div>
@@ -318,7 +349,7 @@
   </section>
 
   <section class="info">
-    <h2><span class="n">6</span>Daily API records</h2>
+    <h2><span class="n" id="recN">6</span><span id="recTitle">Daily API records</span></h2>
     <div class="scroll"><table id="daily"></table></div>
     <p class="small" style="margin-top:10px"><b>Decision for the next day:</b> what the 2:00 pm average of
       this day means for the following day. School is always closed on weekends and holidays.</p>
@@ -326,7 +357,7 @@
       <a href="data/daily.csv">daily.csv</a> · <a href="data/hourly.csv">hourly.csv</a></p>
   </section>
 
-  <section class="info" id="forecastSection">
+  <section class="info" id="forecastSection" data-season="on">
     <h2><span class="n">7</span><span id="fcTitle">5-day forecast of the 2:00 pm average</span></h2>
     <p class="plan"><b>Forecast for planning only.</b> Closure decisions use the real DOE readings at 2:00 pm.</p>
     <p class="small" id="fcIssued"></p>
@@ -344,11 +375,13 @@
     <ul>
       <li>Source: Department of Environment Malaysia (DOE), Air Pollutant Index Management System,
         <a href="https://eqms.doe.gov.my/APIMS/main">eqms.doe.gov.my</a>.</li>
-      <li>New readings are collected once per hour, at about 15 minutes past the hour.</li>
-      <li>If a station reading is late, one more collection runs about 15 minutes later.</li>
-      <li>A reading that is still missing after that is collected in the next hour.</li>
+      <li data-season="on">New readings are collected once per hour, at about 15 minutes past the hour.</li>
+      <li data-season="on">If a station reading is late, one more collection runs about 15 minutes later.</li>
+      <li data-season="on">A reading that is still missing after that is collected in the next hour.</li>
+      <li data-season="off">Off-season, readings are collected about three times a day.
+        Each collection gets the last 24 hours from DOE, so no hour is lost.</li>
       <li>Times are Malaysia time. This page refreshes by itself every 5 minutes.</li>
-      <li>Forecast (section 7): contains modified Copernicus Atmosphere Monitoring Service information
+      <li data-season="on">Forecast (section 7): contains modified Copernicus Atmosphere Monitoring Service information
         (CAMS, run by ECMWF). Weather from ECMWF open data. Both through
         <a href="https://open-meteo.com/">Open-Meteo</a>. The forecast is made twice a day, at about
         7:30 am and 7:30 pm.</li>
@@ -453,9 +486,11 @@
     mt.appendChild(el("div", { "class": "val" }, num(nowAvg)));
     mt.appendChild(el("div", { "class": "km" }, "of " + nowUsed + " stations"));
     nowTiles.appendChild(mt);
+    var off = !!(s.season && s.season.active === false);
+    document.body.classList.toggle("off", off);
     var ageH = newest ? (nowMY() - newest) / 3600e3 : Infinity;
     var warn = $("warn");
-    if (ageH > s.stale_after_hours) {
+    if (!off && ageH > s.stale_after_hours) {
       warn.hidden = false;
       warn.textContent = "The data is old. " + (newest
         ? "The newest reading is " + Math.floor(ageH) + " hours old. "
@@ -641,9 +676,10 @@
           : "Today's " + readClock + " reading is not in yet. The numbers above are from the day before."));
     }
 
+    if (off) drawSeason(s);
     drawDots(s);
-    drawChart(s);
-    drawTable(s);
+    if (!off) drawChart(s);
+    drawTable(off ? Object.assign({}, s, { daily: s.season.records }) : s);
 
     // ---- 5. rule
     var ul = $("rule"); ul.textContent = "";
@@ -663,6 +699,43 @@
       "The average is rounded to a whole number. 0.5 and above goes up. So 149.5 becomes 150, and 141.4 becomes 141.",
       "An average of exactly " + rule.close_from_streak + " or exactly " + rule.close_from_single_day + " counts as high."
     ].forEach(function (x) { notes.appendChild(el("li", {}, x)); });
+    if (off) notes.appendChild(el("li", {}, "Before the next haze season, this rule will be checked with the school. " +
+      "The national guidance changed on 15 Oct 2026."));
+  }
+
+  // ------------------------------------------------------------ off-season: summary of the haze season
+  // Shown when config.json has "season": {"active": false}. The collector works out the numbers.
+  function drawSeason(s) {
+    var z = s.season, rule = s.rule;
+    var first = parse(z.first_day), last = parse(z.last_day);
+    var yr = new Date(last).getUTCFullYear();
+    $("readTitle").textContent = "Haze season " + (z.name || yr) + ": summary";
+    $("pausedSub").textContent = (z.paused_on ? "Paused since " + dayLabel(parse(z.paused_on)) + " " + yr + ". " : "") +
+      "It will start again before the next haze season.";
+    $("seasonSpan").textContent = "Rule period: " + dayLabel(first) + " to " + dayLabel(last) + " " + yr +
+      " (" + z.days + " days). Each number below uses the " + clock(Date.UTC(2000, 0, 1, s.reading_hour)) + " average.";
+    var facts = $("facts"); facts.textContent = "";
+    function fact(big, small) {
+      var li = el("li"); li.appendChild(el("b", {}, big)); li.appendChild(el("span", {}, small)); facts.appendChild(li);
+    }
+    fact(String(z.high_days), "days at " + rule.close_from_streak + " or above");
+    fact(String(z.very_high_days), "days at " + rule.close_from_single_day + " or above");
+    if (z.highest) {
+      var tops = (z.records || []).filter(function (r) { return r.average === z.highest.average; })
+        .map(function (r) { return dayLabel(parse(r.date)); });
+      fact(String(z.highest.average), "highest, on " + (tops.length ? tops.join(" and ") : dayLabel(parse(z.highest.date))));
+    }
+    fact(String(z.closed_school_days.length), "school days closed by the rule");
+    var n = $("seasonNotes"); n.textContent = "";
+    var shut = z.closed_days || z.closed_school_days;
+    var noSchool = {}; (z.records || []).forEach(function (r) { if (!r.school_day) noSchool[r.date] = r.no_school_reason; });
+    if (shut.length) n.appendChild(el("li", {}, "Days closed by the rule: " +
+      shut.map(function (d) { return dayLabel(parse(d)) + (noSchool[d] ? " (" + noSchool[d] + ", no school that day)" : ""); }).join(", ") +
+      ". This is what the rule gave. The school's own decisions may differ."));
+    else n.appendChild(el("li", {}, "The rule closed no day this season."));
+    n.appendChild(el("li", {}, "The dot graph below also shows the days after the season."));
+    $("recN").textContent = "4";
+    $("recTitle").textContent = "Daily API records, haze season " + (z.name || yr);
   }
 
   // ------------------------------------------------------------ table
@@ -700,7 +773,8 @@
   //  - dot size, value labels and date labels thin out by themselves when the days get close.
   var RANGES = [14, 30, 90];
   var dotRange = 14;                       // 0 means all days
-  try { var kept = localStorage.getItem("dotRange"); if (kept !== null && !isNaN(+kept)) dotRange = +kept; } catch (e) {}
+  var dotPicked = false;                   // the viewer chose a view (kept in the browser)
+  try { var kept = localStorage.getItem("dotRange"); if (kept !== null && !isNaN(+kept)) { dotRange = +kept; dotPicked = true; } } catch (e) {}
 
   function drawDots(s) {
     var host = $("dots"); host.textContent = "";
@@ -718,7 +792,9 @@
 
     var end = all[all.length - 1].t;
     var have = Math.round((end - all[0].t) / DAY) + 1;        // days on record
-    var shownDays = dotRange && dotRange < have ? dotRange : have;
+    // Off-season the whole season is the point of the graph: show all days unless the viewer chose.
+    var range = !dotPicked && s.season && s.season.active === false ? 0 : dotRange;
+    var shownDays = range && range < have ? range : have;
 
     // The buttons appear when there are more days on record than the smallest view.
     bar.hidden = have <= RANGES[0];
@@ -730,6 +806,7 @@
           n ? "Last " + n + " days" : "All " + have + " days");
         b.addEventListener("click", function () {
           dotRange = n;
+          dotPicked = true;
           try { localStorage.setItem("dotRange", String(n)); } catch (e) {}
           drawDots(s);
         });
@@ -1279,7 +1356,10 @@
   function load() {
     fetch("data/status.json?t=" + Date.now(), { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (s) { lastStatus = s; render(s); loadForecast(); loadSensor(); })
+      .then(function (s) {
+        lastStatus = s; render(s);
+        if (!(s.season && s.season.active === false)) { loadForecast(); loadSensor(); }   // off-season: hidden
+      })
       .catch(function (e) {
         var w = $("warn"); w.hidden = false;
         w.textContent = "Could not load the data (" + e.message + "). Check the DOE website.";
@@ -1302,7 +1382,10 @@
     lastWidth = window.innerWidth;
     clearTimeout(timer);
     timer = setTimeout(function () {
-      if (lastStatus) { drawDots(lastStatus); drawChart(lastStatus); drawForecast(lastStatus, lastForecast); }
+      if (!lastStatus) return;
+      drawDots(lastStatus);
+      if (lastStatus.season && lastStatus.season.active === false) return;   // off-season: the rest is hidden
+      drawChart(lastStatus); drawForecast(lastStatus, lastForecast);
     }, 150);
   });
   load();
