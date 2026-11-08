@@ -372,3 +372,4 @@ datetime_myt,pm25_aqi,pm10_aqi,pm1_aqi,rh_percent,temp_c,wind_ms,source
 2026-11-07T10:00,46,11,34,,,,feed
 2026-11-07T21:00,100,38,74,,,,feed
 2026-11-08T03:00,150,56,105,,,,feed
+2026-11-08T10:00,85,27,65,,,,feed
