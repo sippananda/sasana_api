@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T13:02+08:00",
+ "generated_at": "2026-11-28T01:27+08:00",
  "school": {
   "name": "Sasana International School",
   "place": "Bandar Tasik Puteri",
@@ -52,21 +52,21 @@
   }
  ],
  "latest": {
-  "datetime": "2026-11-27T12:00",
+  "datetime": "2026-11-28T01:00",
   "values": {
-   "CA15W": 53,
-   "CA19B": 57,
+   "CA15W": 46,
+   "CA19B": 53,
    "CA20B": 54,
-   "CA18B": 40
+   "CA18B": 36
   },
   "stations_used": 4,
-  "average": 51
+  "average": 47
  },
  "today": {
-  "date": "2026-11-27",
-  "weekday": "Fri",
-  "school_day": true,
-  "no_school_reason": null,
+  "date": "2026-11-28",
+  "weekday": "Sat",
+  "school_day": false,
+  "no_school_reason": "weekend",
   "no_school_name": null,
   "next_school_day": false,
   "next_no_school_reason": "weekend",
@@ -84,34 +84,12 @@
   "streak": 0,
   "reason": "pending",
   "reason_text": "The 2:00 pm reading is not taken yet.",
-  "next_date": "2026-11-28",
-  "next_weekday": "Sat",
+  "next_date": "2026-11-29",
+  "next_weekday": "Sun",
   "next_school_date": "2026-11-30"
  },
  "holidays": [],
  "daily": [
-  {
-   "date": "2026-10-28",
-   "weekday": "Wed",
-   "school_day": true,
-   "no_school_reason": null,
-   "no_school_name": null,
-   "next_school_day": true,
-   "next_no_school_reason": null,
-   "values": {
-    "CA15W": 84,
-    "CA19B": 52,
-    "CA20B": 58,
-    "CA18B": 33
-   },
-   "stations_used": 4,
-   "average": 57,
-   "school_status": "open",
-   "decision_next_day": "open",
-   "streak": 0,
-   "reason": "below",
-   "reason_text": "Average is below 150. School stays open."
-  },
   {
    "date": "2026-10-29",
    "weekday": "Thu",
@@ -744,6 +722,28 @@
    },
    "stations_used": 4,
    "average": 46,
+   "school_status": "open",
+   "decision_next_day": "open",
+   "streak": 0,
+   "reason": "below",
+   "reason_text": "Average is below 150. School stays open."
+  },
+  {
+   "date": "2026-11-27",
+   "weekday": "Fri",
+   "school_day": true,
+   "no_school_reason": null,
+   "no_school_name": null,
+   "next_school_day": false,
+   "next_no_school_reason": "weekend",
+   "values": {
+    "CA15W": 50,
+    "CA19B": 55,
+    "CA20B": 53,
+    "CA18B": 42
+   },
+   "stations_used": 4,
+   "average": 50,
    "school_status": "open",
    "decision_next_day": "open",
    "streak": 0,
@@ -1498,129 +1498,13 @@
   [
    "2026-11-26",
    46
+  ],
+  [
+   "2026-11-27",
+   50
   ]
  ],
  "hourly": [
-  {
-   "t": "2026-11-23T13:00",
-   "v": [
-    28,
-    57,
-    60,
-    47
-   ],
-   "avg": 48
-  },
-  {
-   "t": "2026-11-23T14:00",
-   "v": [
-    28,
-    57,
-    60,
-    46
-   ],
-   "avg": 48
-  },
-  {
-   "t": "2026-11-23T15:00",
-   "v": [
-    30,
-    58,
-    61,
-    48
-   ],
-   "avg": 49
-  },
-  {
-   "t": "2026-11-23T16:00",
-   "v": [
-    32,
-    58,
-    61,
-    51
-   ],
-   "avg": 51
-  },
-  {
-   "t": "2026-11-23T17:00",
-   "v": [
-    33,
-    58,
-    61,
-    51
-   ],
-   "avg": 51
-  },
-  {
-   "t": "2026-11-23T18:00",
-   "v": [
-    33,
-    59,
-    61,
-    50
-   ],
-   "avg": 51
-  },
-  {
-   "t": "2026-11-23T19:00",
-   "v": [
-    34,
-    58,
-    62,
-    49
-   ],
-   "avg": 51
-  },
-  {
-   "t": "2026-11-23T20:00",
-   "v": [
-    34,
-    58,
-    61,
-    46
-   ],
-   "avg": 50
-  },
-  {
-   "t": "2026-11-23T21:00",
-   "v": [
-    35,
-    57,
-    61,
-    43
-   ],
-   "avg": 49
-  },
-  {
-   "t": "2026-11-23T22:00",
-   "v": [
-    36,
-    57,
-    61,
-    44
-   ],
-   "avg": 50
-  },
-  {
-   "t": "2026-11-23T23:00",
-   "v": [
-    38,
-    57,
-    62,
-    44
-   ],
-   "avg": 50
-  },
-  {
-   "t": "2026-11-24T00:00",
-   "v": [
-    40,
-    57,
-    62,
-    46
-   ],
-   "avg": 51
-  },
   {
    "t": "2026-11-24T01:00",
    "v": [
@@ -2460,6 +2344,136 @@
     40
    ],
    "avg": 51
+  },
+  {
+   "t": "2026-11-27T13:00",
+   "v": [
+    52,
+    56,
+    54,
+    41
+   ],
+   "avg": 51
+  },
+  {
+   "t": "2026-11-27T14:00",
+   "v": [
+    50,
+    55,
+    53,
+    42
+   ],
+   "avg": 50
+  },
+  {
+   "t": "2026-11-27T15:00",
+   "v": [
+    48,
+    53,
+    52,
+    43
+   ],
+   "avg": 49
+  },
+  {
+   "t": "2026-11-27T16:00",
+   "v": [
+    46,
+    52,
+    52,
+    42
+   ],
+   "avg": 48
+  },
+  {
+   "t": "2026-11-27T17:00",
+   "v": [
+    46,
+    52,
+    52,
+    42
+   ],
+   "avg": 48
+  },
+  {
+   "t": "2026-11-27T18:00",
+   "v": [
+    45,
+    51,
+    52,
+    41
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-27T19:00",
+   "v": [
+    44,
+    51,
+    52,
+    41
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-27T20:00",
+   "v": [
+    44,
+    50,
+    52,
+    41
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-27T21:00",
+   "v": [
+    45,
+    51,
+    52,
+    40
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-27T22:00",
+   "v": [
+    46,
+    52,
+    53,
+    37
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-27T23:00",
+   "v": [
+    48,
+    52,
+    53,
+    37
+   ],
+   "avg": 48
+  },
+  {
+   "t": "2026-11-28T00:00",
+   "v": [
+    47,
+    52,
+    53,
+    36
+   ],
+   "avg": 47
+  },
+  {
+   "t": "2026-11-28T01:00",
+   "v": [
+    46,
+    53,
+    54,
+    36
+   ],
+   "avg": 47
   }
  ]
 }
